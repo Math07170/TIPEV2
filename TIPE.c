@@ -9,6 +9,19 @@ const int USINE = 1;
 const int MAISON = 2;
 const int BARNABE = 3;
 
+const int BLANC = 0;
+const int GRIS = 1;
+const int NOIR = 2;
+
+//-----
+//File de prio
+//-----
+
+//#include <tas_binaire.h>
+
+//-----
+//GRILLE
+//-----
 
 struct s_grille {
     int taille;
@@ -16,6 +29,13 @@ struct s_grille {
 };
 
 typedef struct s_grille grille;
+
+struct s_sommet {
+    int x;
+    int y;
+};
+
+typedef struct s_sommet sommet;
 
 
 grille creer_grille(int n) {
@@ -101,10 +121,69 @@ int heuristique(int xa, int ya, int xb, int yb) {
 }
 
 
-void astar(grille* g) {
+void astar(grille* g, int** voisins, int* poids, sommet* depart, sommet* final) {
 
-    
+    int n = g->taille;
+    int DMAX = n+n+1;
+    fileprio file = nouvelle_fileprio();
 
+    int* p = malloc(sizeof(int) * n*n);
+    int* c = malloc(sizeof(int) * n*n);
+    int* d = malloc(sizeof(int) * n*n);
+    int* f = malloc(sizeof(int) * n*n);
+
+    int sd = depart->x * n + depart->y;
+    int sf = final->x * n + final->y;
+
+
+    for(int i=0;i<n;i++) {
+        p[i] = -1;
+        c[i] = BLANC;
+        d[i] = DMAX;
+        f[i] = DMAX;
+    }
+
+    c[sd] = GRIS;
+    d[sd] = 0;
+    f[sd] = heuristique(depart->x,depart->y, final->x,final->y);
+
+    inserer_fileprio(file, sd, f[sd]);
+
+    ///while("""fileprio_non_vide() && """c[sf] != NOIR) {
+
+    while (c[sf] != NOIR) {
+        int s = extraire(file);
+        c[s] = NOIR;
+
+        int xs = s / n;
+        int ys = s % n;
+
+        int len;
+
+        if (s == 0 || s == n-1 || s == n*n-n || s == n*n-1) { //la case est dans un angle
+            len = 2;
+        }
+        else if (xs == 0 || ys == 0 || xs == n-1 || ys == n-1) {
+            len = 3;
+        }
+        else {
+            len = 4;
+        }
+
+        for(int i=0;i<len;i++) {
+            int sy = voisins[s][i];
+            if (c[sy] == BLANC) {
+
+                c[sy] ==
+
+                𝑐[𝑦] ← 𝐺𝑟𝑖𝑠;
+𝑝[𝑦] ← 𝑥;
+𝑔[𝑦] ← 𝑔[𝑥] + 𝑝(𝑥, 𝑦);
+𝑓 [𝑦] ← 𝑔[𝑦] + ℎ(𝑦);
+inserer((𝑦, 𝑓 [𝑦]), 𝑓 𝑖𝑙𝑒𝑝𝑟𝑖𝑜);
+            }
+        }
+    }
 }
 
 

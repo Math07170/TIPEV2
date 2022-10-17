@@ -120,8 +120,11 @@ int heuristique(int xa, int ya, int xb, int yb) {
     return x + y;
 }
 
+int poids(int sx, int sy) {
+    return 1;
+}
 
-void astar(grille* g, int** voisins, int* poids, sommet* depart, sommet* final) {
+void astar(grille* g, int** voisins, sommet* depart, sommet* final) {
 
     int n = g->taille;
     int DMAX = n+n+1;
@@ -171,21 +174,27 @@ void astar(grille* g, int** voisins, int* poids, sommet* depart, sommet* final) 
         }
 
         for(int i=0;i<len;i++) {
-            int sy = voisins[s][i];
-            if (c[sy] == BLANC) {
+            int sv = voisins[s][i];
+            if (c[sv] == BLANC) {
 
-                c[sy] ==
+                int xsv = sv / n;
+                int ysv = sv % n;
 
-                𝑐[𝑦] ← 𝐺𝑟𝑖𝑠;
-𝑝[𝑦] ← 𝑥;
-𝑔[𝑦] ← 𝑔[𝑥] + 𝑝(𝑥, 𝑦);
-𝑓 [𝑦] ← 𝑔[𝑦] + ℎ(𝑦);
-inserer((𝑦, 𝑓 [𝑦]), 𝑓 𝑖𝑙𝑒𝑝𝑟𝑖𝑜);
-            }
-        }
-    }
-}
+                c[sv] = GRIS;
+                p[sv] = s;
+                d[sv] = d[s] + 1; //rajouter un poids
+                f[sv] = d[sv] + heuristique(xs,ys,xsv,ysv);
 
+                inserer_fileprio(file, sv, f[sv]);
+
+//SinonSi 𝑐[𝑦] = 𝐺𝑟𝑖𝑠 ∧ 𝑔[𝑥] + 𝑝(𝑥, 𝑦) < 𝑔[𝑦] Alors
+//𝑝[𝑦] ← 𝑥;
+//𝑔[𝑦] ← 𝑔[𝑥] + 𝑝(𝑥, 𝑦);
+//𝑓 [𝑦] ← 𝑔[𝑦] + ℎ(𝑦);
+//diminuer((𝑦, 𝑓 [𝑦]), 𝑓 𝑖𝑙𝑒𝑝𝑟𝑖𝑜);
+//Fin Si
+//Fin Pour
+//Fin Tant que
 
 
 int main(){

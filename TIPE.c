@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <time.h>
+//#include "fileprio.h"		// ???
+
 
 const int VIDE = 0;
 const int USINE = 1;
@@ -13,15 +15,7 @@ const int BLANC = 0;
 const int GRIS = 1;
 const int NOIR = 2;
 
-//-----
-//File de prio
-//-----
 
-//#include <tas_binaire.h>
-
-//-----
-//GRILLE
-//-----
 
 struct s_grille {
     int taille;
@@ -71,6 +65,7 @@ void remplace(int x, int i, int j, grille* g) {
     g->t[i][j] = x;
 }
 
+/* Renvoie true si 'g[i][j]' == x */
 bool est(int x, int i, int j, grille* g) {
     int n = g->taille;
     assert(i>=0 && j>=0 && i<n && j<n);
@@ -117,14 +112,14 @@ int heuristique(int xa, int ya, int xb, int yb) {
     if (y < 0) {
         y = -y;
     }
-    return x + y;
+    return x + y;		// SUS
 }
 
 int poids(int sx, int sy) {
     return 1;
 }
 
-void astar(grille* g, int** voisins, sommet* depart, sommet* final) {
+void astar(grille* g, int** voisins, sommet* depart, sommet* final) {		// Situation du tableau voisins à clarifier/régulariser
 
     int n = g->taille;
     int DMAX = n+n+1;
@@ -135,8 +130,8 @@ void astar(grille* g, int** voisins, sommet* depart, sommet* final) {
     int* d = malloc(sizeof(int) * n*n);
     int* f = malloc(sizeof(int) * n*n);
 
-    int sd = depart->x * n + depart->y;
-    int sf = final->x * n + final->y;
+    int s_d = depart->x * n + depart->y;
+    int s_f = final->x * n + final->y;
 
 
     for(int i=0;i<n;i++) {
@@ -146,46 +141,41 @@ void astar(grille* g, int** voisins, sommet* depart, sommet* final) {
         f[i] = DMAX;
     }
 
-    c[sd] = GRIS;
-    d[sd] = 0;
-    f[sd] = heuristique(depart->x,depart->y, final->x,final->y);
+    c[s_d] = GRIS;
+    d[s_d] = 0;
+    f[s_d] = heuristique(depart->x,depart->y, final->x,final->y);
 
-    inserer_fileprio(file, sd, f[sd]);
+    inserer_fileprio(file, s_d, f[s_d]);
 
-    ///while("""fileprio_non_vide() && """c[sf] != NOIR) {
-
-    while (c[sf] != NOIR) {
+    while(fileprio_non_vide() && c[s_f] != NOIR) {
         int s = extraire(file);
         c[s] = NOIR;
 
         int xs = s / n;
         int ys = s % n;
 
-        int len;
-
-        if (s == 0 || s == n-1 || s == n*n-n || s == n*n-1) { //la case est dans un angle
-            len = 2;
+        int deg;		// nombre de voisins
+        if(s == 0 || s == n-1 || s == n*n-n || s == n*n-1){		// la case est dans un angle -> seulement 2 voisins
+            deg = 2;
+        }else if (xs == 0 || ys == 0 || xs == n-1 || ys == n-1){	// la case est en bord de tableau -> seulement 3 voisins
+            deg = 3;
+        }else{			// cas général -> 4 voisins
+            deg = 4;
         }
-        else if (xs == 0 || ys == 0 || xs == n-1 || ys == n-1) {
-            len = 3;
-        }
-        else {
-            len = 4;
-        }
-
+				// TODO : générer d'une façon ou d'une autre le tableau voisins
         for(int i=0;i<len;i++) {
-            int sv = voisins[s][i];
-            if (c[sv] == BLANC) {
+            int s_v = voisins[s][i];
+            if (c[s_v] == BLANC) {
 
-                int xsv = sv / n;
-                int ysv = sv % n;
+                int xs_v = s_v / n;
+                int ys_v = s_v % n;
 
-                c[sv] = GRIS;
-                p[sv] = s;
-                d[sv] = d[s] + 1; //rajouter un poids
-                f[sv] = d[sv] + heuristique(xs,ys,xsv,ysv);
+                c[s_v] = GRIS;
+                p[s_v] = s;
+                d[s_v] = d[s] + 1;		// AJOUT ÉVENTUEL D'UN POIDS ICI (poids différent pour chaque case de la grille ?)
+                f[s_v] = d[s_v] + heuristique(xs,ys,xs_v,ys_v);
 
-                inserer_fileprio(file, sv, f[sv]);
+                inserer_fileprio(file, s_v, f[s_v]);
 
 //SinonSi 𝑐[𝑦] = 𝐺𝑟𝑖𝑠 ∧ 𝑔[𝑥] + 𝑝(𝑥, 𝑦) < 𝑔[𝑦] Alors
 //𝑝[𝑦] ← 𝑥;

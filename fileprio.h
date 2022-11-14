@@ -27,6 +27,7 @@ fileprio creer_fileprio(int taille_max);		// Toujours mettre n² en argument en 
 bool fileprio_non_vide(fileprio* f);
 void inserer_fileprio(fileprio* f,int num_sommet,int distance);
 int extraire_fileprio(fileprio* f);		// Renvoie un numéro de sommet
+void diminuer_fileprio(fileprio* f,int num_sommet);
 // Rajouter une fonction detruire_fileprio ?
 // Rajouter une fonction lire_min_fileprio ?
 

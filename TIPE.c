@@ -32,6 +32,7 @@ struct s_sommet {
 typedef struct s_sommet sommet;
 
 
+
 grille creer_grille(int n) {
     grille g;
     g.taille = n;
@@ -41,7 +42,7 @@ grille creer_grille(int n) {
     }
     for(int i = 0; i < n; i++){
         for(int j = 0; j < n; j++){
-            g.t[i][j] = VIDE;
+            g.t[i][j] = VIDE;		// Initialisation
         }
     }
     return g;

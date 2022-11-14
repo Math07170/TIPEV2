@@ -99,13 +99,24 @@ void percole_haut(fileprio f,int i){
 	return;
 }
 
-void inserer_fileprio(fileprio* f,int num_sommet,int distance){
+void inserer_fileprio(fileprio* f,int num_sommet,int valeur){
 	noeud nv_noeud;
 	nv_noeud.num_sommet = num_sommet;
 	nv_noeud.valeur = valeur;
-	t[f->nb_valeurs] = nv_noeud;
+	f -> t[f->nb_valeurs] = nv_noeud;
 	percole_haut(&f,f -> nb_valeurs);
 	f -> nb_valeurs += 1;
 	return;
 }
 
+void diminuer_fileprio(fileprio* f,int num_sommet,int nv_val){		// WARNING WARNING O(N)
+	int n = f -> nb_valeurs;
+	for(int i = 0;i < n;i++){		// On suppose que le même numéro de sommet n'est pas présent 2 fois dans la file de priorité
+		if (f -> t[i].num_sommet = num_sommet){
+			f -> t[i].valeur = nv_val;
+			percole_haut(&f,i);		// ATTENTION
+			return;
+		}
+	}
+	return;
+}

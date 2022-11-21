@@ -7,7 +7,7 @@
  * Implémentation : tas binaire avec un tableau
  * 17/10/22 au soir : pas encore testé, dangereux mais j'ai sommeil */
 
-struct s_noeud = {		// càd une case du tableau
+struct s_noeud{		// càd une case du tableau
 	int num_sommet;
 	int valeur;
 	//int i_fils_droit;			// a priori non
@@ -15,11 +15,11 @@ struct s_noeud = {		// càd une case du tableau
 };
 typedef struct s_noeud noeud;
 
-struct s_fileprio = {		// Implémentée par un tas binaire
+struct s_fileprio{		// Implémentée par un tas binaire
 	int nb_valeurs;
 	//int taille_max;		// Pourrait être ajouté pour mettre des assertions...
-	int* t;
-}
+	noeud* t;
+};
 typedef struct s_fileprio fileprio;
 
 

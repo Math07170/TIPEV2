@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <time.h>
-//#include "fileprio.h"		// ???
+#include "fileprio.h"
 
 
 const int VIDE = 0;
@@ -17,14 +17,14 @@ const int NOIR = 2;
 
 
 
-struct s_grille {
+struct s_grille{
     int taille;
     int** t;
 };
 
 typedef struct s_grille grille;
 
-struct s_sommet {
+struct s_sommet{
     int x;
     int y;
 };
@@ -124,7 +124,7 @@ void astar(grille* g, int** voisins, sommet* depart, sommet* final) {		// Situat
 
     int n = g->taille;
     int DMAX = n+n+1;
-    fileprio file = nouvelle_fileprio();
+    fileprio file = creer_fileprio(n*n);		// n² ??
 
     int* p = malloc(sizeof(int) * n*n);
     int* c = malloc(sizeof(int) * n*n);
@@ -146,10 +146,10 @@ void astar(grille* g, int** voisins, sommet* depart, sommet* final) {		// Situat
     d[s_d] = 0;
     f[s_d] = heuristique(depart->x,depart->y, final->x,final->y);
 
-    inserer_fileprio(file, s_d, f[s_d]);
+    inserer_fileprio(&file, s_d, f[s_d]);
 
-    while(fileprio_non_vide() && c[s_f] != NOIR) {
-        int s = extraire(file);
+    while(fileprio_non_vide(&file) && c[s_f] != NOIR) {
+        int s = extraire_fileprio(&file);
         c[s] = NOIR;
 
         int xs = s / n;
@@ -164,29 +164,27 @@ void astar(grille* g, int** voisins, sommet* depart, sommet* final) {		// Situat
             deg = 4;
         }
 				// TODO : générer d'une façon ou d'une autre le tableau voisins
-        for(int i=0;i<len;i++) {
+        for(int i=0;i<len;i++) {		// Qu'est-ce que len ??
             int s_v = voisins[s][i];
+            int xs_v = s_v / n;
+            int ys_v = s_v % n;
             if (c[s_v] == BLANC) {
-
-                int xs_v = s_v / n;
-                int ys_v = s_v % n;
 
                 c[s_v] = GRIS;
                 p[s_v] = s;
                 d[s_v] = d[s] + 1;		// AJOUT ÉVENTUEL D'UN POIDS ICI (poids différent pour chaque case de la grille ?)
                 f[s_v] = d[s_v] + heuristique(xs,ys,xs_v,ys_v);
 
-                inserer_fileprio(file, s_v, f[s_v]);
-
-//SinonSi 𝑐[𝑦] = 𝐺𝑟𝑖𝑠 ∧ 𝑔[𝑥] + 𝑝(𝑥, 𝑦) < 𝑔[𝑦] Alors
-//𝑝[𝑦] ← 𝑥;
-//𝑔[𝑦] ← 𝑔[𝑥] + 𝑝(𝑥, 𝑦);
-//𝑓 [𝑦] ← 𝑔[𝑦] + ℎ(𝑦);
-//diminuer((𝑦, 𝑓 [𝑦]), 𝑓 𝑖𝑙𝑒𝑝𝑟𝑖𝑜);
-//Fin Si
-//Fin Pour
-//Fin Tant que
-
+                inserer_fileprio(&file, s_v, f[s_v]);
+			}else if (c[s_v] == GRIS && d[s] + poids(s_v,s) < d[s_v]) {
+                p[s_v] = s;
+                d[s_v] = d[s] + poids(s_v,s);
+                f[s_v] = d[s_v] + heuristique(xs_v,ys_v,xs,ys);
+                diminuer_fileprio(&file,(y,f[s_v]));		// Flemme de comprendre ce qu'est "y"
+            }
+        }
+    }
+}
 
 int main(){
     srand(time(NULL)); 

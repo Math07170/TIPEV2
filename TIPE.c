@@ -124,7 +124,7 @@ void astar(grille* g, int** voisins, sommet* depart, sommet* final) {		// Situat
 
     int n = g->taille;
     int DMAX = n+n+1;
-    fileprio file = creer_fileprio(n*n);		// n² ??
+    fileprio file = creer_fileprio(n*n);
 
     int* p = malloc(sizeof(int) * n*n);
     int* c = malloc(sizeof(int) * n*n);
@@ -164,7 +164,7 @@ void astar(grille* g, int** voisins, sommet* depart, sommet* final) {		// Situat
             deg = 4;
         }
 				// TODO : générer d'une façon ou d'une autre le tableau voisins
-        for(int i=0;i<len;i++) {		// Qu'est-ce que len ??
+        for(int i=0;i<deg;i++) {
             int s_v = voisins[s][i];
             int xs_v = s_v / n;
             int ys_v = s_v % n;
@@ -180,11 +180,35 @@ void astar(grille* g, int** voisins, sommet* depart, sommet* final) {		// Situat
                 p[s_v] = s;
                 d[s_v] = d[s] + poids(s_v,s);
                 f[s_v] = d[s_v] + heuristique(xs_v,ys_v,xs,ys);
-                diminuer_fileprio(&file,(y,f[s_v]));		// Flemme de comprendre ce qu'est "y"
+                diminuer_fileprio(&file,s_v,f[s_v]);		// Flemme de comprendre ce qu'est "y"
             }
         }
     }
 }
+
+
+
+// ----------------------------------------------------- //
+
+
+
+
+
+
+
+// ----------------------------------------------------- //
+
+
+
+
+// chercher un element
+// plus proche element d'un sommet x
+// Relier deux voisins avec un certain element (ex : cables)
+
+// Trouver ou placer les elements (ex : transformateurs)
+// Fonction d'optimisation
+
+
 
 int main(){
     srand(time(NULL)); 

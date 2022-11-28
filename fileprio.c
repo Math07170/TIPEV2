@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 struct s_noeud{
 	int num_sommet;
@@ -22,7 +23,12 @@ fileprio creer_fileprio(int taille_max){
 	f.nb_valeurs = 0;
 	//f.taille_max = taille_max;
 	f.t = malloc(taille_max * sizeof(noeud));
-	return f;
+	if(f.t == NULL){
+		printf("Manque de mémoire pour créer la fileprio..\n");
+		exit(-1);
+	}else{
+		return f;
+	}
 }
 
 bool fileprio_non_vide(fileprio* f){

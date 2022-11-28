@@ -37,8 +37,16 @@ grille creer_grille(int n) {
     grille g;
     g.taille = n;
     g.t = malloc(sizeof(int*) * n);
+    if(g.t == NULL){
+		printf("Manque de mémoire pour créer la grille\n");
+		exit(-1);
+	}
     for(int k = 0; k < n; k++){
         g.t[k] = malloc(sizeof(int) * n);
+        if(g.t[k] == NULL){
+		printf("Manque de mémoire pour créer la grille\n");
+		exit(-1);
+	}
     }
     for(int i = 0; i < n; i++){
         for(int j = 0; j < n; j++){
@@ -88,7 +96,7 @@ void randomize(int element, int nb_element, grille* g) {
 }
 
 
-void affiche(grille* g) {
+void affiche_old(grille* g) {
     int n = g->taille;
     for(int i = 0; i < n; i++){
         for(int j = 0; j < n; j++){
@@ -130,6 +138,10 @@ void astar(grille* g, int** voisins, sommet* depart, sommet* final) {		// Situat
     int* c = malloc(sizeof(int) * n*n);
     int* d = malloc(sizeof(int) * n*n);
     int* f = malloc(sizeof(int) * n*n);
+    
+    if(p == NULL || c == NULL || d == NULL || f == NULL){
+		printf("Manque de mémoire pour A*\n");
+	}
 
     int s_d = depart->x * n + depart->y;
     int s_f = final->x * n + final->y;
@@ -149,7 +161,7 @@ void astar(grille* g, int** voisins, sommet* depart, sommet* final) {		// Situat
     inserer_fileprio(&file, s_d, f[s_d]);
 
     while(fileprio_non_vide(&file) && c[s_f] != NOIR) {
-        int s = extraire_fileprio(&file);
+        int s = extraire_fileprio(&file);		// Numéro du sommet courant
         c[s] = NOIR;
 
         int xs = s / n;
@@ -165,7 +177,7 @@ void astar(grille* g, int** voisins, sommet* depart, sommet* final) {		// Situat
         }
 				// TODO : générer d'une façon ou d'une autre le tableau voisins
         for(int i=0;i<deg;i++) {
-            int s_v = voisins[s][i];
+            int s_v = voisins[s][i];		// Numéro de sommet du voisin
             int xs_v = s_v / n;
             int ys_v = s_v % n;
             if (c[s_v] == BLANC) {
@@ -180,7 +192,7 @@ void astar(grille* g, int** voisins, sommet* depart, sommet* final) {		// Situat
                 p[s_v] = s;
                 d[s_v] = d[s] + poids(s_v,s);
                 f[s_v] = d[s_v] + heuristique(xs_v,ys_v,xs,ys);
-                diminuer_fileprio(&file,s_v,f[s_v]);		// Flemme de comprendre ce qu'est "y"
+                diminuer_fileprio(&file,s_v,f[s_v]);
             }
         }
     }
@@ -213,14 +225,13 @@ void astar(grille* g, int** voisins, sommet* depart, sommet* final) {		// Situat
 int main(){
     srand(time(NULL)); 
 
-    int n = 100;
-    grille g = creer_grille(100);
-    randomize(USINE, 200, &g);
-    randomize(MAISON, 200, &g);
-    randomize(BARNABE, 200, &g);
-    affiche(&g);
+    int n = 10;
+    grille g = creer_grille(n);
+    randomize(USINE, 5, &g);
+    randomize(MAISON, 15, &g);
+    randomize(BARNABE, 10, &g);
+    affiche_old(&g);
     
-
 
     return 0;
 }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "grille.h"
 
 // https://graphviz.org/Gallery/undirected/grid.html
 
@@ -23,7 +24,8 @@ int affiche_grille (grille g*) {
 		for(int j=0;j<n;j++) {
 			fputs("F", fp);
 		}
-		fputs("\t"
+		fputs("\t");
+	}
 	
 	fclose(fp);
 	return 0;

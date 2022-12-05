@@ -1,0 +1,23 @@
+#ifndef GRILLE_H
+#define GRILLE_H
+
+extern const int VIDE;
+extern const int USINE;
+extern const int MAISON;
+extern const int BARNABE;
+
+extern const int BLANC;
+extern const int GRIS;
+extern const int NOIR;
+
+struct s_grille{
+    int taille;
+    int** t;
+};
+typedef struct s_grille grille;
+
+grille creer_grille(int n);
+void randomize(int element, int nb_element, grille* g);
+void affiche_moche(grille* g);
+int heuristique(int xa, int ya, int xb, int yb);
+#endif

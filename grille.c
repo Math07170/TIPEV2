@@ -14,6 +14,17 @@ const int BLANC = 0;
 const int GRIS = 1;
 const int NOIR = 2;
 
+const int PLAINE = 0;
+const int FORET = 1;
+const int EAU = 2;
+const int MONTAGNE = 3;
+
+struct s_cell{ // Pas utilisé actuellement, servira à remplacer t dans s_grille : cell** t
+    int infrastructure;
+    int type;
+};
+typedef struct s_cell cell;
+
 struct s_grille{
     int taille;
     int** t;

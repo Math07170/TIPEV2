@@ -5,10 +5,12 @@
 #include <time.h>
 #include "grille.h"
 #include "fileprio.h"
+#include "affichage.h"
 
 struct s_sommet{
     int x;
     int y;
+    int type;
 };
 typedef struct s_sommet sommet;
 
@@ -120,8 +122,8 @@ int main(){
     randomize(USINE, 5, &g);
     randomize(MAISON, 15, &g);
     randomize(BARNABE, 10, &g);
-    affiche_moche(&g);
-    
+    //affiche_moche(&g);
+    affichage(&g);
 
     return 0;
 }

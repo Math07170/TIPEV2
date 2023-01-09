@@ -3,23 +3,18 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <time.h>
-	// Méfiance
 
 const int VIDE = 0;
 const int USINE = 1;
 const int MAISON = 2;
 const int BARNABE = 3;
 
-const int BLANC = 0;
-const int GRIS = 1;
-const int NOIR = 2;
+const int PLAINE = 10;
+const int FORET = 20;
+const int EAU = 30;
+const int MONTAGNE = 40;
 
-const int PLAINE = 0;
-const int FORET = 1;
-const int EAU = 2;
-const int MONTAGNE = 3;
-
-struct s_cell{ // Pas utilisé actuellement, servira à remplacer t dans s_grille : cell** t
+struct s_cell{ // Pas utilisé actuellement, servira à comme type de t dans la structure s_grille
     int infrastructure;
     int type;
 };
@@ -100,8 +95,8 @@ void randomize(int element, int nb_element, grille* g) {
     return;
 }
 
-
-void affiche_moche(grille* g) {
+/* N'est plus utilisé */
+/*void affiche_moche(grille* g) {
     int n = g->taille;
     for(int i = 0; i < n; i++){
         for(int j = 0; j < n; j++){
@@ -111,10 +106,7 @@ void affiche_moche(grille* g) {
             }
         }
     }
-
-
-
-}
+}*/
 
 
 int heuristique(int xa, int ya, int xb, int yb) {
@@ -126,5 +118,5 @@ int heuristique(int xa, int ya, int xb, int yb) {
     if (y < 0) {
         y = -y;
     }
-    return x + y;		// SUS
+    return x + y;
 }

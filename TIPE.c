@@ -7,6 +7,10 @@
 #include "fileprio.h"
 #include "affichage.h"
 
+const int BLANC = 0;
+const int GRIS = 1;
+const int NOIR = 2;
+
 struct s_sommet{
     int x;
     int y;
@@ -14,7 +18,7 @@ struct s_sommet{
 };
 typedef struct s_sommet sommet;
 
-/* Impressionnant de vacuité */
+/* Impressionnant de vacuité, pourra être amélioré selon les types de cases... */
 int poids(int sx, int sy) {
     return 1;
 }
@@ -117,7 +121,7 @@ void astar(grille* g, int** voisins, sommet* depart, sommet* final) {		// Situat
 int main(){
     srand(time(NULL)); 
 
-    int n = 10;
+    int n = 57;
     grille g = creer_grille(n);
     randomize(USINE, 5, &g);
     randomize(MAISON, 15, &g);
@@ -125,6 +129,11 @@ int main(){
     //affiche_moche(&g);
     init_ncurses();
     affiche(&g);
-
+	
+	sleep(3);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
+	endwin();		// Arrête proprement ncurses, c'est REQUIS pour ne pas détruire le terminal
+	
+	// Quasiment toutes les fonctions du main font des warnings à tour de bras, SUS...
+	
     return 0;
 }

@@ -123,7 +123,8 @@ int main(){
     randomize(MAISON, 15, &g);
     randomize(BARNABE, 10, &g);
     //affiche_moche(&g);
-    affichage(&g);
+    init_ncurses();
+    affiche(&g);
 
     return 0;
 }

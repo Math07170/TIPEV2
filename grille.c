@@ -27,22 +27,22 @@ const int MONTAGNE = 50;	// white
 
 
 grille* creer_grille(int n) {
-    grille g;
-    g.taille = n;
-    g.t = malloc(sizeof(cell*) * n);
-    if(g.t == NULL){
+    grille* g = malloc(sizeof(grille));
+    g->taille = n;
+    g->t = malloc(sizeof(cell*) * n);
+    if(g->t == NULL){
 		printf("Manque de mémoire pour créer la grille\n");
 		exit(-1);
 	}
     for(int k = 0; k < n; k++){
-        g.t[k] = malloc(sizeof(cell) * n);
-        if(g.t[k] == NULL){
+        g->t[k] = malloc(sizeof(cell) * n);
+        if(g->t[k] == NULL){
 			printf("Manque de mémoire pour créer la grille\n");
 			exit(-1);
 		}
 		for(int l = 0;l < n;l++){
-			g.t[k][l].c = malloc(sizeof(cable)*4);		// NOMBRE MAX DE CABLES : 4 (car 4 directions)
-			if(g.t[k][l].c == NULL){
+			g->t[k][l].c = malloc(sizeof(cable)*4);		// NOMBRE MAX DE CABLES : 4 (car 4 directions)
+			if(g->t[k][l].c == NULL){
 				printf("Manque de mémoire pour créer la grille\n");
 				exit(-1);
 			}
@@ -50,11 +50,11 @@ grille* creer_grille(int n) {
     }
     for(int i = 0; i < n; i++){
         for(int j = 0; j < n; j++){
-            g.t[i][j].x = i;
-            g.t[i][j].y = j;
-            g.t[i][j].nb_c = 0;		// Initialisation
-            g.t[i][j].type = PLAINE;
-            g.t[i][j].infra = VIDE;
+            g->t[i][j].x = i;
+            g->t[i][j].y = j;
+            g->t[i][j].nb_c = 0;		// Initialisation
+            g->t[i][j].type = PLAINE;
+            g->t[i][j].infra = VIDE;
         }
     }
     return &g;
@@ -82,7 +82,9 @@ cell** voisins(cell* c, grille* g){
 }
 
 
+cell** get_line(int id_line, grille* g){
 
+}
 void ajoute(int infrastructure, int i, int j, grille* g) {
     int n = g->taille;
     assert(i>=0 && j>=0 && i<n && j<n && g->t[i][j].infra == VIDE);

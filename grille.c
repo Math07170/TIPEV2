@@ -26,7 +26,7 @@ const int MONTAGNE = 50;	// white
 
 
 
-grille creer_grille(int n) {
+grille* creer_grille(int n) {
     grille g;
     g.taille = n;
     g.t = malloc(sizeof(cell*) * n);
@@ -57,7 +57,7 @@ grille creer_grille(int n) {
             g.t[i][j].infra = VIDE;
         }
     }
-    return g;
+    return &g;
 }
 cell* getCell(int x, int y, grille* g){
     if(x>=g->taille || y>=g->taille) return NULL;
@@ -80,6 +80,8 @@ cell** voisins(cell* c, grille* g){
     vois[2] =  getCell(x, y+1, g);
     vois[3] =  getCell(x, y-1, g);
 }
+
+
 
 void ajoute(int infrastructure, int i, int j, grille* g) {
     int n = g->taille;

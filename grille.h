@@ -43,7 +43,7 @@ struct s_grille{
 typedef struct s_grille grille;
 
 
-grille creer_grille(int n);
+grille* creer_grille(int n);
 void randomize_infra(int element, int nb_element, grille* g);
 void randomize_terrain(grille* g);
 //void affiche_moche(grille* g);

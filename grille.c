@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <time.h>
 
+// Infrastructure
 const int VIDE = 0;		// noir
 const int USINE = 1;	// noir
 const int GD_VILLE = 2;	// noir
@@ -13,11 +14,13 @@ const int CENTRALE = 5;	// rouge
 const int GD_TRANSFO = 6;	// rouge
 const int PT_TRANSFO = 7;	// rouge
 
-const int PLAINE = 0;	// yellow
-const int FORET = 10;	// green
-const int EAU = 20;		// blue
-const int RIVIERE = 30;	// cyan
-const int MONTAGNE = 40;	// white
+// Type de terrain
+const int NEANT = 0;	// N'a pas à être affiché !!!
+const int PLAINE = 10;	// yellow
+const int FORET = 20;	// green
+const int EAU = 30;		// blue
+const int RIVIERE = 40;	// cyan		// NE VA PROBABLEMENT PAS RESTER
+const int MONTAGNE = 50;	// white
 
 // Il faut ajouter des constantes pour les câbles !
 
@@ -137,6 +140,20 @@ void randomize_terrain(grille* g){		// TEMPORAIRE !!!
     return;
 }
 
+void terrain_infra_test8(grille* g){		// À des fins de test, utiliser avec n=8, et faire disparaître les preuves à la fin
+	int n = g -> taille;			// 8	!!!
+	 for(int i = 0; i < 8;i++){
+		for(int j = 0 ; j < 5;j++){
+			g->t[i][j].infra = i;
+			g->t[i][j].type = (j+1)*10;
+		}
+		for(int j = 5 ; j < 8;j++){
+			g->t[i][j].infra = i;
+			g->t[i][j].type = NEANT;
+		}
+	}
+	return;
+}
 
 /* N'est plus utilisé */
 /*void affiche_moche(grille* g) {

@@ -67,9 +67,6 @@ void init_ncurses() {
 		init_pair(PT_TRANSFO+RIVIERE,COLOR_RED,COLOR_CYAN);
 		init_pair(PT_TRANSFO+MONTAGNE,COLOR_RED,COLOR_WHITE);
 		
-		//init_pair(USINE,COLOR_CYAN,COLOR_BLACK);
-		//init_pair(MAISON,COLOR_RED,COLOR_BLACK);
-		//init_pair(BARNABE,COLOR_YELLOW,COLOR_BLACK);		// Couleurs allouées au pif, c'est temporaire
 	}
 	return;
 }
@@ -97,12 +94,12 @@ void affiche(grille* g) {
 			
 			if (infra == VIDE) dessine_case(i,j,VIDE+type,' ');
 			else if (infra == USINE) dessine_case(i,j,USINE+type,'U');
-			else if (infra == GD_VILLE) dessine_case(i,j,USINE+type,'G');
-			else if (infra == PT_VILLE) dessine_case(i,j,USINE+type,'P');
-			else if (infra == VILLAGE) dessine_case(i,j,USINE+type,'V');
-			else if (infra == CENTRALE) dessine_case(i,j,USINE+type,'C');
-			else if (infra == GD_TRANSFO) dessine_case(i,j,USINE+type,'T');
-			else if (infra == PT_TRANSFO) dessine_case(i,j,USINE+type,'t');									
+			else if (infra == GD_VILLE) dessine_case(i,j,GD_VILLE+type,'G');
+			else if (infra == PT_VILLE) dessine_case(i,j,PT_VILLE+type,'P');
+			else if (infra == VILLAGE) dessine_case(i,j,VILLAGE+type,'V');
+			else if (infra == CENTRALE) dessine_case(i,j,CENTRALE+type,'C');
+			else if (infra == GD_TRANSFO) dessine_case(i,j,GD_TRANSFO+type,'T');
+			else if (infra == PT_TRANSFO) dessine_case(i,j,PT_TRANSFO+type,'t');									
 		}
 	}
 	refresh();

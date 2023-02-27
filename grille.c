@@ -57,7 +57,7 @@ grille* creer_grille(int n) {
             g->t[i][j].infra = VIDE;
         }
     }
-    return &g;
+    return g;
 }
 cell* getCell(int x, int y, grille* g){
     if(x>=g->taille || y>=g->taille) return NULL;

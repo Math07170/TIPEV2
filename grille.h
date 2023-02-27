@@ -11,7 +11,7 @@ extern const int CENTRALE;
 extern const int GD_TRANSFO;
 extern const int PT_TRANSFO;
 
-
+extern const int NEANT;
 extern const int PLAINE;
 extern const int FORET;
 extern const int EAU;

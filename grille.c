@@ -82,8 +82,17 @@ cell** voisins(cell* c, grille* g){
 }
 
 
-cell** get_line(int id_line, grille* g){
-
+cell** get_line_cost(int id_line, grille* g){
+    int n = g->taille;
+    int res = 0;
+    for(int x = 0; x<n; x++){
+        for(int y = 0; y<n; x++){
+            if(contient_ligne(getCell(x, y, g), id_line)){
+                res += getCell(x, y, g)->type;
+            }
+        }
+    }
+    return res;
 }
 void ajoute(int infrastructure, int i, int j, grille* g) {
     int n = g->taille;

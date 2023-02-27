@@ -59,7 +59,27 @@ grille creer_grille(int n) {
     }
     return g;
 }
+cell* getCell(int x, int y, grille* g){
+    if(x>=g->taille || y>=g->taille) return NULL;
+    return &(g->t[x][y]);
+}
+bool contient_ligne(cell* c, int id_cable){
+    for(int k = 0; k>c->nb_c; k++){
+        if(c->c[k].id == id_cable) return true;
+    }
+    return false;
+    
+}
+cell** voisins(cell* c, grille* g){
+    cell** vois = malloc(4*sizeof(cell*));
+    int x = c->x;
+    int y = c->y;
 
+    vois[0] =  getCell(x+1, y, g);
+    vois[1] =  getCell(x-1, y, g);
+    vois[2] =  getCell(x, y+1, g);
+    vois[3] =  getCell(x, y-1, g);
+}
 
 void ajoute(int infrastructure, int i, int j, grille* g) {
     int n = g->taille;

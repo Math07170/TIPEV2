@@ -1,5 +1,6 @@
 #ifndef GRILLE_H
 #define GRILLE_H
+#include <stdbool.h>
 
 extern const int VIDE;
 extern const int USINE;
@@ -18,7 +19,7 @@ extern const int RIVIERE;
 extern const int MONTAGNE;
 
 struct s_cable{
-	int id;
+	int id; //Identifiant de la ligne
 	float u;
 	float i;
 	float r;
@@ -47,4 +48,7 @@ void randomize_infra(int element, int nb_element, grille* g);
 void randomize_terrain(grille* g);
 //void affiche_moche(grille* g);
 int heuristique(int xa, int ya, int xb, int yb);
+cell* getCell(int x, int y, grille* g);
+bool contient_ligne(cell* c, int id_cable);
+cell** voisins(cell* c, grille* g);
 #endif

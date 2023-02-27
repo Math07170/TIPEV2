@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <time.h>
-
+#include "grille.h"
 // Infrastructure
 const int VIDE = 0;		// noir
 const int USINE = 1;	// noir
@@ -22,29 +22,7 @@ const int EAU = 30;		// blue
 const int RIVIERE = 40;	// cyan		// NE VA PROBABLEMENT PAS RESTER
 const int MONTAGNE = 50;	// white
 
-// Il faut ajouter des constantes pour les câbles !
 
-struct s_cable{
-	int id;
-	float u;
-	float i;
-	float r;
-};
-typedef struct s_cable cable;
-
-struct s_cell{ 
-	int nb_c;
-    cable* c;
-    int type;
-    int infra;
-};
-typedef struct s_cell cell;
-
-struct s_grille{
-    int taille;
-    cell** t;
-};
-typedef struct s_grille grille;
 
 
 
@@ -72,6 +50,8 @@ grille creer_grille(int n) {
     }
     for(int i = 0; i < n; i++){
         for(int j = 0; j < n; j++){
+            g.t[i][j].x = i;
+            g.t[i][j].y = j;
             g.t[i][j].nb_c = 0;		// Initialisation
             g.t[i][j].type = PLAINE;
             g.t[i][j].infra = VIDE;

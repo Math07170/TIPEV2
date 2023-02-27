@@ -41,7 +41,7 @@ struct s_grille{
 };
 typedef struct s_grille grille;
 
-cell* voisin
+
 grille creer_grille(int n);
 void randomize_infra(int element, int nb_element, grille* g);
 void randomize_terrain(grille* g);

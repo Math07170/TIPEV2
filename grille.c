@@ -82,7 +82,7 @@ cell** voisins(cell* c, grille* g){
 }
 
 
-cell** get_line_cost(int id_line, grille* g){
+int get_line_cost(int id_line, grille* g){
     int n = g->taille;
     int res = 0;
     for(int x = 0; x<n; x++){

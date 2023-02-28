@@ -50,4 +50,6 @@ int heuristique(int xa, int ya, int xb, int yb);
 cell* getCell(int x, int y, grille* g);
 bool contient_ligne(cell* c, int id_cable);
 cell** voisins(cell* c, grille* g);
+void change_terrain(int terrain, int i, int j, grille* g);
+void terrain_infra_test8(grille* g);
 #endif

@@ -6,6 +6,9 @@
 #include "grille.h"
 #include "fileprio.h"
 #include "affichage.h"
+#include "carte.h"
+#include <curses.h>
+#include<unistd.h>
 
 const int BLANC = 0;
 const int GRIS = 1;
@@ -134,7 +137,8 @@ int main(){
     terrain_infra_test8(g);		// TEST, penser à effacer les preuves
     //affiche_moche(&g);
     init_ncurses();
-    affiche(g);
+    grille* carte = generation_carte();
+	//affiche(carte);
 	
 	sleep(30);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
 	endwin();		// Arrête proprement ncurses, c'est REQUIS pour ne pas détruire le terminal

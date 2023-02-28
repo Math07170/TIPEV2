@@ -6,6 +6,7 @@
 
 #include "grille.h"
 #include "affichage.h"
+#include "carte.h"
 
 const int c0 = 1;
 const int c1 = 1;
@@ -60,7 +61,7 @@ int coef(int A,int B,int C,int D,int T) {
 
 int random_terrain(int A,int B,int C,int D) {
 	
-	srand(time(NULL));
+
 	
 	
 	int Coefplaine = P_PLAINE*coef(A,B,C,D,PLAINE);
@@ -108,6 +109,7 @@ void tab_init(int max, int* t1, int* t2) {
 }
 
 grille* generation_carte() {
+	srand(time(NULL));
 	grille* g = creer_grille(100);
 	int n = g->taille;
 	int max = 100;
@@ -174,16 +176,4 @@ grille* generation_carte() {
 	
 	return g;
 }	
-
-
-
-
-int main() {
-	
-	grille* carte = generation_carte();
-	affiche(carte);
-	return 0;
- }
-	
-	
 	

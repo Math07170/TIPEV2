@@ -120,34 +120,39 @@ grille* generation_carte() {
 	
 	//premier passage
 	
-	for (int k1=0;k1<n;k1++) {
-		for (int k2=0;k2<n;k2++) {
-			int i = ti[rand() % max];
-			int j = tj[rand() % max];
-			
-			int ter[4];
-			
-			cell* c = getCell(i,j,g);
-			cell** tc = voisins(c, g);
-			for (int k=0;k<4;k++) {
-				if (tc[0] == NULL) {
-				ter[i] = NEANT;
-				}
-				else {
-				ter[i] = tc[0]->type;
-				}
+	while ((max-1) >= 0) {
+		int i = ti[rand() % max];
+		int j = tj[rand() % max];
+		
+		int ter[4];
+		ter[0] = EAU;
+		ter[1] = EAU;
+		ter[2] = EAU;
+		ter[3] = EAU;
+		
+		
+		cell* c = getCell(i,j,g);
+		cell** tc = voisins(c, g);
+		cell* cdq = tc[0];
+		for (int k=0;k<4;k++) {
+			if (tc[k] == NULL) {
+				ter[k] = NEANT;
 			}
-			int terrain = random_terrain(ter[1], ter[2], ter[3], ter[4]);
-			change_terrain(terrain,i,j,g);
-			
-			ti[i] = ti[max];
-			tj[j] = tj[max];
-			max--;
+			else {
+				ter[k] = tc[k]->type;
+			}
 		}
+		
+		int terrain = random_terrain(ter[0], ter[1], ter[2], ter[3]);
+		change_terrain(terrain,i,j,g);
+		
+		ti[i] = ti[max-1];
+		tj[j] = tj[max-1];
+		max--;
 	}
 	
 	//deuxième passage
-	
+	/*
 	int NB = 100;
 	
 	for (int k1=0;k1<NB;k1++) {
@@ -173,7 +178,7 @@ grille* generation_carte() {
 		tj[j] = tj[max];
 		max--;
 	}	
-	
+	*/
 	return g;
 }	
 	

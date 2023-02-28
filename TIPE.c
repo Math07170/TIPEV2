@@ -138,12 +138,14 @@ int main(){
     //affiche_moche(&g);
     init_ncurses();
     grille* carte = generation_carte();
+
 	affiche(carte);
 	
-	sleep(30);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
+	sleep(5);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
 	endwin();		// Arrête proprement ncurses, c'est REQUIS pour ne pas détruire le terminal
 	
-	// Quasiment toutes les fonctions du main font des warnings à tour de bras, SUS...
+    printf("%d\n", g->t[1][1].type);
+
 	
     return 0;
 }

@@ -53,7 +53,7 @@ grille* creer_grille(int n) {
             g->t[i][j].x = i;
             g->t[i][j].y = j;
             g->t[i][j].nb_c = 0;		// Initialisation
-            g->t[i][j].type = PLAINE;
+            g->t[i][j].type = NEANT;
             g->t[i][j].infra = VIDE;
         }
     }
@@ -127,6 +127,7 @@ void change_terrain(int terrain, int i, int j, grille* g){
     int n = g->taille;
     assert(i>=0 && j>=0 && i<n && j<n);
     g->t[i][j].type = terrain;
+    //printf("voici son terrain : %d\n", terrain);
 }
 
 void randomize_infra(int element, int nb_element, grille* g){

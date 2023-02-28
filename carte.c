@@ -9,16 +9,16 @@
 #include "carte.h"
 
 const int c0 = 1;
-const int c1 = 1;
-const int c2 = 1;
-const int c3 = 1;
-const int c4 = 1;
+const int c1 = 10;
+const int c2 = 20;
+const int c3 = 50;
+const int c4 = 100;
 
-const int P_PLAINE = 1;
-const int P_FORET = 1;
-const int P_EAU = 1;
-const int P_RIVIERE = 1;
-const int P_MONTAGNE = 1;
+const int P_PLAINE = 20;
+const int P_FORET = 20;
+const int P_EAU = 0;
+const int P_RIVIERE = 0;
+const int P_MONTAGNE = 16;
 const int P_NEANT = 0; //ne pas changer
 
 int egalite(int A,int B,int C,int D,int T) {
@@ -78,25 +78,30 @@ int random_terrain(int A,int B,int C,int D) {
 	int p3 = p2 + Coefeau;
 	int p4 = p3 + Coefriviere;
 	int p5 = p4 + Coefmontagne;
+
+	//printf("somme : %d\n", somme);
+	//printf("coef : %d\n", Coefplaine);
 	
 	int res = rand() % somme;
 	
+	//printf("res 1 : %d\n", res);
+	
 	if (0 <= res && res < p1) {
-		res = Coefplaine;
+		res = PLAINE;
 	} else if (p1 <= res && res < p2) {
-		res = Coefforet;
+		res = FORET;
 	} else if (p2 <= res && res < p3) {
-		res = Coefeau;
+		res = EAU;
 	} else if (p3 <= res && res < p4) {
-		res = Coefriviere;
+		res = RIVIERE;
 	} else if (p4 <= res && res < p5) {
-		res = Coefmontagne;
+		res = MONTAGNE;
 	} else if (p5 <= res && res < somme) {
-		res = Coefneant;
+		res = NEANT;
 	} else {
 		exit(1);
 	}
-	
+	//printf("res : %d\n", res);
 	return res;
 }
 
@@ -120,7 +125,12 @@ grille* generation_carte() {
 	
 	//premier passage
 	
-	while ((max-1) >= 0) {
+
+	//FAIRE UNE LISTE DE COUPLE
+
+	int NB = 200000;
+
+	while (NB >= 0) {
 		int i = ti[rand() % max];
 		int j = tj[rand() % max];
 		
@@ -144,11 +154,12 @@ grille* generation_carte() {
 		}
 		
 		int terrain = random_terrain(ter[0], ter[1], ter[2], ter[3]);
+		//printf("terrain : %d\n", terrain);
 		change_terrain(terrain,i,j,g);
 		
-		ti[i] = ti[max-1];
-		tj[j] = tj[max-1];
-		max--;
+		//ti[i] = ti[max-1];
+		//tj[j] = tj[max-1];
+		NB--;
 	}
 	
 	//deuxième passage

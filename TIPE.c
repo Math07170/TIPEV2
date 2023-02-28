@@ -138,7 +138,7 @@ int main(){
     //affiche_moche(&g);
     init_ncurses();
     grille* carte = generation_carte();
-	//affiche(carte);
+	affiche(carte);
 	
 	sleep(30);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
 	endwin();		// Arrête proprement ncurses, c'est REQUIS pour ne pas détruire le terminal

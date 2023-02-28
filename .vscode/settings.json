@@ -1,0 +1,9 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/mathias/Documents/GitHub/TIPEV2",
+            "binaryPath": "/home/mathias/Documents/GitHub/TIPEV2/tipe",
+            "binaryArgs": []
+        }
+    ]
+}

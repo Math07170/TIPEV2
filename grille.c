@@ -79,6 +79,7 @@ cell** voisins(cell* c, grille* g){
     vois[1] =  getCell(x-1, y, g);
     vois[2] =  getCell(x, y+1, g);
     vois[3] =  getCell(x, y-1, g);
+    return vois;
 }
 
 

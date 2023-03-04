@@ -102,51 +102,54 @@ int random_terrain(int A,int B,int C,int D) {
 }
 
 
-void tab_init(int max, int* t1, int* t2) {
-	for (int i=0;i<max;i++) {
-		t1[i] = i;
-		t2[i] = i;
+void tab_init(int taille, int* t) {
+	for (int i=0;i<taille;i++) {
+		for (int j=0;j<taille;j++) {
+			int k = i*taille + j;
+			t[k] = k;
+		}
 	}
+	int a = t[20];
+	printf("20 : %d\n\n", a);
 }
 
-grille* generation_carte() {
-	int n = 125;			// C'est à la fois l'ancien "max" et l'ancien "n"...
-	grille* g = creer_grille(n);	// DÉJÀ FAIT DANS LE MAIN
-	
-	int ti[n];		// HORREUR
-	int tj[n];		// HORREUR
-	tab_init(n,ti,tj);
+grille* generation_carte(grille* g) {
+	int n = g->taille;
+
+	int* t = malloc(n*n*sizeof(int));
+	tab_init(n,t);
 	
 	//premier passage
-	
 
-	// FAIRE UNE LISTE DE COUPLE		(càd ?)
-	// Déclarer un max ici
-	int NB = 200000;		// Nombre d'itération restantes (???)
+	int len_actuel = n*n;
 
-	while (NB >= 0) {
-		int i = ti[rand() % n];	// Mettre le nouveau max
-		int j = tj[rand() % n];	// Idem
-		
+	while (len_actuel > 0) {
+		int r = rand() % len_actuel;
+		int x = t[r];
+		int i = x / n;
+		int j = x % n;
+
+		printf("ran : %d\nlen : %d\nx : %d\ni : %d\nj : %d\n\n", r,len_actuel,x,i,j);
+
 		int ter[4];
 		
 		cell* c = getCell(i,j,g);
-		cell** tc = voisins(c, g);
+		cell** v_c = voisins(c, g);
+		
 		for (int k=0;k<4;k++) {
-			if (tc[k] == NULL) {
+			if (v_c[k] == NULL) {
 				ter[k] = NEANT;
 			}
 			else {
-				ter[k] = tc[k]->type;
+				ter[k] = v_c[k]->type;
 			}
 		}
 		
 		int terrain = random_terrain(ter[0], ter[1], ter[2], ter[3]);
 		change_terrain(terrain,i,j,g);
 		
-		//ti[i] = ti[max-1];
-		//tj[j] = tj[max-1];
-		NB--;
+		t[r] = t[len_actuel-1];
+		len_actuel--;
 	}
 	
 	//deuxième passage

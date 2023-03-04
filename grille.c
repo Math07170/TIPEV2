@@ -43,7 +43,7 @@ grille* creer_grille(int n) {
 			exit(-1);
 		}
 		for(int l = 0;l < n;l++){
-			g->t[k][l].c = malloc(sizeof(cable)*4);		// Remplécé par les IDs de lignes, mais ça marche en l'état
+			g->t[k][l].c = malloc(sizeof(cable)*4);		// Remplacé par les IDs de lignes, mais ça marche en l'état
 			if(g->t[k][l].c == NULL){
 				printf("Manque de mémoire pour créer la grille\n");
 				exit(-1);
@@ -61,6 +61,19 @@ grille* creer_grille(int n) {
         }
     }
     return g;
+}
+
+void detruire_grille(grille* g){
+	int n = g -> taille;
+	for(int i = 0;i < n;i++){
+		for(int j = 0;j < n;j++){
+				free(g->t[i][j].c);
+		 }
+		 free(g->t[i]);
+	 }
+	 free(g->t);
+	 free(g);
+	return;
 }
 
 cell* getCell(int x, int y, grille* g){

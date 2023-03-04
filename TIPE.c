@@ -27,12 +27,12 @@ int poids(int sx, int sy) {
 }
 
 /* À mettre dans grille.c ? Ou pas ? */
-int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisins à clarifier/régulariser
-    
+int* astar(grille* g, int** voisins, cell* depart, cell* final) {		// Situation du tableau voisins à clarifier/régulariser
+
     int n = g->taille;
     int DMAX = n+n+1;
     fileprio file = creer_fileprio(n*n);
-    
+
     int* p = malloc(sizeof(int) * n*n);
     int* c = malloc(sizeof(int) * n*n);
     int* d = malloc(sizeof(int) * n*n);
@@ -41,11 +41,9 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
     if(p == NULL || c == NULL || d == NULL || f == NULL){
 		printf("Manque de mémoire pour A*\n");
 	}
-    assert(final == NULL);
+
     int s_d = depart->x * n + depart->y;
-    fprintf(stderr, "Test %d  \n", final->y);
     int s_f = final->x * n + final->y;
-    
 
 
     for(int i=0;i<n;i++) {
@@ -54,7 +52,7 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
         d[i] = DMAX;
         f[i] = DMAX;
     }
-    
+
     c[s_d] = GRIS;
     d[s_d] = 0;
     f[s_d] = heuristique(depart->x,depart->y, final->x,final->y);
@@ -76,18 +74,9 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
         }else{			// cas général -> 4 voisins
             deg = 4;
         }
-        cell** vois = voisins(getCell(xs, ys,g), g);
-        int voisins[deg];
-        for(int k = 0; k<deg; k++){
-            fprintf(stderr, "Test %d \n", k);
-            if(vois[k] != NULL){
-                voisins[k] = vois[k]->x * n + vois[k]->y;
-            }
-        }
 				// TODO : générer d'une façon ou d'une autre le tableau voisins
         for(int i=0;i<deg;i++) {
-
-            int s_v = voisins[i];		// Numéro de sommet du voisin
+            int s_v = voisins[s][i];		// Numéro de sommet du voisin
             int xs_v = s_v / n;
             int ys_v = s_v % n;
             if (c[s_v] == BLANC) {
@@ -107,7 +96,6 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
         }
     }
     for(int k = 0; k < n*n; k++){
-        fprintf(stderr, "Test %d \n", k);
         if(p[k] != -1){
             cell* c = getCell(p[k] / n, p[k]%n, g);
             cable cable;
@@ -152,7 +140,7 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
 int main(){
     srand(time(NULL)); 
 
-    int n = 8;
+    int n = 100;
     grille* g = creer_grille(n);
     /*randomize_terrain(&g);
     randomize_infra(USINE, 4, &g);
@@ -162,11 +150,11 @@ int main(){
     randomize_infra(CENTRALE, 1, &g);
     randomize_infra(GD_TRANSFO, 5, &g);
     randomize_infra(PT_TRANSFO, 12, &g);*/	// NE PAS SUPPRIMER
-    terrain_infra_test8(g);		// TEST, penser à effacer les preuves
+   // terrain_infra_test8(g);		// TEST, penser à effacer les preuves
     //affiche_moche(&g);
     init_ncurses();
-    grille* carte = generation_carte();
-    astar(g, getCell(1,1,g), &(g->t[20][20]));
+    generation_carte(g);
+
 	affiche(carte);
 	
 	sleep(5);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants

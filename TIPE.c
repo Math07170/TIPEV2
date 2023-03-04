@@ -27,7 +27,7 @@ int poids(int sx, int sy) {
 }
 
 /* À mettre dans grille.c ? Ou pas ? */
-void astar(grille* g, int** voisins, sommet* depart, sommet* final) {		// Situation du tableau voisins à clarifier/régulariser
+int* astar(grille* g, int** voisins, cell* depart, cell* final) {		// Situation du tableau voisins à clarifier/régulariser
 
     int n = g->taille;
     int DMAX = n+n+1;
@@ -95,6 +95,7 @@ void astar(grille* g, int** voisins, sommet* depart, sommet* final) {		// Situat
             }
         }
     }
+    return p;
 }
 
 

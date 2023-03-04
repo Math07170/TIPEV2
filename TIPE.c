@@ -152,8 +152,9 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
 int main(){
     srand(time(NULL)); 
 
-    int n = 8;
+    int n = 100;
     grille* g = creer_grille(n);
+    
     /*randomize_terrain(&g);
     randomize_infra(USINE, 4, &g);
     randomize_infra(GD_VILLE, 3, &g);
@@ -162,13 +163,13 @@ int main(){
     randomize_infra(CENTRALE, 1, &g);
     randomize_infra(GD_TRANSFO, 5, &g);
     randomize_infra(PT_TRANSFO, 12, &g);*/	// NE PAS SUPPRIMER
-    terrain_infra_test8(g);		// TEST, penser à effacer les preuves
+    //terrain_infra_test8(g);		// TEST, penser à effacer les preuves
     //affiche_moche(&g);
     init_ncurses();
-    grille* carte = generation_carte();
-    astar(g, getCell(1,1,g), &(g->t[20][20]));
-	affiche(carte);
-	
+    generation_carte(g);
+    //astar(g, getCell(1,1,g), &(g->t[20][20]));
+	affiche(g);
+	fprintf(stderr, "%d \n", g->t[20][20].x);
 	sleep(5);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
 	endwin();		// Arrête proprement ncurses, c'est REQUIS pour ne pas détruire le terminal
 	

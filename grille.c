@@ -65,7 +65,7 @@ grille* creer_grille(int n) {
 
 cell* getCell(int x, int y, grille* g){
     if(x>=g->taille || y>=g->taille || x<0|| y<0) return NULL;
-    return &(g->t[x][y]);
+    return (&(g->t[x][y]));
 }
 
 bool contient_ligne(cell* c, int id_ligne){

@@ -41,14 +41,13 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
     if(p == NULL || c == NULL || d == NULL || f == NULL){
 		printf("Manque de mémoire pour A*\n");
 	}
-    assert(final == NULL);
     int s_d = depart->x * n + depart->y;
     fprintf(stderr, "Test %d  \n", final->y);
     int s_f = final->x * n + final->y;
     
 
 
-    for(int i=0;i<n;i++) {
+    for(int i=0;i<n*n;i++) {
         p[i] = -1;
         c[i] = BLANC;
         d[i] = DMAX;
@@ -107,8 +106,9 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
         }
     }
     for(int k = 0; k < n*n; k++){
-        fprintf(stderr, "Test %d \n", k);
+        
         if(p[k] != -1){
+            
             cell* c = getCell(p[k] / n, p[k]%n, g);
             cable cable;
             cable.i = 0;
@@ -118,8 +118,9 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
             g->nb_l += 1;
             c->c[c->nb_c] = cable;
             c->nb_c = c->nb_c+1;
-
+            
         }
+        
     }
 
     return p;
@@ -165,11 +166,15 @@ int main(){
     randomize_infra(PT_TRANSFO, 12, &g);*/	// NE PAS SUPPRIMER
     //terrain_infra_test8(g);		// TEST, penser à effacer les preuves
     //affiche_moche(&g);
+    
     init_ncurses();
     generation_carte(g);
-    //astar(g, getCell(1,1,g), &(g->t[20][20]));
-	affiche(g);
-	fprintf(stderr, "%d \n", g->t[20][20].x);
+
+    astar(g, getCell(1,1,g), getCell(20,20,g));
+	//affiche(g);
+
+    
+	
 	sleep(5);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
 	endwin();		// Arrête proprement ncurses, c'est REQUIS pour ne pas détruire le terminal
 	

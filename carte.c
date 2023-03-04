@@ -17,11 +17,11 @@ const int c4 = 100;
 const int P_PLAINE = 20;
 const int P_FORET = 20;
 const int P_EAU = 0;
-const int P_RIVIERE = 0;
+const int P_RIVIERE = 0;	// À enlever
 const int P_MONTAGNE = 16;
-const int P_NEANT = 0; //ne pas changer
+const int P_NEANT = 0;		// Ne pas changer !
 
-int egalite(int A,int B,int C,int D,int T) {
+int egalites(int A,int B,int C,int D,int T) {
 	int res = 0;
 	if (A==T) {
 		res++;
@@ -39,7 +39,7 @@ int egalite(int A,int B,int C,int D,int T) {
 }
 
 int coef(int A,int B,int C,int D,int T) {
-	int c = egalite(A,B,C,D,T);
+	int c = egalites(A,B,C,D,T);
 	if (c==0) {
 		return c0;
 	}
@@ -60,9 +60,6 @@ int coef(int A,int B,int C,int D,int T) {
 
 
 int random_terrain(int A,int B,int C,int D) {
-	
-
-	
 	
 	int Coefplaine = P_PLAINE*coef(A,B,C,D,PLAINE);
 	int Coefforet = P_FORET*coef(A,B,C,D,FORET);
@@ -114,25 +111,24 @@ void tab_init(int max, int* t1, int* t2) {
 }
 
 grille* generation_carte() {
-	srand(time(NULL));
-	grille* g = creer_grille(100);
-	int n = g->taille;
-	int max = 100;
+	//srand(time(NULL));	// DÉJÀ FAIT DANS LE MAIN !!!
+	int n = 500;			// C'est à la fois l'ancien "max" et l'ancien "n"...
+	grille* g = creer_grille(n);	// DÉJÀ FAIT DANS LE MAIN...
 	
-	int ti[max];
-	int tj[max];
-	tab_init(max,ti,tj);
+	int ti[n];		// HORREUR
+	int tj[n];		// HORREUR
+	tab_init(n,ti,tj);
 	
 	//premier passage
 	
 
-	//FAIRE UNE LISTE DE COUPLE
+	//FAIRE UNE LISTE DE COUPLE		(càd ?)
 
-	int NB = 200000;
+	int NB = 200000;		// Nombre d'itération restantes (???)
 
 	while (NB >= 0) {
-		int i = ti[rand() % max];
-		int j = tj[rand() % max];
+		int i = ti[rand() % n];
+		int j = tj[rand() % n];
 		
 		int ter[4];
 		ter[0] = EAU;

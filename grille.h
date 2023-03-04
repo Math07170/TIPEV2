@@ -38,6 +38,7 @@ typedef struct s_cell cell;
 
 struct s_grille{
     int taille;
+    int nb_l;
     cell** t;
 };
 typedef struct s_grille grille;

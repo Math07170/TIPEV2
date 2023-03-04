@@ -50,6 +50,7 @@ grille* creer_grille(int n) {
     }
     for(int i = 0; i < n; i++){
         for(int j = 0; j < n; j++){
+            g->nb_l = 0;
             g->t[i][j].x = i;
             g->t[i][j].y = j;
             g->t[i][j].nb_c = 0;		// Initialisation

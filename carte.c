@@ -110,7 +110,7 @@ void tab_init(int taille, int* t) {
 		}
 	}
 	int a = t[20];
-	printf("20 : %d\n\n", a);
+	//printf("20 : %d\n\n", a); //test
 }
 
 grille* generation_carte(grille* g) {
@@ -129,7 +129,7 @@ grille* generation_carte(grille* g) {
 		int i = x / n;
 		int j = x % n;
 
-		printf("ran : %d\nlen : %d\nx : %d\ni : %d\nj : %d\n\n", r,len_actuel,x,i,j);
+		//printf("ran : %d\nlen : %d\nx : %d\ni : %d\nj : %d\n\n", r,len_actuel,x,i,j); //test
 
 		int ter[4];
 		

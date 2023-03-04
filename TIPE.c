@@ -95,6 +95,21 @@ int* astar(grille* g, int** voisins, cell* depart, cell* final) {		// Situation 
             }
         }
     }
+    for(int k = 0; k < n*n; k++){
+        if(p[k] != -1){
+            cell* c = getCell(p[k] / n, p[k]%n, g);
+            cable cable;
+            cable.i = 0;
+            cable.u = 230;
+            cable.r = 50;
+            cable.id = g->nb_l;
+            g->nb_l += 1;
+            c->c[c->nb_c] = cable;
+            c->nb_c = c->nb_c+1;
+
+        }
+    }
+
     return p;
 }
 

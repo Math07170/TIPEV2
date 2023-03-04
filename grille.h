@@ -19,8 +19,8 @@ extern const int RIVIERE;
 extern const int MONTAGNE;
 
 struct s_cable{
-	int id; //Identifiant de la ligne
-	float u;
+	int id; 	// Identifiant de la ligne
+	float u;	// Permet de donner le type de câble
 	float i;
 	float r;
 };
@@ -38,6 +38,7 @@ typedef struct s_cell cell;
 
 struct s_grille{
     int taille;
+    int nb_l;
     cell** t;
 };
 typedef struct s_grille grille;

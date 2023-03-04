@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <time.h>
 #include "grille.h"
+
+
 // Infrastructure
 const int VIDE = 0;		// noir
 const int USINE = 1;	// noir
@@ -41,7 +43,7 @@ grille* creer_grille(int n) {
 			exit(-1);
 		}
 		for(int l = 0;l < n;l++){
-			g->t[k][l].c = malloc(sizeof(cable)*4);		// NOMBRE MAX DE CABLES : 4 (car 4 directions)
+			g->t[k][l].c = malloc(sizeof(cable)*4);		// Remplécé par les IDs de lignes, mais ça marche en l'état
 			if(g->t[k][l].c == NULL){
 				printf("Manque de mémoire pour créer la grille\n");
 				exit(-1);
@@ -50,7 +52,7 @@ grille* creer_grille(int n) {
     }
     for(int i = 0; i < n; i++){
         for(int j = 0; j < n; j++){
-            g->nb_l = 0;
+			g->nb_l = 0;
             g->t[i][j].x = i;
             g->t[i][j].y = j;
             g->t[i][j].nb_c = 0;		// Initialisation
@@ -60,17 +62,20 @@ grille* creer_grille(int n) {
     }
     return g;
 }
+
 cell* getCell(int x, int y, grille* g){
     if(x>=g->taille || y>=g->taille || x<0|| y<0) return NULL;
     return &(g->t[x][y]);
 }
-bool contient_ligne(cell* c, int id_cable){
+
+bool contient_ligne(cell* c, int id_ligne){
     for(int k = 0; k>c->nb_c; k++){
-        if(c->c[k].id == id_cable) return true;
+        if(c->c[k].id == id_ligne) return true;
     }
     return false;
-    
 }
+
+/* Ordre : ?,?,?,? */
 cell** voisins(cell* c, grille* g){
     cell** vois = malloc(4*sizeof(cell*));
     int x = c->x;
@@ -96,19 +101,18 @@ int get_line_cost(int id_line, grille* g){
     }
     return res;
 }
+
 void ajoute(int infrastructure, int i, int j, grille* g) {
     int n = g->taille;
     assert(i>=0 && j>=0 && i<n && j<n && g->t[i][j].infra == VIDE);
     g->t[i][j].infra = infrastructure;
 }
 
-
 void supprime(int i, int j, grille* g) {
     int n = g->taille;
     assert(i>=0 && j>=0 && i<n && j<n);
     g->t[i][j].infra = VIDE;
 }
-
 
 void remplace(int infrastructure, int i, int j, grille* g) {
     int n = g->taille;

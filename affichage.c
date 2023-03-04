@@ -69,7 +69,8 @@ void init_ncurses() {
 	return;
 }
 
-void dessine_case(cell c){
+/* Pour l'instant, n'affiche que la 1ère ligne passant dans chaque case ! */
+void dessine_case(cell c,grille* g){
 	int couleur = c.infra+c.type;
 	char ch;
 	if(c.infra == VIDE) ch = ' ';
@@ -88,9 +89,30 @@ void dessine_case(cell c){
 		}
 	}
 	mvaddch(3*c.x+1,6*c.y+3,ch);
+	
 	attroff(COLOR_PAIR(couleur));
 	
-	
+	if(c.nb_c != 0){		// Affiche UNE ligne, s'il y a existence
+		int id_l = c.c[0].id;		// On suppose que la ligne est là-dedans
+		cell** v = voisins(&c, g);
+		
+		if(v[0] != NULL || contient_ligne(v[0],id_l)){
+			mvaddch(3*c.x,6*c.y+3,ACS_CKBOARD);
+			mvaddch(3*c.x,6*c.y+4,ACS_CKBOARD);
+		}
+		if(v[1] != NULL || contient_ligne(v[1],id_l)){
+			mvaddch(3*c.x+2,6*c.y+3,ACS_CKBOARD);
+			mvaddch(3*c.x+2,6*c.y+4,ACS_CKBOARD);
+		}
+		if(v[2] != NULL || contient_ligne(v[2],id_l)){
+			mvaddch(3*c.x+1,6*c.y,ACS_CKBOARD);
+			mvaddch(3*c.x+1,6*c.y+1,ACS_CKBOARD);
+		}
+		if(v[3] != NULL || contient_ligne(v[3],id_l)){
+			mvaddch(3*c.x+1,6*c.y+4,ACS_CKBOARD);
+			mvaddch(3*c.x+1,6*c.y+5,ACS_CKBOARD);
+		}
+	}
 	
 	return;
 }
@@ -101,7 +123,7 @@ void affiche(grille* g){
 	
 	for(int i=0;i<n;i++){
 		for(int j=0;j<n;j++){
-			dessine_case(g->t[i][j]);
+			dessine_case(g->t[i][j],g);
 		}
 	}
 	refresh();

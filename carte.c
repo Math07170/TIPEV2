@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
-#include <time.h>
 
 #include "grille.h"
 #include "affichage.h"
@@ -111,9 +110,8 @@ void tab_init(int max, int* t1, int* t2) {
 }
 
 grille* generation_carte() {
-	//srand(time(NULL));	// DÉJÀ FAIT DANS LE MAIN !!!
-	int n = 500;			// C'est à la fois l'ancien "max" et l'ancien "n"...
-	grille* g = creer_grille(n);	// DÉJÀ FAIT DANS LE MAIN...
+	int n = 125;			// C'est à la fois l'ancien "max" et l'ancien "n"...
+	grille* g = creer_grille(n);	// DÉJÀ FAIT DANS LE MAIN
 	
 	int ti[n];		// HORREUR
 	int tj[n];		// HORREUR
@@ -122,24 +120,18 @@ grille* generation_carte() {
 	//premier passage
 	
 
-	//FAIRE UNE LISTE DE COUPLE		(càd ?)
-
+	// FAIRE UNE LISTE DE COUPLE		(càd ?)
+	// Déclarer un max ici
 	int NB = 200000;		// Nombre d'itération restantes (???)
 
 	while (NB >= 0) {
-		int i = ti[rand() % n];
-		int j = tj[rand() % n];
+		int i = ti[rand() % n];	// Mettre le nouveau max
+		int j = tj[rand() % n];	// Idem
 		
 		int ter[4];
-		ter[0] = EAU;
-		ter[1] = EAU;
-		ter[2] = EAU;
-		ter[3] = EAU;
-		
 		
 		cell* c = getCell(i,j,g);
 		cell** tc = voisins(c, g);
-		cell* cdq = tc[0];
 		for (int k=0;k<4;k++) {
 			if (tc[k] == NULL) {
 				ter[k] = NEANT;
@@ -150,7 +142,6 @@ grille* generation_carte() {
 		}
 		
 		int terrain = random_terrain(ter[0], ter[1], ter[2], ter[3]);
-		//printf("terrain : %d\n", terrain);
 		change_terrain(terrain,i,j,g);
 		
 		//ti[i] = ti[max-1];

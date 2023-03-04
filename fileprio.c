@@ -24,7 +24,7 @@ fileprio creer_fileprio(int taille_max){
 	//f.taille_max = taille_max;
 	f.t = malloc(taille_max * sizeof(noeud));
 	if(f.t == NULL){
-		printf("Manque de mémoire pour créer la fileprio..\n");
+		printf("Manque de mémoire pour créer la fileprio.\n");
 		exit(-1);
 	}else{
 		return f;
@@ -42,9 +42,6 @@ void permute(noeud t[],int i,int j){
 	return;
 }
 
-
-
-
 /* Renvoie l'indice de l'éventuel fils gauche du noeud d'indice i */
 int i_fg(int i){
 	return 2*(i+1);
@@ -61,8 +58,8 @@ void percole_bas(fileprio f,int i){
 	int id = i_fd(i);
 	//int n = f.nb_valeurs;
 	if(ig < f.nb_valeurs){		// 2 fils
-		if(f.t[i].num_sommet > f.t[ig].num_sommet || f.t[i].num_sommet > f.t[id].num_sommet){
-			if (f.t[i].num_sommet > f.t[ig].num_sommet){
+		if(f.t[i].valeur > f.t[ig].valeur || f.t[i].valeur > f.t[id].valeur){
+			if (f.t[i].valeur > f.t[ig].valeur){
 				permute(f.t,i,ig);
 				percole_bas(f,ig);
 			}else{
@@ -71,7 +68,7 @@ void percole_bas(fileprio f,int i){
 			}
 		}		// else -> percolation terminée
 	}else if(ig == f.nb_valeurs - 1){		// 1 seul fils, le dernier noeud du tableau
-		if(f.t[i].num_sommet > f.t[ig].num_sommet){
+		if(f.t[i].valeur > f.t[ig].valeur){
 			permute(f.t,i,ig);
 		}
 	}
@@ -97,7 +94,7 @@ int i_p(int i){
 void percole_haut(fileprio f,int i){
 	if(i > 0){		// Sinon on est en train de traiter la racine et ça va péter
 		int ip = i_p(i);
-		if(f.t[i].num_sommet < f.t[ip].num_sommet){
+		if(f.t[i].valeur < f.t[ip].valeur){
 			permute(f.t,i,ip);
 			percole_haut(f,i);
 		}

@@ -7,8 +7,8 @@
 #include "fileprio.h"
 #include "affichage.h"
 #include "carte.h"
-#include <curses.h>
-#include<unistd.h>
+#include <ncurses.h>
+#include <unistd.h>
 
 const int BLANC = 0;
 const int GRIS = 1;
@@ -143,9 +143,6 @@ int main(){
 	
 	sleep(5);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
 	endwin();		// Arrête proprement ncurses, c'est REQUIS pour ne pas détruire le terminal
-	
-    printf("%d\n", g->t[1][1].type);
-
-	
+		
     return 0;
 }

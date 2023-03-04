@@ -152,7 +152,7 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
 int main(){
     srand(time(NULL)); 
 
-    int n = 8;
+    int n = 100;
     grille* g = creer_grille(n);
     /*randomize_terrain(&g);
     randomize_infra(USINE, 4, &g);
@@ -162,7 +162,7 @@ int main(){
     randomize_infra(CENTRALE, 1, &g);
     randomize_infra(GD_TRANSFO, 5, &g);
     randomize_infra(PT_TRANSFO, 12, &g);*/	// NE PAS SUPPRIMER
-    terrain_infra_test8(g);		// TEST, penser à effacer les preuves
+    //terrain_infra_test8(g);		// TEST, penser à effacer les preuves
     //affiche_moche(&g);
     init_ncurses();
     grille* carte = generation_carte();

@@ -96,19 +96,19 @@ void dessine_case(cell c,grille* g){
 		int id_l = c.c[0].id;		// On suppose que la ligne est là-dedans
 		cell** v = voisins(&c, g);
 		
-		if(v[0] != NULL || contient_ligne(v[0],id_l)){
+		if(v[0] != NULL && contient_ligne(v[0],id_l)){
 			mvaddch(3*c.x,6*c.y+3,ACS_CKBOARD);
 			mvaddch(3*c.x,6*c.y+4,ACS_CKBOARD);
 		}
-		if(v[1] != NULL || contient_ligne(v[1],id_l)){
+		if(v[1] != NULL && contient_ligne(v[1],id_l)){
 			mvaddch(3*c.x+2,6*c.y+3,ACS_CKBOARD);
 			mvaddch(3*c.x+2,6*c.y+4,ACS_CKBOARD);
 		}
-		if(v[2] != NULL || contient_ligne(v[2],id_l)){
+		if(v[2] != NULL && contient_ligne(v[2],id_l)){
 			mvaddch(3*c.x+1,6*c.y,ACS_CKBOARD);
 			mvaddch(3*c.x+1,6*c.y+1,ACS_CKBOARD);
 		}
-		if(v[3] != NULL || contient_ligne(v[3],id_l)){
+		if(v[3] != NULL && contient_ligne(v[3],id_l)){
 			mvaddch(3*c.x+1,6*c.y+4,ACS_CKBOARD);
 			mvaddch(3*c.x+1,6*c.y+5,ACS_CKBOARD);
 		}

@@ -170,8 +170,8 @@ int main(){
     init_ncurses();
     generation_carte(g);
 
-    astar(g, getCell(1,1,g), getCell(20,20,g));
-	//affiche(g);
+    astar(g, getCell(10,10,g), getCell(50,50,g));
+	affiche(g);
 
     
 	

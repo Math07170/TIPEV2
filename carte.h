@@ -3,7 +3,7 @@
 #include "grille.h"
 int egalite(int A,int B,int C,int D,int T);
 
-int coef(int A,int B,int C,int D,int T);
+int coef(int A,int B,int C,int D,int T,int p);
 
 int random_terrain(int A,int B,int C,int D);
 

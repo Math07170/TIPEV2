@@ -37,7 +37,7 @@ void print_tableau(fileprio f){
         fprintf(stderr,"%d ",f.t[i].valeur);
         i++;
     }
-    fprintf(stderr,"\n");
+    fprintf(stderr,"\n\n");
     return;
 }
 
@@ -69,24 +69,24 @@ void percole_bas(fileprio f,int i){
 	//int n = f.nb_valeurs;
 	if(ig < f.nb_valeurs-1){		// 2 fils
 		if(f.t[i].valeur > f.t[ig].valeur || f.t[i].valeur > f.t[id].valeur){
-			if (f.t[i].valeur > f.t[ig].valeur){
-				fprintf(stderr,"g,%d,%d\n",ig,id);
+			if (f.t[id].valeur > f.t[ig].valeur){
+				//fprintf(stderr,"g %d\n",i);
 				permute(f.t,i,ig);
 				percole_bas(f,ig);
-			}else{
-				fprintf(stderr,"d,%d,%d\n",ig,id);
+			}else{ // f.[ig].valeur > f.t[id].valeur
+				//fprintf(stderr,"BONJOUR d %d\n",i);
 				permute(f.t,i,id);
 				percole_bas(f,id);
 			}
 		}		// else -> percolation terminée
 	}else if(ig == f.nb_valeurs-1){		// 1 seul fils, le dernier noeud du tableau
-		fprintf(stderr,"u,%d,%d\n",ig,id);
+		//fprintf(stderr,"u,%d,%d\n",ig,id);
 		if(f.t[i].valeur > f.t[ig].valeur){
 			permute(f.t,i,ig);
 		}
 	}
-	fprintf(stderr,"Percole Bas :\n");
-	print_tableau(f);
+	//fprintf(stderr,"Percole Bas :\n");
+	//print_tableau(f);
 }
 
 /* Renvoie le NUMÉRO DE SOMMET du sommet avec la valeur la plus faible */
@@ -95,8 +95,8 @@ int extraire_fileprio(fileprio* f){
 	permute(f -> t,0,f -> nb_valeurs);
 	int res = f -> t[f -> nb_valeurs].num_sommet;
 	percole_bas(*f,0);
-	fprintf(stderr,"Extraire :\n");
-	print_tableau(*f);
+	//fprintf(stderr,"Extraction : %d %d\n",res,f -> t[f -> nb_valeurs].valeur);
+	//print_tableau(*f);
 	return res;
 }
 
@@ -113,8 +113,8 @@ void percole_haut(fileprio f,int i){
 			percole_haut(f,ip);
 		}
 	}
-	fprintf(stderr,"Percole Haut :\n");
-	print_tableau(f);
+	//fprintf(stderr,"Percole Haut :\n");
+	//print_tableau(f);
 	return;
 }
 
@@ -125,21 +125,25 @@ void inserer_fileprio(fileprio* f,int num_sommet,int valeur){
 	f -> t[f->nb_valeurs] = nv_noeud;
 	percole_haut(*f,f -> nb_valeurs);
 	f -> nb_valeurs += 1;
-	fprintf(stderr,"Insérer:\n");
-	print_tableau(*f);
+	//fprintf(stderr,"Insérer:\n");
+	//print_tableau(*f);
 	return;
 }
 
 void diminuer_fileprio(fileprio* f,int num_sommet,int nv_val){		// WARNING WARNING O(N)
 	int n = f -> nb_valeurs;
 	for(int i = 0;i < n;i++){		// On suppose que le même numéro de sommet n'est pas présent 2 fois dans la file de priorité
-		if (f -> t[i].num_sommet = num_sommet){
+		if (f -> t[i].num_sommet == num_sommet){
 			f -> t[i].valeur = nv_val;
 			percole_haut(*f,i);		// ATTENTION
-			return;
 		}
 	}
-	fprintf(stderr,"Diminuer :\n");
-	print_tableau(*f);
+	//fprintf(stderr,"Diminuer %d %d :\n",num_sommet,nv_val);
+	//print_tableau(*f);
 	return;
+}
+
+void detruire_fileprio(fileprio *f){
+	f -> nb_valeurs = 0;
+	free(f -> t);
 }

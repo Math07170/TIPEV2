@@ -7,17 +7,24 @@
 #include "affichage.h"
 #include "carte.h"
 
-const int c0 = 1;
-const int c1 = 10;
-const int c2 = 20;
-const int c3 = 50;
-const int c4 = 100;
+const int k0 = 1;
+const int k1 = 2;
+const int k2 = 5;
+const int k3 = 10;
+const int k4 = 20;
 
-const int P_PLAINE = 20;
-const int P_FORET = 20;
-const int P_EAU = 0;
+const int c0 = 0;
+const int c1 = 5;
+const int c2 = 10;
+const int c3 = 20;
+const int c4 = 30;
+
+
+const int P_PLAINE = 32;
+const int P_FORET = 25;
+const int P_EAU = 10;
 const int P_RIVIERE = 0;	// À enlever
-const int P_MONTAGNE = 16;
+const int P_MONTAGNE = 7;
 const int P_NEANT = 0;		// Ne pas changer !
 
 int egalites(int A,int B,int C,int D,int T) {
@@ -37,35 +44,38 @@ int egalites(int A,int B,int C,int D,int T) {
 	return res;
 }
 
-int coef(int A,int B,int C,int D,int T) {
+int coef(int A,int B,int C,int D,int T,int p) {
 	int c = egalites(A,B,C,D,T);
-	if (c==0) {
-		return c0;
+	if (p==0) {
+		return 0;
+	}
+	else if (c==0) {
+		return (k0*p + c0);
 	}
 	else if (c==1) {
-		return c1;
+		return (k1*p + c1);
 	}
 	else if (c==2) {
-		return c2;
+		return (k2*p + c2);
 	}
 	else if (c==3) {
-		return c3;
+		return (k3*p + c3);
 	}
 	else {
-		return c4;
+		return (k4*p + c4);
 	}
 }
 	
 
 
-int random_terrain(int A,int B,int C,int D) {
+int random_terrain(int A,int B,int C,int D) { // A : Haut, B = Bas, C = Gauche, D = Droite
 	
-	int Coefplaine = P_PLAINE*coef(A,B,C,D,PLAINE);
-	int Coefforet = P_FORET*coef(A,B,C,D,FORET);
-	int Coefeau = P_EAU*coef(A,B,C,D,EAU);
-	int Coefriviere = P_RIVIERE*coef(A,B,C,D,RIVIERE);
-	int Coefmontagne = P_MONTAGNE*coef(A,B,C,D,MONTAGNE);
-	int Coefneant = P_NEANT*coef(A,B,C,D,NEANT);
+	int Coefplaine = coef(A,B,C,D,PLAINE,P_PLAINE);
+	int Coefforet = coef(A,B,C,D,FORET, P_FORET);
+	int Coefeau = coef(A,B,C,D,EAU,P_EAU);
+	int Coefriviere = coef(A,B,C,D,RIVIERE,P_RIVIERE);
+	int Coefmontagne = coef(A,B,C,D,MONTAGNE,P_MONTAGNE);
+	int Coefneant = coef(A,B,C,D,NEANT,P_NEANT);
 	
 	int somme = Coefplaine + Coefforet + Coefeau + Coefriviere + Coefmontagne + Coefneant;
 
@@ -113,6 +123,52 @@ void tab_init(int taille, int* t) {
 	//printf("20 : %d\n\n", a); //test
 }
 
+
+int affine_terrain(int H, int B, int G, int D, int A) {
+	
+	if (H==B && (B==G || B==D)) {
+		return H;
+	}
+	else if (G==D && (D==H || D==B)) {
+		return G;
+	}
+	else {
+		return A;
+	}
+}
+
+void deuxième_passage(grille* g, int NB) {
+
+	int n = g->taille;
+	
+	for (int k1=0;k1<NB;k1++) {
+		int i = rand() % n;
+		int j = rand() % n;
+
+		//printf("ran : %d\nlen : %d\nx : %d\ni : %d\nj : %d\n\n", r,len_actuel,x,i,j); //test
+
+		int ter[4];
+		
+		cell* c = getCell(i,j,g);
+		cell** v_c = voisins(c, g);
+		
+		for (int k=0;k<4;k++) {
+			if (v_c[k] == NULL) {
+				ter[k] = NEANT;
+			}
+			else {
+				ter[k] = v_c[k]->type;
+			}
+		}
+		
+		int terrain = affine_terrain(ter[0], ter[1], ter[2], ter[3], c->type);
+		change_terrain(terrain,i,j,g);
+	}	
+
+
+
+}
+
 grille* generation_carte(grille* g) {
 	int n = g->taille;
 
@@ -152,34 +208,8 @@ grille* generation_carte(grille* g) {
 		len_actuel--;
 	}
 	
-	//deuxième passage
-	/*
-	int NB = 100;
+	deuxième_passage(g,1000000);
 	
-	for (int k1=0;k1<NB;k1++) {
-		int i = rand() % n;
-		int j = rand() % n;
-		
-		int ter[4];
-		
-		cell* c = getCell(i,j,g);
-		cell** tc = voisins(c, g);
-		for (int k=0;k<4;k++) {
-			if (tc[0] == NULL) {
-				ter[i] = NEANT;
-			}
-			else {
-				ter[i] = tc[0]->type;
-			}		
-		}
-		int terrain = random_terrain(ter[1], ter[2], ter[3], ter[4]);
-		change_terrain(terrain,i,j,g);
-		
-		ti[i] = ti[max];
-		tj[j] = tj[max];
-		max--;
-	}	
-	*/
 	return g;
 }	
 	

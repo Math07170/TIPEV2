@@ -96,7 +96,7 @@ void percole_haut(fileprio f,int i){
 		int ip = i_p(i);
 		if(f.t[i].valeur < f.t[ip].valeur){
 			permute(f.t,i,ip);
-			percole_haut(f,i);
+			percole_haut(f,ip);
 		}
 	}
 	return;

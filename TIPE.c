@@ -62,7 +62,9 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
 
     while(fileprio_non_vide(&file) && c[s_f] != NOIR) {
         int s = extraire_fileprio(&file);		// Numéro du sommet courant
+        if(s / n == final->x && s%n == final->y) break;
         c[s] = NOIR;
+        
 
         int xs = s / n;
         int ys = s % n;
@@ -78,7 +80,6 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
         cell** vois = voisins(getCell(xs, ys,g), g);
         int voisins[deg];
         for(int k = 0; k<deg; k++){
-            fprintf(stderr, "Test %d \n", k);
             if(vois[k] != NULL){
                 voisins[k] = vois[k]->x * n + vois[k]->y;
             }
@@ -104,12 +105,18 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
                 diminuer_fileprio(&file,s_v,f[s_v]);
             }
         }
+        
     }
     for(int k = 0; k < n*n; k++){
         
         if(p[k] != -1){
             
             cell* c = getCell(p[k] / n, p[k]%n, g);
+            if(c->x == final->x && c->y == final->y){
+            
+            }
+            //fprintf(stderr,"x=%d, y=%d", p[k] / n, p[k]%n);
+            
             cable cable;
             cable.i = 0;
             cable.u = 230;
@@ -167,16 +174,25 @@ int main(){
     //terrain_infra_test8(g);		// TEST, penser à effacer les preuves
     //affiche_moche(&g);
     
-    init_ncurses();
+    //init_ncurses();
     generation_carte(g);
 
-    astar(g, getCell(10,10,g), getCell(50,50,g));
-	affiche(g);
+    //astar(g, getCell(10,10,g), getCell(50,50,g));
+	//affiche(g);
 
+    fileprio f = creer_fileprio(n*n);
+    inserer_fileprio(&f, 5, 5);
+    inserer_fileprio(&f, 1, 1);
+    inserer_fileprio(&f, 4, 4);
+    inserer_fileprio(&f, 3, 3);
+    inserer_fileprio(&f, 2, 2);
+    while(fileprio_non_vide(&f)){
+        fprintf(stderr, "Test test test %d \n ", extraire_fileprio(&f));
+    }
     
 	
 	sleep(5);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
-	endwin();		// Arrête proprement ncurses, c'est REQUIS pour ne pas détruire le terminal
+	//endwin();		// Arrête proprement ncurses, c'est REQUIS pour ne pas détruire le terminal
 	
 	detruire_grille(g);
 		

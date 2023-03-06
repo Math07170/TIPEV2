@@ -157,6 +157,7 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
 
 
 
+
 int main(){
     srand(time(NULL)); 
 
@@ -182,12 +183,19 @@ int main(){
 
     fileprio f = creer_fileprio(n*n);
     inserer_fileprio(&f, 5, 5);
+    // print_tableau(f);
     inserer_fileprio(&f, 1, 1);
+    // print_tableau(f);
     inserer_fileprio(&f, 4, 4);
+    // print_tableau(f);
     inserer_fileprio(&f, 3, 3);
+    // print_tableau(f);
     inserer_fileprio(&f, 2, 2);
+    // print_tableau(f);
     while(fileprio_non_vide(&f)){
-        fprintf(stderr, "Test test test %d \n ", extraire_fileprio(&f));
+        fprintf(stderr, "%d \n", extraire_fileprio(&f));
+        // print_tableau(f);
+        // extraire_fileprio(&f);
     }
     
 	

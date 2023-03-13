@@ -125,12 +125,12 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
         cable.u = 230;
         cable.r = 50;
         cable.id = g->nb_l;
-        g->nb_l += 1;
         ce->c[ce->nb_c] = cable;
         ce->nb_c = ce->nb_c+1;
         fprintf(stderr, "Case : x=%d y=%d", ce->x, ce->y);
         ce = getCell(k / n, k%n, g);
     }
+    g->nb_l += 1;
     detruire_fileprio(&file);
     return p;
 }

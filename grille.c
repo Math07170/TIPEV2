@@ -82,10 +82,8 @@ cell* getCell(int x, int y, grille* g){
 }
 
 bool contient_ligne(cell* c, int id_ligne){
-    for(int k = 0; k<c->nb_c; k++){
-        if(c->c[k].id == id_ligne) {
-            return true;
-        }
+    for(int k = 0; k>c->nb_c; k++){
+        if(c->c[k].id == id_ligne) return true;
     }
     return false;
 }

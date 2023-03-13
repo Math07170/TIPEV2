@@ -82,7 +82,7 @@ cell* getCell(int x, int y, grille* g){
 }
 
 bool contient_ligne(cell* c, int id_ligne){
-    for(int k = 0; k>c->nb_c; k++){
+    for(int k = 0; k<c->nb_c; k++){
         if(c->c[k].id == id_ligne) return true;
     }
     return false;
@@ -94,10 +94,10 @@ cell** voisins(cell* c, grille* g){
     int x = c->x;
     int y = c->y;
 
-    vois[3] =  getCell(x+1, y, g);
-    vois[2] =  getCell(x-1, y, g);
-    vois[0] =  getCell(x, y+1, g);
-    vois[1] =  getCell(x, y-1, g);
+    vois[1] =  getCell(x+1, y, g);
+    vois[0] =  getCell(x-1, y, g);
+    vois[3] =  getCell(x, y+1, g);
+    vois[2] =  getCell(x, y-1, g);
     return vois;
 }
 

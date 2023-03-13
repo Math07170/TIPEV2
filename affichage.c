@@ -93,22 +93,22 @@ void dessine_case(cell c,grille* g){
 	attroff(COLOR_PAIR(couleur));
 	
 	if(c.nb_c != 0){		// Affiche UNE ligne, s'il y a existence
-		int id_l = c.c[0].id;		// On suppose que la ligne est là-dedans
+		int id_l = c.c[0].id;		// On suppose que la ligne est là-dedans, À AMÉLIORER
 		cell** v = voisins(&c, g);
 		
-		if(v[0] != NULL && contient_ligne(v[0],id_l)){
+		if(v[0] != NULL && contient_ligne(v[0],id_l)){		// Affiche en haut
+			mvaddch(3*c.x,6*c.y+2,ACS_CKBOARD);
 			mvaddch(3*c.x,6*c.y+3,ACS_CKBOARD);
-			mvaddch(3*c.x,6*c.y+4,ACS_CKBOARD);
 		}
-		if(v[1] != NULL && contient_ligne(v[1],id_l)){
+		if(v[1] != NULL && contient_ligne(v[1],id_l)){		// Affiche en bas
+			mvaddch(3*c.x+2,6*c.y+2,ACS_CKBOARD);
 			mvaddch(3*c.x+2,6*c.y+3,ACS_CKBOARD);
-			mvaddch(3*c.x+2,6*c.y+4,ACS_CKBOARD);
 		}
-		if(v[2] != NULL && contient_ligne(v[2],id_l)){
+		if(v[2] != NULL && contient_ligne(v[2],id_l)){		// Affiche à gauche
 			mvaddch(3*c.x+1,6*c.y,ACS_CKBOARD);
 			mvaddch(3*c.x+1,6*c.y+1,ACS_CKBOARD);
 		}
-		if(v[3] != NULL && contient_ligne(v[3],id_l)){
+		if(v[3] != NULL && contient_ligne(v[3],id_l)){		// Affiche à droite
 			mvaddch(3*c.x+1,6*c.y+4,ACS_CKBOARD);
 			mvaddch(3*c.x+1,6*c.y+5,ACS_CKBOARD);
 		}

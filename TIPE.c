@@ -177,11 +177,11 @@ int main(){
     //////terrain_infra_test8(g);		// TEST, penser à effacer les preuves
     //////affiche_moche(&g);
     
-    //init_ncurses();
+    init_ncurses();
     generation_carte(g);
 
     astar(g, getCell(10,10,g), getCell(50,50,g));
-    //affiche(g);
+    affiche(g);
 	/*
 	// TESTS FILEPRIO
     fileprio f = creer_fileprio(n*n);
@@ -214,7 +214,7 @@ int main(){
     // TEST OK
 	*/
 	sleep(5);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
-	//endwin();		// Arrête proprement ncurses, c'est REQUIS pour ne pas détruire le terminal
+	endwin();		// Arrête proprement ncurses, c'est REQUIS pour ne pas détruire le terminal
 	
 	detruire_grille(g);
 		

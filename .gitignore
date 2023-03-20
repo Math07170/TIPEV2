@@ -2,3 +2,6 @@
 *.o
 tipe
 .vscode
+*.json
+*.docx
+*.odt

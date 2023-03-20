@@ -211,7 +211,7 @@ void eau_passage(grille* g, int x, int y) {
 	int len = n*n;
 	int direction = rand() % 8; // nord = 0 , est = 2, .... mod 8
 
-	while (len > 0) {
+	while (len > 0 && !est_terrain(EAU,x,y,g)) {
 		
 		int r = rand() % 100;
 		if (r > ptourner) {
@@ -262,8 +262,8 @@ void montagne_passage(grille* g) {
 		i++;
 	}
 	int r = rand() % 100;
-	if (r < 20) {
-		//eau_passage(g,x,y);
+	if (r < 60) {
+		eau_passage(g,x,y);
 	}
 }
 
@@ -341,12 +341,10 @@ grille* generation_carte(grille* g) {
 	
 	deuxième_passage(g,100000);
 
-	int nb_montagnes = 10;
+	int nb_montagnes = n / 40;
 	for(int b=0;b<nb_montagnes;b++) {
 		montagne_passage(g);
 	}
-
-	deuxième_passage(g,100000);
 
 	return g;
 }	

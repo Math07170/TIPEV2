@@ -10,130 +10,8 @@
 #include <ncurses.h>
 #include <unistd.h>
 
-const int BLANC = 0;
-const int GRIS = 1;
-const int NOIR = 2;
-
-struct s_sommet{
-    int x;
-    int y;
-    int type;
-};
-typedef struct s_sommet sommet;
-
-/* Impressionnant de vacuité, pourra être amélioré selon les types de cases... */
-int poids(int sx, int sy) {
-    return 1;
-}
-
-/* À mettre dans grille.c ? Ou pas ? */
-int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisins à clarifier/régulariser
-    
-    int n = g->taille;
-    int DMAX = n+n+1;
-    fileprio file = creer_fileprio(n*n);
-    
-    int* p = malloc(sizeof(int) * n*n);
-    int* c = malloc(sizeof(int) * n*n);
-    int* d = malloc(sizeof(int) * n*n);
-    int* f = malloc(sizeof(int) * n*n);
-    fprintf(stderr, "TEST TEST");
-    if(p == NULL || c == NULL || d == NULL || f == NULL){
-		printf("Manque de mémoire pour A*\n");
-	}
-    int s_d = depart->x * n + depart->y;
-    
-    int s_f = final->x * n + final->y;
-    
 
 
-    for(int i=0;i<n*n;i++) {
-        p[i] = -1;
-        c[i] = BLANC;
-        d[i] = DMAX;
-        f[i] = DMAX;
-    }
-    
-    c[s_d] = GRIS;
-    d[s_d] = 0;
-    f[s_d] = heuristique(depart->x,depart->y, final->x,final->y);
-
-    inserer_fileprio(&file, s_d, f[s_d]);
-
-    while(fileprio_non_vide(&file) && c[s_f] != NOIR) {
-        int s = extraire_fileprio(&file);		// Numéro du sommet courant
-        
-        //if(s / n == final->x && s%n == final->y) break;
-        c[s] = NOIR;
-        
-
-        int xs = s / n;
-        int ys = s % n;
-
-        int deg;		// nombre de voisins
-        if(s == 0 || s == n-1 || s == n*n-n || s == n*n-1){		// la case est dans un angle -> seulement 2 voisins
-            deg = 2;
-        }else if (xs == 0 || ys == 0 || xs == n-1 || ys == n-1){	// la case est en bord de tableau -> seulement 3 voisins
-            deg = 3;
-        }else{			// cas général -> 4 voisins
-            deg = 4;
-        }
-        cell** vois = voisins(getCell(xs, ys,g), g);
-        int voisins[deg];
-        int indice = 0;
-        for(int k = 0; k<4; k++){
-            if(vois[k] != NULL){
-                voisins[indice] =  vois[k]->x* n + vois[k]->y;
-                indice++;
-            }
-        }
-				// TODO : générer d'une façon ou d'une autre le tableau voisins
-        for(int i=0;i<deg;i++) {
-            
-            int s_v = voisins[i];		// Numéro de sommet du voisin
-            
-            int xs_v = s_v / n;
-            int ys_v = s_v % n;
-            if (c[s_v] == BLANC) {
-                
-                c[s_v] = GRIS;
-                
-                p[s_v] = s;
-                
-                d[s_v] = d[s] + 1;		// AJOUT ÉVENTUEL D'UN POIDS ICI (poids différent pour chaque case de la grille ?)
-                
-                f[s_v] = d[s_v] + heuristique(xs,ys,final->x,final->y);
-                inserer_fileprio(&file, s_v, f[s_v]);
-                
-			}else if (c[s_v] == GRIS && d[s] + poids(s_v,s) < d[s_v]) {
-                p[s_v] = s;
-                
-                d[s_v] = d[s] + poids(s_v,s);
-                f[s_v] = d[s_v] + heuristique(final->x,final->y,xs,ys);
-                diminuer_fileprio(&file,s_v,f[s_v]);
-                
-            }
-            
-        }
-        
-    }
-    cell* ce = final;
-    while(ce != depart){
-        int k = p[ce->x * n + ce->y];
-        cable cable;
-        cable.i = 0;
-        cable.u = 230;
-        cable.r = 50;
-        cable.id = g->nb_l;
-        ce->c[ce->nb_c] = cable;
-        ce->nb_c = ce->nb_c+1;
-        fprintf(stderr, "Case : x=%d y=%d", ce->x, ce->y);
-        ce = getCell(k / n, k%n, g);
-    }
-    g->nb_l += 1;
-    detruire_fileprio(&file);
-    return p;
-}
 
 
 
@@ -163,7 +41,7 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
 int main(){
     srand(time(NULL)); 
 
-    int n = 100;
+    int n = 200;
     grille* g = creer_grille(n);
     
     /*randomize_terrain(&g);
@@ -213,7 +91,7 @@ int main(){
     detruire_fileprio(&f);
     // TEST OK
 	*/
-	sleep(5);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
+	sleep(50);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
 	endwin();		// Arrête proprement ncurses, c'est REQUIS pour ne pas détruire le terminal
 	
 	detruire_grille(g);

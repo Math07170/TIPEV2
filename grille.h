@@ -54,4 +54,5 @@ bool contient_ligne(cell* c, int id_cable);
 cell** voisins(cell* c, grille* g);
 void change_terrain(int terrain, int i, int j, grille* g);
 void terrain_infra_test8(grille* g);
+int* astar(grille* g, cell* depart, cell* final);
 #endif

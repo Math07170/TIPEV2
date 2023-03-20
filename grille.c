@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <time.h>
 #include "grille.h"
-
+#include "fileprio.h"
 
 // Infrastructure
 const int VIDE = 0;		// noir
@@ -100,7 +100,21 @@ cell** voisins(cell* c, grille* g){
     vois[2] =  getCell(x, y-1, g);
     return vois;
 }
+void deplace(cell* source, cell* destination){
 
+}
+void delete_line(int id_line, grille* g){
+    int n = g->taille;
+    int res = 0;
+    for(int x = 0; x<n; x++){
+        for(int y = 0; y<n; x++){
+            if(contient_ligne(getCell(x, y, g), id_line)){
+                (getCell(x, y, g)->nb_c) = (getCell(x, y, g)->nb_c) - 1;
+                
+            }
+        }
+    }
+}
 
 int get_line_cost(int id_line, grille* g){
     int n = g->taille;
@@ -207,6 +221,11 @@ void terrain_infra_test8(grille* g){		// À des fins de test, utiliser avec n=8,
         }
     }
 }*/
+const int BLANC = 0;
+const int GRIS = 1;
+const int NOIR = 2;
+
+
 
 
 int heuristique(int xa, int ya, int xb, int yb) {
@@ -219,4 +238,120 @@ int heuristique(int xa, int ya, int xb, int yb) {
         y = -y;
     }
     return x + y;
+}
+
+/* Impressionnant de vacuité, pourra être amélioré selon les types de cases... */
+int poids(int sx, int sy, grille* g) {
+    int n = g->taille;
+    cell* c = getCell(sx / n, sx%n, g);
+    int res = (c->type)*(c->type);
+    return res;
+}
+
+/* À mettre dans grille.c ? Ou pas ? */
+int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisins à clarifier/régulariser
+    
+    int n = g->taille;
+    int DMAX = n+n+1;
+    fileprio file = creer_fileprio(n*n);
+    
+    int* p = malloc(sizeof(int) * n*n);
+    int* c = malloc(sizeof(int) * n*n);
+    int* d = malloc(sizeof(int) * n*n);
+    int* f = malloc(sizeof(int) * n*n);
+    if(p == NULL || c == NULL || d == NULL || f == NULL){
+		printf("Manque de mémoire pour A*\n");
+	}
+    int s_d = depart->x * n + depart->y;
+    
+    int s_f = final->x * n + final->y;
+    
+
+
+    for(int i=0;i<n*n;i++) {
+        p[i] = -1;
+        c[i] = BLANC;
+        d[i] = DMAX;
+        f[i] = DMAX;
+    }
+    
+    c[s_d] = GRIS;
+    d[s_d] = 0;
+    f[s_d] = heuristique(depart->x,depart->y, final->x,final->y);
+
+    inserer_fileprio(&file, s_d, f[s_d]);
+
+    while(fileprio_non_vide(&file) && c[s_f] != NOIR) {
+        int s = extraire_fileprio(&file);		// Numéro du sommet courant
+        
+        //if(s / n == final->x && s%n == final->y) break;
+        c[s] = NOIR;
+        
+
+        int xs = s / n;
+        int ys = s % n;
+
+        int deg;		// nombre de voisins
+        if(s == 0 || s == n-1 || s == n*n-n || s == n*n-1){		// la case est dans un angle -> seulement 2 voisins
+            deg = 2;
+        }else if (xs == 0 || ys == 0 || xs == n-1 || ys == n-1){	// la case est en bord de tableau -> seulement 3 voisins
+            deg = 3;
+        }else{			// cas général -> 4 voisins
+            deg = 4;
+        }
+        cell** vois = voisins(getCell(xs, ys,g), g);
+        int voisins[deg];
+        int indice = 0;
+        for(int k = 0; k<4; k++){
+            if(vois[k] != NULL){
+                voisins[indice] =  vois[k]->x* n + vois[k]->y;
+                indice++;
+            }
+        }
+				// TODO : générer d'une façon ou d'une autre le tableau voisins
+        for(int i=0;i<deg;i++) {
+            
+            int s_v = voisins[i];		// Numéro de sommet du voisin
+            
+            int xs_v = s_v / n;
+            int ys_v = s_v % n;
+            if (c[s_v] == BLANC) {
+                
+                c[s_v] = GRIS;
+                
+                p[s_v] = s;
+                
+                d[s_v] = d[s] + poids(s_v,s, g);		// AJOUT ÉVENTUEL D'UN POIDS ICI (poids différent pour chaque case de la grille ?)
+                
+                f[s_v] = d[s_v] + heuristique(xs,ys,final->x,final->y);
+                inserer_fileprio(&file, s_v, f[s_v]);
+                
+			}else if (c[s_v] == GRIS && d[s] + poids(s_v,s, g) < d[s_v]) {
+                p[s_v] = s;
+                
+                d[s_v] = d[s] + poids(s_v,s, g);
+                f[s_v] = d[s_v] + heuristique(final->x,final->y,xs,ys);
+                diminuer_fileprio(&file,s_v,f[s_v]);
+                
+            }
+            
+        }
+        
+    }
+    cell* ce = final;
+    while(ce != depart){
+        int k = p[ce->x * n + ce->y];
+        cable cable;
+        cable.i = 0;
+        cable.u = 230;
+        cable.r = 50;
+        cable.id = g->nb_l;
+        ce->c[ce->nb_c] = cable;
+        ce->nb_c = ce->nb_c+1;
+        fprintf(stderr, "Case : x=%d y=%d", ce->x, ce->y);
+        ce = getCell(k / n, k%n, g);
+    }
+    g->nb_l += 1;
+    detruire_fileprio(&file);
+    return p;
 }

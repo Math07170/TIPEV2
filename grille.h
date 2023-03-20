@@ -48,6 +48,7 @@ void detruire_grille(grille* g);
 void randomize_infra(int element, int nb_element, grille* g);
 void randomize_terrain(grille* g);
 //void affiche_moche(grille* g);
+bool est_terrain(int terrain, int i, int j, grille* g);
 int heuristique(int xa, int ya, int xb, int yb);
 cell* getCell(int x, int y, grille* g);
 bool contient_ligne(cell* c, int id_cable);

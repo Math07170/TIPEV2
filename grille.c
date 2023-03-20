@@ -16,6 +16,12 @@ const int CENTRALE = 5;	// rouge
 const int GD_TRANSFO = 6;	// rouge
 const int PT_TRANSFO = 7;	// rouge
 
+const int NB_USINE = 30;
+const int NB_GD_VILLE = 15;
+const int NB_PT_VILLE = 50;
+const int NB_VILLAGE = 70;
+const int NB_CENTRALE = 10;
+
 // Type de terrain
 const int NEANT = 0;	// N'a pas à être affiché !!!
 const int PLAINE = 10;	// yellow
@@ -358,4 +364,44 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
     g->nb_l += 1;
     detruire_fileprio(&file);
     return p;
+}
+
+void situation_initiale(grille* g){
+	int n = g -> taille;
+	for(int k = 0;k < NB_USINE;k++){
+		int i = rand()%n;
+		int j = rand()%n;
+		cell* c = getCell(i,j,g);
+		if(c -> infra == VIDE && c -> infra != EAU) c -> infra = USINE;
+		else k-=1;
+	}
+	for(int k = 0;k < NB_GD_VILLE;k++){
+		int i = rand()%n;
+		int j = rand()%n;
+		cell* c = getCell(i,j,g);
+		if(c -> infra == VIDE && c -> infra != EAU) c -> infra = GD_VILLE;
+		else k-=1;
+	}
+	for(int k = 0;k < NB_PT_VILLE;k++){
+		int i = rand()%n;
+		int j = rand()%n;
+		cell* c = getCell(i,j,g);
+		if(c -> infra == VIDE && c -> infra != EAU) c -> infra = PT_VILLE;
+		else k-=1;
+	}
+	for(int k = 0;k < NB_VILLAGE;k++){
+		int i = rand()%n;
+		int j = rand()%n;
+		cell* c = getCell(i,j,g);
+		if(c -> infra == VIDE && c -> infra != EAU) c -> infra = VILLAGE;
+		else k-=1;
+	}
+	for(int k = 0;k < NB_CENTRALE;k++){
+		int i = rand()%n;
+		int j = rand()%n;
+		cell* c = getCell(i,j,g);
+		if(c -> infra == VIDE && c -> infra != EAU) c -> infra = CENTRALE;
+		else k-=1;
+	}
+	return;
 }

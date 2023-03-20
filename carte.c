@@ -153,42 +153,43 @@ int random_entre(int min, int max) {
 
 void poser_terrain(grille* g, int t, int* x, int* y, int dir, int* len) {
 	int n = g->taille;
-	assert(*x >= 0 && *y >= 0 && *x < n && *y < n);
-
 	int d = dir % 8;
 
-	if (d==0 && *x > 0) { // Nord
+	if (*x < 0 || *y < 0 || *x >= n || *y >= n) {
+		*len = 0;
+	}
+	else if (d==0 && *x >= 0 && !est_terrain(t,*x,*y,g)) { // Nord
 		change_terrain(t,*x,*y,g);
 		*x = *x - 1;
 	}
-	else if (d==1 && *x > 0 && *y < (n-1)) { // Nord-Est
+	else if (d==1 && *x >= 0 && *y <= (n-1) && !est_terrain(t,*x,*y,g)) { // Nord-Est
 		change_terrain(t,*x,*y,g);
 		*x = *x - 1;
 		*y = *y + 1;
 	}
-	else if (d==2 && *y < (n-1)) { // Est
+	else if (d==2 && *y <= (n-1) && !est_terrain(t,*x,*y,g)) { // Est
 		change_terrain(t,*x,*y,g);
 		*y = *y + 1;
 	}
-	else if (d==3 && *x < (n-1) && *y < (n-1)) { // Sud-Est
+	else if (d==3 && *x <= (n-1) && *y <= (n-1) && !est_terrain(t,*x,*y,g)) { // Sud-Est
 		change_terrain(t,*x,*y,g);
 		*x = *x + 1;
 		*y = *y + 1;
 	}
-	else if (d==4 && *x < (n-1)) { // Sud
+	else if (d==4 && *x <= (n-1) && !est_terrain(t,*x,*y,g)) { // Sud
 		change_terrain(t,*x,*y,g);
 		*x = *x + 1;
 	}
-	else if (d==5 && *x < (n-1) && *y > 0) { // Sud-West
+	else if (d==5 && *x <= (n-1) && *y >= 0 && !est_terrain(t,*x,*y,g)) { // Sud-West
 		change_terrain(t,*x,*y,g);
 		*x = *x + 1;
 		*y = *y - 1;
 	}
-	else if (d==6 && *y > 0) { // West
+	else if (d==6 && *y >= 0 && !est_terrain(t,*x,*y,g)) { // West
 		change_terrain(t,*x,*y,g);
 		*y = *y - 1;
 	}
-	else if (d==7 && *x > 0 && *y > 0) { // Nord-West
+	else if (d==7 && *x >= 0 && *y >= 0 && !est_terrain(t,*x,*y,g)) { // Nord-West
 		change_terrain(t,*x,*y,g);
 		*x = *x - 1;
 		*y = *y - 1;
@@ -199,49 +200,11 @@ void poser_terrain(grille* g, int t, int* x, int* y, int dir, int* len) {
 	*len = *len - 1;
 }
 
-//Pose une montagne de taille aléatoire sur la carte
-
-void montagne_passage(grille* g) {
-	int n = g->taille;
-
-	int x = rand() % n;
-	int y = rand() % n;
-
-	int lignes = x + random_entre(4,8);
-	int i = x;
-		
-	while (i < lignes && i < n) {
-		
-		int poubelle1 = 10;
-		int poubelle2 = 10;
-
-		int j1 = y;
-		int j2 = y;
-		int len1 = y + random_entre(2,4);
-		int len2 = y - random_entre(2,4);
-
-		while(j1 > 0 && j1 < len1 && j1 < (n-1)) {	
-			poser_terrain(g,MONTAGNE,&i,&j1,2,&poubelle1);
-		}
-		while(j2 < (n-1) && j2 < len2 && j2 > 0) {	
-			poser_terrain(g,MONTAGNE,&i,&j2,6,&poubelle2);
-		}
-		i++;
-	}
-}
-
-
-
-
-
-
 //pose un cours d'eau avec pour sommet initial (xi,yi) et de longueur maximum len_max
 
-void eau_passage(grille* g) {
-	int n = g->taille;
+void eau_passage(grille* g, int x, int y) {
 
-	int x = rand() % n;
-	int y = rand() % n;
+	int n = g->taille;
 
 	int ptourner = 10;
 
@@ -267,6 +230,41 @@ void eau_passage(grille* g) {
 			}
 			poser_terrain(g, EAU, &x, &y, direction, &len);
 		}
+	}
+}
+
+//Pose une montagne de taille aléatoire sur la carte
+
+void montagne_passage(grille* g) {
+	int n = g->taille;
+
+	int x = rand() % n;
+	int y = rand() % n;
+
+	int lignes = x + random_entre(3,4);
+	int i = x;
+		
+	while (i < lignes && i < n) {
+		
+		int poubelle1 = 10;
+		int poubelle2 = 10;
+
+		int j1 = y;
+		int j2 = y;
+		int len1 = y + random_entre(2,3);
+		int len2 = y - random_entre(2,3);
+
+		while(j1 > 0 && j1 < len1 && j1 < (n-1)) {	
+			poser_terrain(g,MONTAGNE,&i,&j1,2,&poubelle1);
+		}
+		while(j2 < (n-1) && j2 > len2 && j2 > 0) {	
+			poser_terrain(g,MONTAGNE,&i,&j2,6,&poubelle2);
+		}
+		i++;
+	}
+	int r = rand() % 100;
+	if (r < 20) {
+		eau_passage(g,x,y);
 	}
 }
 
@@ -344,14 +342,9 @@ grille* generation_carte(grille* g) {
 	
 	deuxième_passage(g,100000);
 
-	int nb_eau = 6;
-	for(int b=0;b<nb_eau;b++) {
-		eau_passage(g);
-	}
-
 	int nb_montagnes = 25;
 	for(int b=0;b<nb_montagnes;b++) {
-		montagne_passage(g);
+		//montagne_passage(g);
 	}
 
 	return g;

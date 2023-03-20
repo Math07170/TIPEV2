@@ -155,6 +155,13 @@ bool est(int infrastructure, int i, int j, grille* g){
     return (g->t[i][j].infra == infrastructure);
 }
 
+/* Renvoie true si 'g[i][j]' == x */
+bool est_terrain(int terrain, int i, int j, grille* g){
+    int n = g->taille;
+    assert(i>=0 && j>=0 && i<n && j<n);
+    return (g->t[i][j].type == terrain);
+}
+
 void change_terrain(int terrain, int i, int j, grille* g){
     int n = g->taille;
     assert(i>=0 && j>=0 && i<n && j<n);

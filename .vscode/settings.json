@@ -5,5 +5,11 @@
             "binaryPath": "/home/mathias/Documents/GitHub/TIPEV2/tipe",
             "binaryArgs": []
         }
-    ]
+    ],
+    "files.associations": {
+        "unistd.h": "c",
+        "carte.h": "c",
+        "types.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }

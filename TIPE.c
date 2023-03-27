@@ -12,9 +12,6 @@
 
 
 
-
-
-
 // ----------------------------------------------------- //
 
 
@@ -41,7 +38,7 @@
 int main(){
     srand(time(NULL)); 
 
-    int n = 200;
+    int n = 100;
     grille* g = creer_grille(n);
     
     /*randomize_terrain(&g);
@@ -57,8 +54,8 @@ int main(){
     
     init_ncurses();
     generation_carte(g);
-
-    astar(g, getCell(10,10,g), getCell(50,50,g));
+    situation_initiale(g);
+    astar(g, getCell(0,0,g), getCell(50,50,g));
     affiche(g);
 	/*
 	// TESTS FILEPRIO

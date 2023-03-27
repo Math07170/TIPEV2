@@ -39,7 +39,9 @@ typedef struct s_cell cell;
 struct s_grille{
     int taille;
     int nb_l;
+    int nb_infra;
     cell** t;
+    cell** infra;
 };
 typedef struct s_grille grille;
 
@@ -56,4 +58,5 @@ cell** voisins(cell* c, grille* g);
 void change_terrain(int terrain, int i, int j, grille* g);
 void terrain_infra_test8(grille* g);
 int* astar(grille* g, cell* depart, cell* final);
+void situation_initiale(grille* g);
 #endif

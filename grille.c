@@ -37,6 +37,8 @@ const int MONTAGNE = 50;	// white
 grille* creer_grille(int n) {
     grille* g = malloc(sizeof(grille));
     g->taille = n;
+    g->infra = 0;
+    g->infra = malloc(sizeof(cell) * n);
     g->t = malloc(sizeof(cell*) * n);
     if(g->t == NULL){
 		printf("Manque de mémoire pour créer la grille\n");
@@ -365,13 +367,60 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
     detruire_fileprio(&file);
     return p;
 }
+int dist(cell* c1, cell* c2){
+    int x = c1->x - c2->x;
+    int y = c1->y - c2->y;
+    if (x < 0) {
+        x = -x;
+    }
+    if (y < 0) {
+        y = -y;
+    }
+    return x + y;
+}
 
+cell* k_plus_proche(grille* g, cell* source, int id, int k){
+    cell** top = malloc(k*sizeof(cell*));
+    for(int l = 0; l<g->nb_infra, l++){
+        cell* actuel = g->infra[l];
+        if(actuel->infra != id) continue;
+        if(l<k){
+            top[k] = actuel;
+        }else{
+            for(int j = k-1; j>=0; j--){
+                if(dist(source, actuel) < dist(source, top[j])){
+                    if(j == k-1){
+                        top[j] = actuel;
+                    }
+                    top[j+1] = top[j];
+                    top[j] = actuel;
+                    
+                }else{
+                    break;
+                }
+            }
+        }
+    }
+
+}
+cell* barycentre(grille* g, cell* points[], int k){
+    int x = 0;
+    int y = 0;
+    for(int l = 0; l<k; k++){
+        x += points[l]->x;
+        y += points[l]->y;
+    }
+    x = x/k;
+    y = y/k;
+}
 void situation_initiale(grille* g){
 	int n = g -> taille;
 	for(int k = 0;k < NB_USINE;k++){
 		int i = rand()%n;
 		int j = rand()%n;
 		cell* c = getCell(i,j,g);
+        g->infra[g->nb_infra] = c;
+        g->nb_infra = g->nb_infra + 1;
 		if(c -> infra == VIDE && c -> infra != EAU) c -> infra = USINE;
 		else k-=1;
 	}
@@ -379,6 +428,8 @@ void situation_initiale(grille* g){
 		int i = rand()%n;
 		int j = rand()%n;
 		cell* c = getCell(i,j,g);
+        g->infra[g->nb_infra] = c;
+        g->nb_infra = g->nb_infra + 1;
 		if(c -> infra == VIDE && c -> infra != EAU) c -> infra = GD_VILLE;
 		else k-=1;
 	}
@@ -386,6 +437,8 @@ void situation_initiale(grille* g){
 		int i = rand()%n;
 		int j = rand()%n;
 		cell* c = getCell(i,j,g);
+        g->infra[g->nb_infra] = c;
+        g->nb_infra = g->nb_infra + 1;
 		if(c -> infra == VIDE && c -> infra != EAU) c -> infra = PT_VILLE;
 		else k-=1;
 	}
@@ -393,6 +446,8 @@ void situation_initiale(grille* g){
 		int i = rand()%n;
 		int j = rand()%n;
 		cell* c = getCell(i,j,g);
+        g->infra[g->nb_infra] = c;
+        g->nb_infra = g->nb_infra + 1;
 		if(c -> infra == VIDE && c -> infra != EAU) c -> infra = VILLAGE;
 		else k-=1;
 	}
@@ -400,6 +455,8 @@ void situation_initiale(grille* g){
 		int i = rand()%n;
 		int j = rand()%n;
 		cell* c = getCell(i,j,g);
+        g->infra[g->nb_infra] = c;
+        g->nb_infra = g->nb_infra + 1;
 		if(c -> infra == VIDE && c -> infra != EAU) c -> infra = CENTRALE;
 		else k-=1;
 	}

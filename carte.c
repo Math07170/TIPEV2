@@ -356,11 +356,41 @@ grille* generation_carte(grille* g) {
 
 //Transposition carte réelle --> grille
 
-/*int plage(Pixel p) {
 
-	float red = (float) (p.r + 1);
-	float blue = (float) (p.b + 1);
-	float green = (float) (p.g + 1);
+struct s_pixel2{
+	int rouge;
+	int vert;
+	int bleu;
+};
+typedef struct s_pixel2 pixel2;
+struct s_image2{
+	int hauteur;
+	int largeur;
+	pixel2* pixels;
+};
+typedef struct s_image2 image2;
+
+pixel2 lire_pixel2(image2* img,int i,int j){
+	return img -> pixels[img->largeur*i+j];
+}
+
+int rouge2(pixel2 p){
+	return p.rouge;
+}
+
+int vert2(pixel2 p){
+	return p.vert;
+}
+
+int bleu2(pixel2 p){
+	return p.bleu;
+}
+
+int plage(pixel2 p) {
+
+	float red = (float) rouge2(p);
+	float blue = (float) bleu2(p);
+	float green = (float) vert2(p);
 
 	float somme = red + blue + green;
 
@@ -368,36 +398,66 @@ grille* generation_carte(grille* g) {
 	float g = somme / green;
 	float b = somme / blue;
 
-	fprintf(stderr, "somme : %f\n", somme);
-	fprintf(stderr, "somme bizzre: %f\n", green);
-	fprintf(stderr, "cette chose : %f\n", g);
-	fprintf(stderr, "voila : %f\n\n", r);
+	float coef = 2.2;
 
-	if (r <= 2.0) { // rouge
-		return FORET;
-	}
-	else if (g <= 2.0) { // vert
+	if (r <= coef) { // rouge
 		return PLAINE;
 	}
-	else if (b <= 2.0) { // bleu
+	else if (g <= coef) { // vert
+		return FORET;
+	}
+	else if (b <= coef) { // bleu
 		return EAU;
 	}
 	else {
 		return MONTAGNE;
 	}
 }
-*/
 
 
-/*grille* convertir(Image* I) {
-	assert(I->h == I->w);
-	grille* g = creer_grille(I->h);
+grille* convertir(image2* I) {
+	assert(I->hauteur == I->largeur);
+	grille* g = creer_grille(I->hauteur);
 	int n = g->taille;
 	for (int i=0;i<n;i++) {
 		for (int j=0;j<n;j++) {
-			int x = n*j;
-			g->t[i][j].type = plage(I->dat[x]);
+			
+			pixel2 p = lire_pixel2(I,i,j);
+			g->t[i][j].type = plage(p);
 		}
 	}
 	return g;
-}*/
+}
+
+
+grille* recuperer_image() {
+	FILE* fichier = fopen("test.ppm","r");
+
+	int largeur;
+	int taille;
+
+	fscanf(fichier, "P3 %d %d 255", &largeur, &taille);
+	assert((largeur == taille) && (largeur > 0) && (largeur <= 255));
+
+	image2* Image = malloc(sizeof(image2));
+	Image->pixels = malloc(taille*taille*sizeof(pixel2));
+	Image->hauteur = taille;
+	Image->largeur = taille;
+
+	for(int i=0;i<taille;i++) {
+		for(int j=0;j<taille;j++) {
+			int rouge;
+			int vert;
+			int bleu;
+			fscanf(fichier, "%d %d %d", &rouge, &vert, &bleu);
+			Image->pixels[taille*i+j].rouge = rouge;
+			Image->pixels[taille*i+j].vert = vert;
+			Image->pixels[taille*i+j].bleu = bleu;
+		}
+	}
+	grille* g = convertir(Image);
+	free(Image->pixels);
+	free(Image);
+	deuxième_passage(g,10000);
+	return g;
+}

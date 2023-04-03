@@ -14,5 +14,6 @@ void tab_init(int taille, int* t);
 grille* generation_carte(grille* g);
 
 //grille* convertir(Image* I);
+grille* recuperer_image();
 
 #endif

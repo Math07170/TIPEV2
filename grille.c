@@ -37,7 +37,7 @@ const int MONTAGNE = 50;	// white
 grille* creer_grille(int n) {
     grille* g = malloc(sizeof(grille));
     g->taille = n;
-    g->infra = 0;
+    g->nb_infra = 0;
     g->infra = malloc(sizeof(cell) * n);
     g->t = malloc(sizeof(cell*) * n);
     if(g->t == NULL){
@@ -380,17 +380,20 @@ int dist(cell* c1, cell* c2){
 }
 
 cell** k_plus_proche(grille* g, cell* source, int id, int k){
-    cell** top = malloc(k*sizeof(cell*));
+    cell** top = malloc(k * sizeof(cell*));
+    int i = 0;
     for(int l = 0; l<g->nb_infra; l++){
         cell* actuel = g->infra[l];
         if(actuel->infra != id) continue;
-        if(l<k){
-            top[k] = actuel;
+        if(i!=k){
+            top[i] = actuel;
+            i++;
         }else{
             for(int j = k-1; j>=0; j--){
                 if(dist(source, actuel) < dist(source, top[j])){
                     if(j == k-1){
                         top[j] = actuel;
+                        continue;
                     }
                     top[j+1] = top[j];
                     top[j] = actuel;
@@ -407,12 +410,13 @@ cell** k_plus_proche(grille* g, cell* source, int id, int k){
 cell* barycentre(grille* g, cell* points[], int k){
     int x = 0;
     int y = 0;
-    for(int l = 0; l<k; k++){
-        x += points[l]->x;
-        y += points[l]->y;
+    for(int l = 0; l<k; l++){
+        x += (points[l]->x)/k;
+        y += (points[l]->y)/k;
+        fprintf(stderr, "Bary : x=%ld, y=%ld \n", x, y);
     }
-    x = x/k;
-    y = y/k;
+    x = x;
+    y = y;
     return getCell(x, y, g);
 }
 void situation_initiale(grille* g){
@@ -462,5 +466,14 @@ void situation_initiale(grille* g){
 		if(c -> infra == VIDE && c -> infra != EAU) c -> infra = CENTRALE;
 		else k-=1;
 	}
+
+    for(int x = 0; x<g->nb_infra; x++){
+        fprintf(stderr, "x=%d", x);
+        if(((g->infra[x])->infra) == 1){
+            cell** vois = k_plus_proche(g, g->infra[x], 1, 5);
+            cell* b = barycentre(g, vois, 5);
+            b->type = NEANT;
+        }
+    }
 	return;
 }

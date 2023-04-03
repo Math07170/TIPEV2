@@ -88,7 +88,7 @@ int main(){
     detruire_fileprio(&f);
     // TEST OK
 	*/
-	sleep(50);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
+	sleep(5);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
 	endwin();		// Arrête proprement ncurses, c'est REQUIS pour ne pas détruire le terminal
 	
 	detruire_grille(g);

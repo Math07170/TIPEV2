@@ -381,7 +381,7 @@ int dist(cell* c1, cell* c2){
 
 cell* k_plus_proche(grille* g, cell* source, int id, int k){
     cell** top = malloc(k*sizeof(cell*));
-    for(int l = 0; l<g->nb_infra, l++){
+    for(int l = 0; l<g->nb_infra; l++){
         cell* actuel = g->infra[l];
         if(actuel->infra != id) continue;
         if(l<k){

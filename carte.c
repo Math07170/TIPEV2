@@ -6,6 +6,7 @@
 #include "grille.h"
 #include "affichage.h"
 #include "carte.h"
+#include "quickimage.h"
 
 const int k0 = 1;
 const int k1 = 2;
@@ -294,6 +295,7 @@ void deuxième_passage(grille* g, int NB) {
 		
 		int terrain = affine_terrain(ter[0], ter[1], ter[2], ter[3], c->type);
 		change_terrain(terrain,i,j,g);
+		free(v_c);
 	}	
 
 
@@ -337,6 +339,7 @@ grille* generation_carte(grille* g) {
 		
 		t[r] = t[len_actuel-1];
 		len_actuel--;
+		free(v_c);
 	}
 	
 	deuxième_passage(g,100000);
@@ -349,3 +352,54 @@ grille* generation_carte(grille* g) {
 	return g;
 }	
 	
+/////////////
+/////////////
+/////////////
+
+//Transposition carte réelle --> grille
+
+int plage(Pixel p) {
+
+	float red = (float) (p.r + 1);
+	float blue = (float) (p.b + 1);
+	float green = (float) (p.g + 1);
+
+	float somme = red + blue + green;
+
+	float r = somme / red;
+	float g = somme / green;
+	float b = somme / blue;
+
+	fprintf(stderr, "somme : %f\n", somme);
+	fprintf(stderr, "somme bizzre: %f\n", green);
+	fprintf(stderr, "cette chose : %f\n", g);
+	fprintf(stderr, "voila : %f\n\n", r);
+
+	if (r <= 2.0) { // rouge
+		return FORET;
+	}
+	else if (g <= 2.0) { // vert
+		return PLAINE;
+	}
+	else if (b <= 2.0) { // bleu
+		return EAU;
+	}
+	else {
+		return MONTAGNE;
+	}
+}
+
+
+
+grille* convertir(Image* I) {
+	assert(I->h == I->w);
+	grille* g = creer_grille(I->h);
+	int n = g->taille;
+	for (int i=0;i<n;i++) {
+		for (int j=0;j<n;j++) {
+			int x = n*j;
+			g->t[i][j].type = plage(I->dat[x]);
+		}
+	}
+	return g;
+}

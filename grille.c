@@ -379,7 +379,7 @@ int dist(cell* c1, cell* c2){
     return x + y;
 }
 
-cell* k_plus_proche(grille* g, cell* source, int id, int k){
+cell** k_plus_proche(grille* g, cell* source, int id, int k){
     cell** top = malloc(k*sizeof(cell*));
     for(int l = 0; l<g->nb_infra; l++){
         cell* actuel = g->infra[l];
@@ -401,6 +401,7 @@ cell* k_plus_proche(grille* g, cell* source, int id, int k){
             }
         }
     }
+    return top;
 
 }
 cell* barycentre(grille* g, cell* points[], int k){
@@ -412,6 +413,7 @@ cell* barycentre(grille* g, cell* points[], int k){
     }
     x = x/k;
     y = y/k;
+    return getCell(x, y, g);
 }
 void situation_initiale(grille* g){
 	int n = g -> taille;

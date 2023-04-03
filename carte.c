@@ -356,7 +356,7 @@ grille* generation_carte(grille* g) {
 
 //Transposition carte réelle --> grille
 
-int plage(Pixel p) {
+/*int plage(Pixel p) {
 
 	float red = (float) (p.r + 1);
 	float blue = (float) (p.b + 1);
@@ -386,7 +386,7 @@ int plage(Pixel p) {
 		return MONTAGNE;
 	}
 }
-
+*/
 
 
 /*grille* convertir(Image* I) {

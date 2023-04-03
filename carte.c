@@ -346,7 +346,7 @@ grille* generation_carte(grille* g) {
 	for(int b=0;b<nb_montagnes;b++) {
 		montagne_passage(g);
 	}
-
+	free(t);
 	return g;
 }	
 	

@@ -6,7 +6,7 @@
 #include "grille.h"
 #include "affichage.h"
 #include "carte.h"
-#include "quickimage.h"
+//#include "quickimage.h"
 
 const int k0 = 1;
 const int k1 = 2;
@@ -389,7 +389,7 @@ int plage(Pixel p) {
 
 
 
-grille* convertir(Image* I) {
+/*grille* convertir(Image* I) {
 	assert(I->h == I->w);
 	grille* g = creer_grille(I->h);
 	int n = g->taille;
@@ -400,4 +400,4 @@ grille* convertir(Image* I) {
 		}
 	}
 	return g;
-}
+}*/

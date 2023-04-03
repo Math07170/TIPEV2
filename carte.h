@@ -1,7 +1,7 @@
 #ifndef CARTE_H
 #define CARTE_H
 #include "grille.h"
-#include "quickimage.h"
+//#include "quickimage.h"
 
 int egalite(int A,int B,int C,int D,int T);
 

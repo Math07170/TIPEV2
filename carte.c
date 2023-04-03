@@ -385,8 +385,8 @@ grille* generation_carte(grille* g) {
 	else {
 		return MONTAGNE;
 	}
-}*/
-
+}
+*/
 
 
 /*grille* convertir(Image* I) {

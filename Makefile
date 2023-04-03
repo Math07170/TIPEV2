@@ -1,4 +1,4 @@
-tipe:  grille.o fileprio.o TIPE.o affichage.o carte.o quickimage.o
+tipe:  grille.o fileprio.o TIPE.o affichage.o carte.o
 		gcc TIPE.o fileprio.o grille.o affichage.o carte.o -o tipe -lncurses
 tipe-all:
 		gcc -c fileprio.c -lncurses

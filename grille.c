@@ -37,7 +37,6 @@ const int MONTAGNE = 50;	// white
 grille* creer_grille(int n) {
     grille* g = malloc(sizeof(grille));
     g->taille = n;
-    g->infra = 0;
     g->infra = malloc(sizeof(cell) * n);
     g->t = malloc(sizeof(cell*) * n);
     if(g->t == NULL){
@@ -348,6 +347,7 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
             }
             
         }
+        free(vois);
         
     }
     cell* ce = final;
@@ -365,6 +365,11 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
     }
     g->nb_l += 1;
     detruire_fileprio(&file);
+
+    free(c);
+    free(d);
+    free(f);
+
     return p;
 }
 int dist(cell* c1, cell* c2){

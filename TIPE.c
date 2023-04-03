@@ -38,7 +38,7 @@
 int main(){
     srand(time(NULL)); 
 
-    int n = 100;
+    int n = 200;
     grille* g = creer_grille(n);
     
     /*randomize_terrain(&g);
@@ -88,7 +88,7 @@ int main(){
     detruire_fileprio(&f);
     // TEST OK
 	*/
-	sleep(50);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
+	sleep(5);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
 	endwin();		// Arrête proprement ncurses, c'est REQUIS pour ne pas détruire le terminal
 	
 	detruire_grille(g);

@@ -6,6 +6,7 @@
 #include "grille.h"
 #include "fileprio.h"
 
+
 // Infrastructure
 const int VIDE = 0;		// noir
 const int USINE = 1;	// noir
@@ -30,7 +31,26 @@ const int EAU = 30;		// blue
 const int RIVIERE = 40;	// cyan		// NE VA PROBABLEMENT PAS RESTER
 const int MONTAGNE = 50;	// white
 
-
+const cable THT_cable= { 
+    0,
+    50000,
+    50
+};
+const cable HT_cable= { 
+    0,
+    230,
+    50
+};
+const cable MT_cable= { 
+    0,
+    230,
+    50
+};
+const cable T_cable= { 
+    0,
+    230,
+    50
+};
 
 
 
@@ -360,7 +380,7 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
         cable.id = g->nb_l;
         ce->c[ce->nb_c] = cable;
         ce->nb_c = ce->nb_c+1;
-        fprintf(stderr, "Case : x=%d y=%d", ce->x, ce->y);
+        //fprintf(stderr, "Case : x=%d y=%d", ce->x, ce->y);
         ce = getCell(k / n, k%n, g);
     }
     g->nb_l += 1;
@@ -379,15 +399,21 @@ int dist(cell* c1, cell* c2){
     return x + y;
 }
 
-cell* k_plus_proche(grille* g, cell* source, int id, int k){
-    cell** top = malloc(k*sizeof(cell*));
-    for(int l = 0; l<g->nb_infra, l++){
+cell** k_plus_proche(grille* g, cell* source, int id, int k){
+    cell** top = malloc(k * sizeof(cell*) );
+    for(int l = 0; l<g->nb_infra; l++){
         cell* actuel = g->infra[l];
         if(actuel->infra != id) continue;
         if(l<k){
-            top[k] = actuel;
+            //fprintf(stderr, "l : %d \n", l);
+            //fprintf(stderr, "Actuel: (%d, %d) \n", actuel->x, actuel->y);
+            top[l] = actuel;
         }else{
             for(int j = k-1; j>=0; j--){
+                //fprintf(stderr, "j : %d \n", j);
+                //fprintf(stderr, "Source : x=%d, y=%d, Actuel: (%d, %d) \n", source->x, source->y, actuel->x, actuel->y);
+                //fprintf(stderr, "top %d %d,\n", top[j]->x, top[j]->y);
+                
                 if(dist(source, actuel) < dist(source, top[j])){
                     if(j == k-1){
                         top[j] = actuel;
@@ -401,17 +427,22 @@ cell* k_plus_proche(grille* g, cell* source, int id, int k){
             }
         }
     }
+    return top;
 
 }
-cell* barycentre(grille* g, cell* points[], int k){
+cell* barycentre(grille* g, cell** points, int k){
     int x = 0;
     int y = 0;
-    for(int l = 0; l<k; k++){
+    for(int l = 0; l<k; l++){
+        //fprintf(stderr, "top %d,\n", l);
         x += points[l]->x;
         y += points[l]->y;
     }
     x = x/k;
     y = y/k;
+    fprintf(stderr, "x: %d y: %d \n", x, y);
+    cell * res = getCell(x, y ,g);
+    return res;
 }
 void situation_initiale(grille* g){
 	int n = g -> taille;
@@ -460,5 +491,18 @@ void situation_initiale(grille* g){
 		if(c -> infra == VIDE && c -> infra != EAU) c -> infra = CENTRALE;
 		else k-=1;
 	}
-	return;
+	
+    for(int x = 0; x < g->nb_infra; x++){
+        fprintf(stderr, " x : %d \n", x);
+        if((g->infra[x])->infra == 1){
+            
+            cell** v = k_plus_proche(g, g->infra[x], 1, 5);
+            
+            cell* b = barycentre(g, v, 5);
+            
+            free(v);
+            b->type = NEANT;
+        }
+    }
+    return;
 }

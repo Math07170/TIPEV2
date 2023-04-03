@@ -277,8 +277,6 @@ void deuxième_passage(grille* g, int NB) {
 		int i = rand() % n;
 		int j = rand() % n;
 
-		//printf("ran : %d\nlen : %d\nx : %d\ni : %d\nj : %d\n\n", r,len_actuel,x,i,j); //test
-
 		int ter[4];
 		
 		cell* c = getCell(i,j,g);

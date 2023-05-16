@@ -7,6 +7,7 @@
 #include "fileprio.h"
 #include "affichage.h"
 #include "carte.h"
+#include "genetique.h"
 #include <ncurses.h>
 #include <unistd.h>
 
@@ -37,10 +38,17 @@
 
 int main(){
     srand(time(NULL)); 
-
+    population* pop = creer_population(100);
+    fprintf(stderr, "Population créée\n");
     int n = 100;
-    grille* g = creer_grille(n);
-    
+    grille* g1 = creer_grille(n);
+    grille* g = copie_grille(g1);
+    for(int x = 0; x< 100; x++){
+        pop = next_generation(pop, 0.5, 0.5);
+        
+        fprintf(stderr, "Generation %d, Score moyen : %f\n", x, moyenne(pop, 0.5, 0.5));
+    }
+    return 0;
     /*randomize_terrain(&g);
     randomize_infra(USINE, 4, &g);
     randomize_infra(GD_VILLE, 3, &g);
@@ -51,11 +59,11 @@ int main(){
     randomize_infra(PT_TRANSFO, 12, &g);*/	// NE PAS SUPPRIMER
     //////terrain_infra_test8(g);		// TEST, penser à effacer les preuves
     //////affiche_moche(&g);
-    
     init_ncurses();
     generation_carte(g);
     situation_initiale(g);
-    astar(g, getCell(0,0,g), getCell(50,50,g));
+    relie(g);
+    //astar(g, getCell(0,0,g), getCell(50,50,g));
     affiche(g);
 	/*
 	// TESTS FILEPRIO
@@ -88,7 +96,7 @@ int main(){
     detruire_fileprio(&f);
     // TEST OK
 	*/
-	sleep(5);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
+	sleep(50);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
 	endwin();		// Arrête proprement ncurses, c'est REQUIS pour ne pas détruire le terminal
 	
 	detruire_grille(g);

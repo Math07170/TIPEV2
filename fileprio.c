@@ -34,10 +34,10 @@ fileprio creer_fileprio(int taille_max){
 void print_tableau(fileprio f){
     int i = 0;
     while(i < 5){
-        fprintf(stderr,"%d ",f.t[i].valeur);
+        //fprintf(stderr,"%d ",f.t[i].valeur);
         i++;
     }
-    fprintf(stderr,"\n\n");
+    //fprintf(stderr,"\n\n");
     return;
 }
 

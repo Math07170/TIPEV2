@@ -51,7 +51,7 @@ grille* creer_grille(int n) {
 			exit(-1);
 		}
 		for(int l = 0;l < n;l++){
-			g->t[k][l].c = malloc(sizeof(cable)*4);		// Remplacé par les IDs de lignes, mais ça marche en l'état
+			g->t[k][l].c = malloc(sizeof(cable)*100);		// Remplacé par les IDs de lignes, mais ça marche en l'état
 			if(g->t[k][l].c == NULL){
 				printf("Manque de mémoire pour créer la grille\n");
 				exit(-1);
@@ -70,7 +70,42 @@ grille* creer_grille(int n) {
     }
     return g;
 }
-
+grille* copie_grille(grille* g){
+    //fprintf(stderr, "%d \n ", g->t[99][99].nb_c);
+    int n = g->taille;
+    grille* copie = creer_grille(n);
+    copie->nb_infra = g->nb_infra;
+    copie->nb_l = g->nb_l;
+    
+    for(int i = 0;i < n;i++){
+        for(int j = 0;j < n;j++){
+            //fprintf(stderr,"i = %d, j = %d\n",i,j);
+            copie->t[i][j].x = g->t[i][j].x;
+            //fprintf(stderr,"1");
+            copie->t[i][j].y = g->t[i][j].y;
+            //fprintf(stderr,"2");
+            copie->t[i][j].nb_c = g->t[i][j].nb_c;
+            //fprintf(stderr,"3");
+            copie->t[i][j].type = g->t[i][j].type;
+            //fprintf(stderr,"4");
+            copie->t[i][j].infra = g->t[i][j].infra;
+            //fprintf(stderr,"5");
+            //fprintf(stderr,"nb_c = %d\n",copie->t[i][j].nb_c);
+            for(int k = 0;k < g->t[i][j].nb_c;k++){
+                //fprintf(stderr,"6");
+                copie->t[i][j].c[k].u = g->t[i][j].c[k].u;
+                copie->t[i][j].c[k].r = g->t[i][j].c[k].r;
+                copie->t[i][j].c[k].i = g->t[i][j].c[k].i;
+                copie->t[i][j].c[k].id = g->t[i][j].c[k].id;
+            }
+            
+        }
+    }
+    for(int i = 0;i < g->nb_infra;i++){
+        copie->infra[i] = getCell(g->infra[i]->x,g->infra[i]->y,copie);
+    }
+    return copie;
+}
 void detruire_grille(grille* g){
 	int n = g -> taille;
 	for(int i = 0;i < n;i++){
@@ -259,10 +294,13 @@ int poids(int sx, int sy, grille* g) {
     int res = (c->type)*(c->type);
     return res;
 }
+// Donne le chemin le plus court entre deux points en utilisant l'algorithme A*
+int* a_star(grille* g, cell* depart, cell* arrive, int id){
 
+}
 /* À mettre dans grille.c ? Ou pas ? */
-int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisins à clarifier/régulariser
-    
+int* astar(grille* g, cell* depart, cell* final, int id) {	// Situation du tableau voisins à clarifier/régulariser
+    assert(final != NULL && depart != NULL);
     int n = g->taille;
     int DMAX = n+n+1;
     fileprio file = creer_fileprio(n*n);
@@ -327,6 +365,7 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
             
             int xs_v = s_v / n;
             int ys_v = s_v % n;
+            cell* v = getCell(xs_v, ys_v,g);
             if (c[s_v] == BLANC) {
                 
                 c[s_v] = GRIS;
@@ -352,6 +391,11 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
     }
     cell* ce = final;
     while(ce != depart){
+        if(ce == NULL){
+            fprintf(stderr, "Erreur : pas de chemin trouvé\n");
+            return NULL;
+        }
+        fprintf(stderr, "Case : x=%d y=%d", ce->x, ce->y);
         int k = p[ce->x * n + ce->y];
         cable cable;
         cable.i = 0;
@@ -360,12 +404,25 @@ int* astar(grille* g, cell* depart, cell* final) {	// Situation du tableau voisi
         cable.id = g->nb_l;
         ce->c[ce->nb_c] = cable;
         ce->nb_c = ce->nb_c+1;
-        fprintf(stderr, "Case : x=%d y=%d", ce->x, ce->y);
+        //fprintf(stderr, "Case : x=%d y=%d", ce->x, ce->y);
         ce = getCell(k / n, k%n, g);
     }
+    ce=depart;
+    int k = p[ce->x * n + ce->y];
+    cable cable;
+    cable.i = 0;
+    cable.u = 230;
+    cable.r = 50;
+    cable.id = g->nb_l;
+    ce->c[ce->nb_c] = cable;
+    ce->nb_c = (ce->nb_c)+1;
     g->nb_l += 1;
     detruire_fileprio(&file);
-    return p;
+    free(p);
+    free(c);
+    free(d);
+    free(f);
+    return NULL;
 }
 int dist(cell* c1, cell* c2){
     int x = c1->x - c2->x;
@@ -379,12 +436,12 @@ int dist(cell* c1, cell* c2){
     return x + y;
 }
 
-cell** k_plus_proche(grille* g, cell* source, int id, int k){
+cell** k_plus_proche(grille* g, cell* source, int id_inf, int k, int id_sup){
     cell** top = malloc(k * sizeof(cell*));
     int i = 0;
     for(int l = 0; l<g->nb_infra; l++){
         cell* actuel = g->infra[l];
-        if(actuel->infra != id) continue;
+        if(actuel->infra < id_inf || actuel->infra > id_sup) continue;
         if(i!=k){
             top[i] = actuel;
             i++;
@@ -411,13 +468,76 @@ cell* barycentre(grille* g, cell* points[], int k){
     int x = 0;
     int y = 0;
     for(int l = 0; l<k; l++){
-        x += (points[l]->x)/k;
-        y += (points[l]->y)/k;
-        fprintf(stderr, "Bary : x=%ld, y=%ld \n", x, y);
+        if(points[l] == NULL) continue;
+        x = x + ((points[l])->x)/k;
+        y = y + ((points[l])->y)/k;
+        //fprintf(stderr, "Bary : x=%ld, y=%ld \n", x, y);
     }
     x = x;
     y = y;
     return getCell(x, y, g);
+}
+void situation_initiale_pop(grille** g, int l){
+	int n = g[0] -> taille;
+	for(int k = 0;k < NB_USINE;k++){
+		int i = rand()%n;
+		int j = rand()%n;
+        for(int m = 0; m<l; m++){
+            cell* c = getCell(i,j,g[m]);
+            (g[m])->infra[g[m]->nb_infra] = c;
+            (g[m])->nb_infra = g[m]->nb_infra + 1;
+		    if(c -> infra == VIDE && c -> infra != EAU) c -> infra = USINE;
+		    else k-=1;
+        }
+
+	}
+	for(int k = 0;k < NB_GD_VILLE;k++){
+		int i = rand()%n;
+		int j = rand()%n;
+		for(int m = 0; m<l; m++){
+            cell* c = getCell(i,j,g[m]);
+            (g[m])->infra[g[m]->nb_infra] = c;
+            (g[m])->nb_infra = g[m]->nb_infra + 1;
+		    if(c -> infra == VIDE && c -> infra != EAU) c -> infra = GD_VILLE;
+		    else k-=1;
+        }
+	}
+	for(int k = 0;k < NB_PT_VILLE;k++){
+		int i = rand()%n;
+		int j = rand()%n;
+		for(int m = 0; m<l; m++){
+            cell* c = getCell(i,j,g[m]);
+            g[m]->infra[g[m]->nb_infra] = c;
+            g[m]->nb_infra = g[m]->nb_infra + 1;
+		    if(c -> infra == VIDE && c -> infra != EAU) c -> infra = PT_VILLE;
+		    else k-=1;
+        }
+	}
+	for(int k = 0;k < NB_VILLAGE;k++){
+		int i = rand()%n;
+		int j = rand()%n;
+		for(int m = 0; m<l; m++){
+            cell* c = getCell(i,j,g[m]);
+            g[m]->infra[g[m]->nb_infra] = c;
+            g[m]->nb_infra = g[m]->nb_infra + 1;
+		    if(c -> infra == VIDE && c -> infra != EAU) c -> infra = VILLAGE;
+		    else k-=1;
+        }
+	}
+	for(int k = 0;k < NB_CENTRALE;k++){
+		int i = rand()%n;
+		int j = rand()%n;
+		for(int m = 0; m<l; m++){
+            cell* c = getCell(i,j,g[m]);
+            g[m]->infra[g[m]->nb_infra] = c;
+            g[m]->nb_infra = g[m]->nb_infra + 1;
+		    if(c -> infra == VIDE && c -> infra != EAU) c -> infra = CENTRALE;
+		    else k-=1;
+        }
+	}
+
+   
+	return;
 }
 void situation_initiale(grille* g){
 	int n = g -> taille;
@@ -467,13 +587,94 @@ void situation_initiale(grille* g){
 		else k-=1;
 	}
 
-    for(int x = 0; x<g->nb_infra; x++){
-        fprintf(stderr, "x=%d", x);
-        if(((g->infra[x])->infra) == 1){
-            cell** vois = k_plus_proche(g, g->infra[x], 1, 5);
-            cell* b = barycentre(g, vois, 5);
-            b->type = NEANT;
-        }
-    }
+   
 	return;
 }
+//Pose les transformateur de façon aléatoire
+void random_transfo(grille* g){
+    int n = g -> taille;
+    for(int x =0; x<NB_CENTRALE; x++){
+        int i = rand()%n;
+        int j = rand()%n;
+        cell* c = getCell(i,j,g);
+        g->infra[g->nb_infra] = c;
+        g->nb_infra = g->nb_infra + 1;
+        if(c -> infra == VIDE && c -> infra != EAU) c -> infra = CENTRALE;
+        else x-=1;
+    }
+    int NB_petit_transfo = NB_PT_VILLE /5;
+    int NB_grand_transfo = (NB_GD_VILLE + NB_USINE + NB_petit_transfo)/5;
+    for(int x =0; x<NB_grand_transfo; x++){
+        int i = rand()%n;
+        int j = rand()%n;
+        cell* c = getCell(i,j,g);
+        g->infra[g->nb_infra] = c;
+        g->nb_infra = g->nb_infra + 1;
+        if(c -> infra == VIDE && c -> infra != EAU) c -> infra = GD_TRANSFO;
+        else x-=1;
+    }
+    for(int x =0; x<NB_petit_transfo; x++){
+        int i = rand()%n;
+        int j = rand()%n;
+        cell* c = getCell(i,j,g);
+        g->infra[g->nb_infra] = c;
+        g->nb_infra = g->nb_infra + 1;
+        if(c -> infra == VIDE && c -> infra != EAU) c -> infra = PT_TRANSFO;
+        else x-=1;
+    }
+
+}
+void relie(grille* g) {
+     for(int x = 0; x<g->nb_infra; x++){
+        //fprintf(stderr, "x=%d", x);
+        if(((g->infra[x])->infra > 0 && (g->infra[x])->infra <= 4) && (((g->infra[x])->nb_c) == 0)){
+            cell** vois = k_plus_proche(g, g->infra[x], USINE, 5, VILLAGE);
+            cell* b = barycentre(g, vois, 5);
+            b->infra = PT_TRANSFO;
+            g->infra[g->nb_infra] = b;
+            g->nb_infra += 1;
+            for(int p=0; p<5; p++){
+                if(vois[p]->nb_c == 0) astar(g, vois[p], b, 1);
+            }
+            
+        }
+    }
+    for(int x = 0; x<g->nb_infra; x++){
+        //fprintf(stderr, "x=%d", x);
+        if((g->infra[x])->infra == PT_TRANSFO){
+            cell** vois = k_plus_proche(g, g->infra[x], PT_TRANSFO, 10, PT_TRANSFO);
+            cell* b = barycentre(g, vois, 5);
+            b->infra = GD_TRANSFO;
+            g->infra[g->nb_infra] = b;
+            g->nb_infra += 1;
+            for(int p=0; p<5; p++){
+                if(vois[p]->nb_c <= 5) astar(g, vois[p], b, 1);
+            }
+            
+        }
+    }
+    for(int x = 0; x<g->nb_infra; x++){
+        //fprintf(stderr, "x=%d", x);
+        if((g->infra[x])->infra == GD_TRANSFO){
+            cell** vois = k_plus_proche(g, g->infra[x], CENTRALE, 1, CENTRALE);
+            astar(g, vois[0], g->infra[x], 1);
+        }
+    }
+}
+void creation_res(grille* g, int k_vois_cons, int k_vois_transfo){
+    return;
+}
+
+void export_csv_file(int xl[], int yl[], int n){
+    FILE* fichier = NULL;
+    fichier = fopen("resultat.csv", "w+");
+    if (fichier != NULL)
+    {
+        for(int i = 0; i<n; i++){
+            //fprintf(fichier, "%d;%d\n", xl[i], yl[i]);
+        }
+        fclose(fichier);
+    }
+    return;
+}
+

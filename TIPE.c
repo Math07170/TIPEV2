@@ -38,17 +38,17 @@
 
 int main(){
     srand(time(NULL)); 
-    population* pop = creer_population(100);
+    population* pop = creer_population(20);
     fprintf(stderr, "Population créée\n");
     int n = 100;
-    grille* g1 = creer_grille(n);
-    grille* g = copie_grille(g1);
+
     for(int x = 0; x< 100; x++){
         pop = next_generation(pop, 0.5, 0.5);
         
-        fprintf(stderr, "Generation %d, Score moyen : %f\n", x, moyenne(pop, 0.5, 0.5));
+        fprintf(stderr, "Generation %d, Score moyen : %f, taille mémoire : %ld \n", x, moyenne(pop, 0.5, 0.5), sizeof(grille));
     }
-    return 0;
+    grille* g = copie_grille(best(pop, 0.5, 0.5));
+    free_population(pop);
     /*randomize_terrain(&g);
     randomize_infra(USINE, 4, &g);
     randomize_infra(GD_VILLE, 3, &g);
@@ -60,9 +60,7 @@ int main(){
     //////terrain_infra_test8(g);		// TEST, penser à effacer les preuves
     //////affiche_moche(&g);
     init_ncurses();
-    generation_carte(g);
-    situation_initiale(g);
-    relie(g);
+    relieup(g);
     //astar(g, getCell(0,0,g), getCell(50,50,g));
     affiche(g);
 	/*

@@ -16,5 +16,6 @@ individu croisement(individu i1, individu i2);
 int* tri_rapide(population* p, float eco, float env);
 population* next_generation(population* p, float eco, float env);
 population* creer_population(int n);
-
+void free_population(population* p);
+individu best(population* p, float eco, float env);
 #endif // GENETIQUE_H

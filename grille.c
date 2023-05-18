@@ -38,7 +38,17 @@ grille* creer_grille(int n) {
     grille* g = malloc(sizeof(grille));
     g->taille = n;
     g->nb_infra = 0;
-    g->infra = malloc(sizeof(cell) * n);
+    g->infra = malloc(sizeof(cell*) * n*n);
+    if(n!= 100){
+        int a = n;
+    }
+    // initialisation tu tableau infra 
+    for(int k = 0; k < n*n; k++){
+        g->infra[k] = NULL;
+        if(g->infra == NULL){
+            printf("Manque de mémoire alerte pour créer la grille\n");
+        }
+    }
     g->t = malloc(sizeof(cell*) * n);
     if(g->t == NULL){
 		printf("Manque de mémoire pour créer la grille\n");
@@ -51,8 +61,8 @@ grille* creer_grille(int n) {
 			exit(-1);
 		}
 		for(int l = 0;l < n;l++){
-			g->t[k][l].c = malloc(sizeof(cable)*100);		// Remplacé par les IDs de lignes, mais ça marche en l'état
-			if(g->t[k][l].c == NULL){
+			(g->t[k][l]).c = malloc(sizeof(cable)*1000);		// Remplacé par les IDs de lignes, mais ça marche en l'état
+            if(g->t[k][l].c == NULL){
 				printf("Manque de mémoire pour créer la grille\n");
 				exit(-1);
 			}
@@ -69,6 +79,19 @@ grille* creer_grille(int n) {
         }
     }
     return g;
+}
+void copie_case(cell* depart, cell* arrive){
+    arrive->x = depart->x;
+    arrive->y = depart->y;
+    arrive->nb_c = depart->nb_c;
+    arrive->type = depart->type;
+    arrive->infra = depart->infra;
+    for(int i = 0;i < depart->nb_c;i++){
+        arrive->c[i].u = depart->c[i].u;
+        arrive->c[i].r = depart->c[i].r;
+        arrive->c[i].i = depart->c[i].i;
+        arrive->c[i].id = depart->c[i].id;
+    }
 }
 grille* copie_grille(grille* g){
     //fprintf(stderr, "%d \n ", g->t[99][99].nb_c);
@@ -102,6 +125,7 @@ grille* copie_grille(grille* g){
         }
     }
     for(int i = 0;i < g->nb_infra;i++){
+        cell* tes = g->infra[i];
         copie->infra[i] = getCell(g->infra[i]->x,g->infra[i]->y,copie);
     }
     return copie;
@@ -113,14 +137,18 @@ void detruire_grille(grille* g){
 				free(g->t[i][j].c);
 		 }
 		 free(g->t[i]);
-	 }
-	 free(g->t);
-	 free(g);
-	return;
+	}
+    free(g->infra);
+	free(g->t);
+	free(g);
 }
 
 cell* getCell(int x, int y, grille* g){
-    if(x>=g->taille || y>=g->taille || x<0|| y<0) return NULL;
+    if(x>=g->taille || y>=g->taille || x<0|| y<0){
+        //fprintf(stderr, "Erreur : cellule x=%d y=%d hors de la grille\n", x, y);
+        return NULL;
+    }
+    //fprintf(stderr, "getCell : %d %d\n", g->t[x][y].x, g->t[x][y].y);
     return (&(g->t[x][y]));
 }
 
@@ -138,9 +166,17 @@ cell** voisins(cell* c, grille* g){
     int y = c->y;
 
     vois[1] =  getCell(x+1, y, g);
+    if(vois[1] != NULL && vois[1]->x* 100 + vois[1]->y > 99* 100 + 99) 
+    {exit(-1);}
     vois[0] =  getCell(x-1, y, g);
+    if(vois[0] != NULL && vois[0]->x* 100 + vois[0]->y > 99* 100 + 99) 
+    {exit(-2);}
     vois[3] =  getCell(x, y+1, g);
+    if(vois[3] != NULL && vois[3]->x* 100 + vois[3]->y > 99* 100 + 99) 
+    {exit(-3);}
     vois[2] =  getCell(x, y-1, g);
+    if(vois[2] != NULL && vois[2]->x* 100 + vois[2]->y > 99* 100 + 99) 
+    {exit(-4);}
     return vois;
 }
 void deplace(cell* source, cell* destination){
@@ -294,10 +330,6 @@ int poids(int sx, int sy, grille* g) {
     int res = (c->type)*(c->type);
     return res;
 }
-// Donne le chemin le plus court entre deux points en utilisant l'algorithme A*
-int* a_star(grille* g, cell* depart, cell* arrive, int id){
-
-}
 /* À mettre dans grille.c ? Ou pas ? */
 int* astar(grille* g, cell* depart, cell* final, int id) {	// Situation du tableau voisins à clarifier/régulariser
     assert(final != NULL && depart != NULL);
@@ -358,8 +390,9 @@ int* astar(grille* g, cell* depart, cell* final, int id) {	// Situation du table
                 indice++;
             }
         }
+        free(vois);
 				// TODO : générer d'une façon ou d'une autre le tableau voisins
-        for(int i=0;i<deg;i++) {
+        for(int i=0;i<indice;i++) {
             
             int s_v = voisins[i];		// Numéro de sommet du voisin
             
@@ -392,11 +425,13 @@ int* astar(grille* g, cell* depart, cell* final, int id) {	// Situation du table
     cell* ce = final;
     while(ce != depart){
         if(ce == NULL){
-            fprintf(stderr, "Erreur : pas de chemin trouvé\n");
+            fprintf(stderr, "Erreur : x = %d, y=%d\n", final->x, final->y);
+            fprintf(stderr, "Erreur : CE est nul\n");
             return NULL;
         }
-        fprintf(stderr, "Case : x=%d y=%d", ce->x, ce->y);
+        
         int k = p[ce->x * n + ce->y];
+        //fprintf(stderr, "x = %d, y=%d\n", ce->x, ce->y);
         cable cable;
         cable.i = 0;
         cable.u = 230;
@@ -406,6 +441,7 @@ int* astar(grille* g, cell* depart, cell* final, int id) {	// Situation du table
         ce->nb_c = ce->nb_c+1;
         //fprintf(stderr, "Case : x=%d y=%d", ce->x, ce->y);
         ce = getCell(k / n, k%n, g);
+        //fprintf(stderr, "Case : x=%d y=%d", ce->x, ce->y);
     }
     ce=depart;
     int k = p[ce->x * n + ce->y];
@@ -438,6 +474,9 @@ int dist(cell* c1, cell* c2){
 
 cell** k_plus_proche(grille* g, cell* source, int id_inf, int k, int id_sup){
     cell** top = malloc(k * sizeof(cell*));
+    for(int i = 0; i<k; i++){
+        top[i] = NULL;
+    }
     int i = 0;
     for(int l = 0; l<g->nb_infra; l++){
         cell* actuel = g->infra[l];
@@ -590,6 +629,8 @@ void situation_initiale(grille* g){
    
 	return;
 }
+
+
 //Pose les transformateur de façon aléatoire
 void random_transfo(grille* g){
     int n = g -> taille;
@@ -624,6 +665,32 @@ void random_transfo(grille* g){
     }
 
 }
+//relie chaque consomateur au transformateur le plus proche.
+void relieup(grille* g){
+    for(int k = 0; k < g->nb_infra; k++){
+        if(g->infra[k]->infra == VILLAGE || g->infra[k]->infra == PT_VILLE){
+            cell** destination = k_plus_proche(g, g->infra[k], PT_TRANSFO, 1, PT_TRANSFO);
+            cell* c = destination[0];
+            if(c == NULL) exit(666);
+            astar(g, g->infra[k], c, 1);
+            free(destination);
+        }else if(g->infra[k]->infra == USINE || g->infra[k]->infra == PT_TRANSFO || g->infra[k]->infra == GD_VILLE){
+            cell** destination = k_plus_proche(g, g->infra[k], GD_TRANSFO, 1, GD_TRANSFO);
+            cell* c = destination[0];
+            if(c == NULL) exit(666);
+            astar(g, g->infra[k], c, 1);
+            free(destination);
+        }else{
+            cell** destination = k_plus_proche(g, g->infra[k], CENTRALE, 1, CENTRALE);
+            cell* c = destination[0];
+            if(c == NULL) exit(666);
+            astar(g, g->infra[k], c, 1);
+            free(destination);
+        }
+    }
+}
+
+
 void relie(grille* g) {
      for(int x = 0; x<g->nb_infra; x++){
         //fprintf(stderr, "x=%d", x);
@@ -634,6 +701,7 @@ void relie(grille* g) {
             g->infra[g->nb_infra] = b;
             g->nb_infra += 1;
             for(int p=0; p<5; p++){
+                if(vois[p] == NULL) continue;
                 if(vois[p]->nb_c == 0) astar(g, vois[p], b, 1);
             }
             
@@ -648,6 +716,7 @@ void relie(grille* g) {
             g->infra[g->nb_infra] = b;
             g->nb_infra += 1;
             for(int p=0; p<5; p++){
+                if(vois[p] == NULL) continue;
                 if(vois[p]->nb_c <= 5) astar(g, vois[p], b, 1);
             }
             
@@ -657,6 +726,7 @@ void relie(grille* g) {
         //fprintf(stderr, "x=%d", x);
         if((g->infra[x])->infra == GD_TRANSFO){
             cell** vois = k_plus_proche(g, g->infra[x], CENTRALE, 1, CENTRALE);
+            if(vois[0] == NULL) continue;
             astar(g, vois[0], g->infra[x], 1);
         }
     }

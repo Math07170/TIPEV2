@@ -60,7 +60,9 @@ void terrain_infra_test8(grille* g);
 int* astar(grille* g, cell* depart, cell* final, int id);
 void situation_initiale(grille* g);
 void relie(grille* g);
+void relieup(grille* g);
 void situation_initiale_pop(grille** gl, int n);
 grille* copie_grille(grille* g);
 void random_transfo(grille* g);
+void copie_case(cell* depart, cell* arrive);
 #endif

@@ -9,8 +9,8 @@
 
 // Plus le score est faible mieux c'est
 int score(individu i, float eco, float env){
-    grille* g = copie_grille(i);
-    relie(g);
+    grille* g = copie_grille((grille*)i);
+    relieup(g);
     int res_eco = 0;
     int res_env = 0;
     for(int k = 0; k<g->taille; k++){
@@ -29,8 +29,6 @@ int score(individu i, float eco, float env){
 // croise deux individus en prenant 1/4 de l'un et 3/4 de l'autre
 individu croisement(individu g1, individu g2){
     individu res = creer_grille(g1->taille);
-    generation_carte(res);
-    situation_initiale(res);
     for(int k = 0; k<g1->taille; k++){
         for(int j = 0; j<g1->taille; j++){
             if(k < g1->taille/2 && j < g1->taille/2){
@@ -63,13 +61,27 @@ individu croisement(individu g1, individu g2){
             }
         }
     }
+    for(int i = 0;i < g1->nb_infra;i++){
+        if(g1->infra[i]->x < g1->taille/2 && g1->infra[i]->y < g1->taille/2){
+            res->infra[res->nb_infra] = getCell(g1->infra[i]->x,g1->infra[i]->y,res);
+            cell* test = res->infra[res->nb_infra];
+            res->nb_infra += 1;
+        }
+    }
+    for(int i = 0;i < g2->nb_infra;i++){
+        if(g2->infra[i]->x >= g2->taille/2 || g2->infra[i]->y >= g2->taille/2){
+            res->infra[res->nb_infra] = getCell(g2->infra[i]->x,g2->infra[i]->y,res);
+            cell* test = res->infra[res->nb_infra];
+            res->nb_infra += 1;
+        }
+    }
     return res;
 }
 
 // Applique une mutation a un individu 
 /// Une mutation prend k cases contenant un transformateur et les déplaces aléatoirement sur la carte
 void mutation(individu g){
-    int k = rand() % 5;
+    int k = rand() % g->nb_infra;
     int modif = 0;
     for(int l = 0; l < g->nb_infra; l++){
         if (modif >= k){
@@ -79,10 +91,9 @@ void mutation(individu g){
             modif++;
             int x2 = rand() % g->taille;
             int y2 = rand() % g->taille;
-            g->infra[l]->x = x2;
-            g->infra[l]->y = y2;
             getCell(x2,y2,g)->infra = g->infra[l]->infra;
             g->infra[l]->infra = VIDE;
+            g->infra[l] = getCell(x2,y2,g);
         }
     }
 }
@@ -107,6 +118,7 @@ individu worst(population* p, float eco, float env){
     int max = score(p->t[0], eco, env);
     int indice = 0;
     for(int k = 1; k < p->taille; k++){
+        individu i = p->t[k];
         int s = score(p->t[k], eco, env);
         if(s > max){
             max = s;
@@ -120,7 +132,12 @@ individu worst(population* p, float eco, float env){
 float moyenne(population* p, float eco, float env){
     float res = 0;
     for(int k = 0; k < p->taille; k++){
-        res += score(p->t[k], eco, env);
+        if(p->score[k] == -1){
+            res += score(p->t[k], eco, env);
+        }else{
+            res += p->score[k];
+        }
+        
     }
     return res/p->taille;
 }
@@ -193,9 +210,21 @@ int* tri_rapide(population* p, float eco, float env){
     }
     return res;
 }
+void free_partial_population(population* p, int* t){
+    for(int k = p->taille /2; k < p->taille; k++){
+        grille* test = p->t[t[k]];
+        detruire_grille(test);
+        
+    }
+    free(p->t);
+    free(p->score);
+    free(p);
+}
 void free_population(population* p){
     for(int k = 0; k < p->taille; k++){
-        detruire_grille(p->t[k]);
+        grille* g = p->t[k];
+        detruire_grille(g);
+        int a = 1;
     }
     free(p->t);
     free(p->score);
@@ -203,7 +232,7 @@ void free_population(population* p){
 }
 // Utilise la fonction tri_rapide pour générer la population suivante en appliquant une selection naturelle et une chance de mutation de 10% par individu
 population* next_generation(population* p, float eco, float env){
-    fprintf(stderr, "Moyenne : %d\n", score(worst(p, eco, env), eco, env));
+    fprintf(stderr, "Pire : %d\n", score(worst(p, eco, env), eco, env));
     population* res = malloc(sizeof(population));
     res->taille = p->taille;
     res->t = malloc(sizeof(individu)*p->taille);
@@ -213,22 +242,32 @@ population* next_generation(population* p, float eco, float env){
     for(int k = 0; k < p->taille/2; k++){
         res->t[k] = p->t[t[k]];
         res->score[k] = p->score[t[k]];
-        if(rand() % 100 > 10 ) { 
+        if(rand() % 100 <= 30 ) { 
             res->score[k] = -1;
             mutation(res->t[k]);
         }
-        fprintf(stderr, "k = %d res : %d\n", k, score(res->t[k], eco, env));
+        //fprintf(stderr, "k = %d res : %d\n", k, score(res->t[k], eco, env));
     }
     for(int k = p->taille/2; k < p->taille; k++){
         //detruire_grille(res->t[k]);
-        res->t[k] = croisement(p->t[t[rand() % (p->taille/2)]], p->t[t[rand() % (p->taille/2)]]);
+        int n1 = rand() % (p->taille/2), n2= rand() % (p->taille/2);
+        int i1 = t[n1], i2 = t[n2];
+        grille* test1 = p->t[i1];
+        grille* test2 = p->t[i2];
         
-        if(rand() % 100 > 10 ) mutation(res->t[k]);
-        fprintf(stderr, "k = %d res : %d\n", k, score(res->t[k], eco, env));
-        res->score[k] = -1;
+        grille* temp = p->t[t[k]];
+        res->t[k] = croisement(test1, test2);
+        detruire_grille(temp);
+        if(rand() % 100 <= 30 ) mutation(res->t[k]);
+        //fprintf(stderr, "k = %d res : %d\n", k, score(res->t[k], eco, env));
+        res->score[k] = score(res->t[k], eco, env);
     }
+    free(p->score);
+    free(p->t);
+    free(p);
     free(t);
-    fprintf(stderr, "Moyenne res : %d\n", score(worst(res, eco, env), eco, env));
+    
+    fprintf(stderr, "Moyenne res : %f\n", moyenne(res, eco, env));
     return res;
 }
 
@@ -246,6 +285,8 @@ population* creer_population(int n){
         res->score[k] = -1;
         res->t[k] = copie_grille(res->t[0]);
         random_transfo(res->t[k]);
+        grille* test2 = res->t[k];
+        int a = 1;
     }
     random_transfo(res->t[0]);
     return res;

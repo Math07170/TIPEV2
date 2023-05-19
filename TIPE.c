@@ -6,6 +6,7 @@
 #include "grille.h"
 #include "fileprio.h"
 #include "affichage.h"
+#include "affichePPM.h"
 #include "carte.h"
 #include "genetique.h"
 #include <ncurses.h>
@@ -38,11 +39,11 @@
 
 int main(){
     srand(time(NULL)); 
-    population* pop = creer_population(20);
+    population* pop = creer_population(5);
     fprintf(stderr, "Population créée\n");
     int n = 100;
 
-    for(int x = 0; x< 100; x++){
+    for(int x = 0; x< 3; x++){
         pop = next_generation(pop, 0.5, 0.5);
         
         fprintf(stderr, "Generation %d, Score moyen : %f, taille mémoire : %ld \n", x, moyenne(pop, 0.5, 0.5), sizeof(grille));
@@ -63,6 +64,7 @@ int main(){
     relieup(g);
     //astar(g, getCell(0,0,g), getCell(50,50,g));
     affiche(g);
+    affichePPM(g,true,"grille.ppm");		// Le booléen correspond à la présence du quadrillage
 	/*
 	// TESTS FILEPRIO
     fileprio f = creer_fileprio(n*n);
@@ -94,7 +96,7 @@ int main(){
     detruire_fileprio(&f);
     // TEST OK
 	*/
-	sleep(50);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
+	sleep(60);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
 	endwin();		// Arrête proprement ncurses, c'est REQUIS pour ne pas détruire le terminal
 	
 	detruire_grille(g);

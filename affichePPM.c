@@ -5,7 +5,7 @@
 #include <time.h>
 #include "grille.h"
 
-const int TAILLE_TUILE = 16;		// Pas encore utilisé
+const int TAILLE_TUILE = 16;
 
 struct s_pixel{
 	int rouge;
@@ -166,16 +166,25 @@ void dessine_ligne(cell* c,image* img,grille* g,int indice_ligne){
 		}
 	}
 	if(v[1] != NULL && contient_ligne(v[1],id_l)){		// Affiche en bas
-		//mvaddch(3*c.x+2,6*c.y+2,ACS_CKBOARD);		// Copier-coller, pas d'inquiétude à avoir
-		//mvaddch(3*c.x+2,6*c.y+3,ACS_CKBOARD);
+		for(int i = TAILLE_TUILE - 2;i > TAILLE_TUILE - 1 - TAILLE_TUILE * 2 / 5;i--){
+			for(int j = TAILLE_TUILE * 2 / 5;j < TAILLE_TUILE - (TAILLE_TUILE * 2 / 5);j++){
+				dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
+			}
+		}
 	}
 	if(v[2] != NULL && contient_ligne(v[2],id_l)){		// Affiche à gauche
-		//mvaddch(3*c.x+1,6*c.y,ACS_CKBOARD);
-		//mvaddch(3*c.x+1,6*c.y+1,ACS_CKBOARD);
+		for(int j = 0;j < TAILLE_TUILE * 2 / 5;j++){
+			for(int i = TAILLE_TUILE * 2 / 5;i < TAILLE_TUILE - (TAILLE_TUILE * 2 / 5);i++){
+				dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
+			}
+		}
 	}
 	if(v[3] != NULL && contient_ligne(v[3],id_l)){		// Affiche à droite
-		//mvaddch(3*c.x+1,6*c.y+4,ACS_CKBOARD);
-		//mvaddch(3*c.x+1,6*c.y+5,ACS_CKBOARD);
+		for(int j = TAILLE_TUILE - 2;j > TAILLE_TUILE - 1 - TAILLE_TUILE * 2 / 5;j--){
+			for(int i = TAILLE_TUILE * 2 / 5;i < TAILLE_TUILE - (TAILLE_TUILE * 2 / 5);i++){
+				dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
+			}
+		}
 	}
 	free(v);		// Requis, voir fonction voisins
 	return;
@@ -244,7 +253,7 @@ void dessine_cell(cell* c,image* img,grille* g,bool quadrillage){		// Pour l'ins
 			break;
 		default:		// 0, ou erreur grossière
 			{}			// Pas de ligne à dessinner, RAS
-		}
+		}		// En fait, appeller dessine_ligne 4 fois comme un sauvage dans tous les cas devrait suffire...
 	return;
 }
 

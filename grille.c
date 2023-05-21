@@ -156,7 +156,8 @@ bool contient_ligne(cell* c, int id_ligne){
     return false;
 }
 
-/* Ordre : H,B,G,D */
+/* Ordre : H,B,G,D
+ * IL EST REQUIS DE LIBÉRER LE TABLEAU RENVOYÉ PAR CETTE FONCTION APRÈS UTILISATION !!! */
 cell** voisins(cell* c, grille* g){
     cell** vois = malloc(4*sizeof(cell*));
     int x = c->x;

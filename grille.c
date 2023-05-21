@@ -39,9 +39,6 @@ grille* creer_grille(int n) {
     g->taille = n;
     g->nb_infra = 0;
     g->infra = malloc(sizeof(cell*) * n*n);
-    if(n!= 100){
-        int a = n;
-    }
     // initialisation tu tableau infra 
     for(int k = 0; k < n*n; k++){
         g->infra[k] = NULL;
@@ -166,17 +163,9 @@ cell** voisins(cell* c, grille* g){
     int y = c->y;
 
     vois[1] =  getCell(x+1, y, g);
-    if(vois[1] != NULL && vois[1]->x* 100 + vois[1]->y > 99* 100 + 99) 
-    {exit(-1);}
     vois[0] =  getCell(x-1, y, g);
-    if(vois[0] != NULL && vois[0]->x* 100 + vois[0]->y > 99* 100 + 99) 
-    {exit(-2);}
     vois[3] =  getCell(x, y+1, g);
-    if(vois[3] != NULL && vois[3]->x* 100 + vois[3]->y > 99* 100 + 99) 
-    {exit(-3);}
     vois[2] =  getCell(x, y-1, g);
-    if(vois[2] != NULL && vois[2]->x* 100 + vois[2]->y > 99* 100 + 99) 
-    {exit(-4);}
     return vois;
 }
 void deplace(cell* source, cell* destination){

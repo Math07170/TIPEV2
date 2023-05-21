@@ -38,7 +38,7 @@
 
 int main(){
     srand(time(NULL)); 
-    population* pop = creer_population(20);
+    /*population* pop = creer_population(100);
     fprintf(stderr, "Population créée\n");
     int n = 100;
 
@@ -46,7 +46,15 @@ int main(){
         pop = next_generation(pop, 0.5, 0.5);
         
         fprintf(stderr, "Generation %d, Score moyen : %f, taille mémoire : %ld \n", x, moyenne(pop, 0.5, 0.5), sizeof(grille));
+    }*/
+
+    population_v2* pop = creer_population_v2(100);
+    fprintf(stderr, "Population créée\n");
+    for(int x =0; x < 100; x++){
+        pop = next_generation_v2(pop);
+        fprintf(stderr,"Genération %d : Moyenne %f \n", k, moyenne_v2(pop));
     }
+    return 0;
     grille* g = copie_grille(best(pop, 0.5, 0.5));
     free_population(pop);
     /*randomize_terrain(&g);

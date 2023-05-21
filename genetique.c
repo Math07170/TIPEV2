@@ -7,6 +7,213 @@
 #include "genetique.h"
 #include "carte.h"
 
+int score_v2(grille* g, individu_v2* i, float eco, float env){
+    grille* copie = copie_grille(g);
+    for(int k = 0; k < i->taille; k++){
+        cell* c = getCell(i->t[k].x, i->t[k].y, copie);
+        c->infra = i->t[k].type;
+        copie->infra[copie->nb_infra] = c;
+        copie->nb_infra++;
+        //fprintf(stderr, "nb_infra : %d x : %d, y : %d, type : %d\n", copie->nb_infra, i->t[k].x, i->t[k].y, i->t[k].type);
+    }
+    relieup(copie);
+    int res_eco = 0;
+    int res_env = 0;
+    for(int k = 0; k<copie->taille; k++){
+        for(int j = 0; j<copie->taille; j++){
+            res_eco += (copie->t[k][j].type)*(copie->t[k][j].nb_c);
+            //fprintf(stderr, "type : %d, nb_c : %d res_eco %d\n", g->t[k][j].type, g->t[k][j].nb_c, res_eco);
+            for(int c = 0; c < copie->t[k][j].nb_c; c++){
+                res_env += (copie->t[k][j].c[c].r)*(copie->t[k][j].c[c].i)*(copie->t[k][j].c[c].i);
+            }
+        }
+    }
+    detruire_grille(copie);
+    return (res_eco*eco + res_env*env);
+
+}
+float moyenne_v2(population_v2* p){
+    int res = 0;
+    for(int k = 0; k < p->taille; k++){
+        res += (p->score[k] == -1) ? score_v2(p->g, &(p->t[k]), 0.5, 0.5) : p->score[k];
+    }
+    return res/p->taille;
+}
+// Renvoie la liste des indices des individus de la population triés par score croissant
+int* tri_rapide_v2(population_v2* p, float eco, float env){
+    int* res = malloc(sizeof(int)*p->taille);
+    for(int k = 0; k < p->taille; k++){
+        res[k] = k;
+    }
+    for(int k = 0; k < p->taille; k++){
+        if(p->score[res[k]] == -1){
+            p->score[res[k]] = score_v2(p->g, &(p->t[res[k]]), eco, env);
+        }
+        int min = p->score[res[k]];
+        int indice = k;
+        for(int j = k+1; j < p->taille; j++){
+            if(p->score[res[j]] == -1){
+                p->score[res[j]] = score_v2(p->g, &(p->t[res[j]]), eco, env);
+            }
+            int s = p->score[res[j]];
+            if(s < min){
+                min = s;
+                indice = j;
+            }
+        }
+        int tmp = res[k];
+        res[k] = res[indice];
+        res[indice] = tmp;
+    }
+    return res;
+}
+
+individu_v2 croisement_v2(individu_v2 i1, individu_v2 i2, int n){
+    individu_v2 res;
+    res.taille = i1.taille + i2.taille;
+    infra* temp = malloc(sizeof(infra)*res.taille);
+    int taille_f = 0;
+    for(int k = 0; k < i1.taille; k++){
+        if(i1.t[k].x < n/2 && i1.t[k].y < n/2){
+            temp[taille_f].type = i1.t[k].type;
+            temp[taille_f].x = i1.t[k].x;
+            temp[taille_f].y = i1.t[k].y;
+            taille_f++;
+        }
+    }
+    for(int k = 0; k < i2.taille; k++){
+        if(!(i2.t[k].x < n/2 && i2.t[k].y < n/2)){
+            temp[taille_f].type = i2.t[k].type;
+            temp[taille_f].x = i2.t[k].x;
+            temp[taille_f].y = i2.t[k].y;
+            taille_f++;
+        }
+    }
+    res.taille = taille_f;
+    res.t = malloc(sizeof(infra)*res.taille);
+    for(int k = 0; k < res.taille; k++){
+        res.t[k].type = temp[k].type;
+        res.t[k].x = temp[k].x;
+        res.t[k].y = temp[k].y;
+    }
+    free(temp);
+    return res;
+}
+
+void mutation_v2(individu_v2* i, int n){
+    int k = rand() % i->taille;
+    int x2 = rand() % n;
+    int y2 = rand() % n;
+    i->t[k].x = x2;
+    i->t[k].y = y2;
+}
+
+population_v2* creer_population_v2(int n){
+    population_v2* res = malloc(sizeof(population_v2));
+    res->taille = n;
+    res->t = malloc(sizeof(individu_v2)*n);
+    res->score = malloc(sizeof(int)*n);
+    for(int k = 0; k<n; k++){
+        res->score[k] = -1;
+    }
+    res->g = creer_grille(100);
+    generation_carte(res->g);
+    situation_initiale(res->g);
+
+    for(int k = 0; k < n; k++){
+        int NB_petit_transfo = NB_PT_VILLE /5;
+        int NB_grand_transfo = (NB_GD_VILLE + NB_USINE + NB_petit_transfo)/5;
+        res->t[k].t = malloc(sizeof(infra)*(NB_CENTRALE + NB_grand_transfo + NB_petit_transfo));
+        res->t[k].taille = NB_CENTRALE + NB_grand_transfo + NB_petit_transfo;
+        int taille = res->g->taille;
+        for(int x =0; x<NB_CENTRALE; x++){
+            int i = rand()%n;
+            int j = rand()%n;
+            cell* c = getCell(i,j,res->g);
+            if(c->infra == VIDE && c->infra != EAU){
+                res->t[k].t[x].x = i;
+                res->t[k].t[x].y = j;
+                res->t[k].t[x].type = CENTRALE;
+            }else{
+                x-=1;
+            }
+            
+        }
+        
+        for(int x =NB_CENTRALE; x<NB_CENTRALE+NB_grand_transfo; x++){
+            int i = rand()%n;
+            int j = rand()%n;
+            cell* c = getCell(i,j,res->g);
+            if(c->infra == VIDE && c->infra != EAU){
+                res->t[k].t[x].x = i;
+                res->t[k].t[x].y = j;
+                res->t[k].t[x].type = GD_TRANSFO;
+            }else{
+                x-=1;
+            }
+            
+        }
+        for(int x =NB_CENTRALE+NB_grand_transfo; x<NB_CENTRALE+NB_grand_transfo+NB_petit_transfo; x++){
+            int i = rand()%n;
+            int j = rand()%n;
+            cell* c = getCell(i,j,res->g);
+            if(c->infra == VIDE && c->infra != EAU){
+                res->t[k].t[x].x = i;
+                res->t[k].t[x].y = j;
+                res->t[k].t[x].type = PT_TRANSFO;
+            }else{
+                x-=1;
+            }
+            
+        }
+        
+    }
+    
+    return res;
+
+}
+
+population_v2* next_generation_v2(population_v2* pop){
+    population_v2* res = malloc(sizeof(population_v2));
+    res->taille = pop->taille;
+    res->t = malloc(sizeof(individu_v2)*pop->taille);
+    res->score = malloc(sizeof(int)*pop->taille);
+    res->g = pop->g;
+    int* t = tri_rapide_v2(pop, 0.5, 0.5);
+    for(int k = 0; k < pop->taille/2; k++){
+        res->t[k].t = pop->t[t[k]].t;
+        res->t[k].taille = pop->t[t[k]].taille;
+        res->score[k] = pop->score[t[k]];
+        if(rand() % 100 <= 30 ) { 
+            res->score[k] = -1;
+            mutation_v2(&(res->t[k]), res->g->taille);
+        }
+        //fprintf(stderr, "k = %d res : %d\n", k, score(res->t[k], eco, env));
+    }
+    for(int k = pop->taille/2; k < pop->taille; k++){
+        //detruire_grille(res->t[k]);
+        int n1 = rand() % (pop->taille/2), n2= rand() % (pop->taille/2);
+        int i1 = t[n1], i2 = t[n2];
+        individu_v2 test1 = pop->t[i1];
+        individu_v2 test2 = pop->t[i2];
+        
+        individu_v2 temp = pop->t[t[k]];
+        individu_v2 crois = croisement_v2(test1, test2, res->g->taille);
+        res->t[k].t = crois.t;
+        res->t[k].taille = crois.taille;
+
+        free(temp.t);
+        if(rand() % 100 <= 30 ) mutation_v2(&(res->t[k]), res->g->taille);
+        //fprintf(stderr, "k = %d res : %d\n", k, score(res->t[k], eco, env));
+        res->score[k] = score_v2(res->g, &(res->t[k]), 0.5, 0.5);
+    }
+    free(t);
+    free(pop->t);
+    free(pop->score);
+    free(pop);
+    //fprintf(stderr, "Moyenne : %d\n", moyenne_v2(*res));
+    return res;
+}
 // Plus le score est faible mieux c'est
 int score(individu i, float eco, float env){
     grille* g = copie_grille((grille*)i);

@@ -32,6 +32,37 @@ int score_v2(grille* g, individu_v2* i, float eco, float env){
     return (res_eco*eco + res_env*env);
 
 }
+void free_population_v2(population_v2* p){
+    for(int k = 0; k < p->taille; k++){
+        free(p->t[k].t);
+    }
+    free(p->t);
+    free(p->score);
+    free(p);
+}
+grille* best_v2(population_v2* p, float eco, float env){
+    int min = score_v2(p->g, &(p->t[0]), eco, env);
+    int indice = 0;
+    for(int k = 1; k < p->taille; k++){
+        int s = score_v2(p->g, &(p->t[k]), eco, env);
+        if(s < min){
+            min = s;
+            indice = k;
+        }
+    }
+    individu_v2* i = &(p->t[indice]);
+    grille* copie = copie_grille(p->g);
+    for(int k = 0; k < i->taille; k++){
+        cell* c = getCell(i->t[k].x, i->t[k].y, copie);
+        c->infra = i->t[k].type;
+        copie->infra[copie->nb_infra] = c;
+        copie->nb_infra++;
+        //fprintf(stderr, "nb_infra : %d x : %d, y : %d, type : %d\n", copie->nb_infra, i->t[k].x, i->t[k].y, i->t[k].type);
+    }
+    relieup(copie);
+    return copie;
+
+}
 float moyenne_v2(population_v2* p){
     int res = 0;
     for(int k = 0; k < p->taille; k++){

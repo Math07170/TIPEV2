@@ -51,13 +51,12 @@ int main(){
 
     population_v2* pop = creer_population_v2(100);
     fprintf(stderr, "Population créée\n");
-    for(int x =0; x < 100; x++){
+    for(int x =0; x < 50; x++){
         pop = next_generation_v2(pop);
-        fprintf(stderr,"Genération %d : Moyenne %f \n", k, moyenne_v2(pop));
+        fprintf(stderr,"Genération %d : Moyenne %f \n", x, moyenne_v2(pop));
     }
-    return 0;
-    grille* g = copie_grille(best(pop, 0.5, 0.5));
-    free_population(pop);
+    grille* g = best_v2(pop, 0.5, 0.5);
+    free_population_v2(pop);
     /*randomize_terrain(&g);
     randomize_infra(USINE, 4, &g);
     randomize_infra(GD_VILLE, 3, &g);
@@ -68,11 +67,11 @@ int main(){
     randomize_infra(PT_TRANSFO, 12, &g);*/	// NE PAS SUPPRIMER
     //////terrain_infra_test8(g);		// TEST, penser à effacer les preuves
     //////affiche_moche(&g);
+    affichePPM(g,true,"grille.ppm");
     init_ncurses();
-    relieup(g);
     //astar(g, getCell(0,0,g), getCell(50,50,g));
     affiche(g);
-    affichePPM(g,true,"grille.ppm");		// Le booléen correspond à la présence du quadrillage
+		// Le booléen correspond à la présence du quadrillage
 	/*
 	// TESTS FILEPRIO
     fileprio f = creer_fileprio(n*n);

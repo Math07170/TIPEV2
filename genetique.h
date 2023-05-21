@@ -43,4 +43,6 @@ individu best(population* p, float eco, float env);
 population_v2* creer_population_v2(int n);
 population_v2* next_generation_v2(population_v2* pop);
 float moyenne_v2(population_v2* p);
+void free_population_v2(population_v2* p);
+grille* best_v2(population_v2* p, float eco, float env);
 #endif // GENETIQUE_H

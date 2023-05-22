@@ -372,7 +372,7 @@ int* astar(grille* g, cell* depart, cell* final, int id) {	// Situation du table
             deg = 4;
         }
         cell** vois = voisins(getCell(xs, ys,g), g);
-        int voisins[deg];
+        int voisins[deg];		// HORREUR !!!
         int indice = 0;
         for(int k = 0; k<4; k++){
             if(vois[k] != NULL){

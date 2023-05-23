@@ -51,13 +51,14 @@ int main(){
 
     population_v2* pop = creer_population_v2(100);
     fprintf(stderr, "Population créée\n");
-    for(int x =0; x < 100; x++){
+    for(int x =0; x < 10; x++){
         pop = next_generation_v2(pop);
         fprintf(stderr,"Genération %d : Moyenne %lf \n", x, moyenne_v2(pop));
     }
     grille* g = best_v2(pop, 0.5, 0.5);
+    affichePPM(g,true,"grille.ppm");
     free_population_v2(pop);
-    
+    return 0;
     /*randomize_terrain(&g);
     randomize_infra(USINE, 4, &g);
     randomize_infra(GD_VILLE, 3, &g);

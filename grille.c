@@ -317,6 +317,7 @@ int heuristique(int xa, int ya, int xb, int yb) {
 int poids(int sx, int sy, grille* g) {
     int n = g->taille;
     cell* c = getCell(sx / n, sx%n, g);
+    if(c->nb_c != 0) return 0;
     int res = (c->type)*(c->type);
     return res;
 }
@@ -372,7 +373,7 @@ int* astar(grille* g, cell* depart, cell* final, int id) {	// Situation du table
             deg = 4;
         }
         cell** vois = voisins(getCell(xs, ys,g), g);
-        int voisins[deg];		// HORREUR !!!
+        int voisins[4];		// HORREUR !!!
         int indice = 0;
         for(int k = 0; k<4; k++){
             if(vois[k] != NULL){

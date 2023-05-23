@@ -6,6 +6,7 @@
 #include "grille.h"
 #include "fileprio.h"
 #include "affichage.h"
+#include "affichePPM.h"
 #include "carte.h"
 #include "genetique.h"
 #include <ncurses.h>
@@ -38,17 +39,25 @@
 
 int main(){
     srand(time(NULL)); 
-    population* pop = creer_population(20);
+    /*population* pop = creer_population(100);
     fprintf(stderr, "Population créée\n");
     int n = 100;
 
-    for(int x = 0; x< 100; x++){
+    for(int x = 0; x< 3; x++){
         pop = next_generation(pop, 0.5, 0.5);
         
         fprintf(stderr, "Generation %d, Score moyen : %f, taille mémoire : %ld \n", x, moyenne(pop, 0.5, 0.5), sizeof(grille));
+    }*/
+
+    population_v2* pop = creer_population_v2(3);
+    fprintf(stderr, "Population créée\n");
+    for(int x =0; x < 3; x++){
+        pop = next_generation_v2(pop);
+        fprintf(stderr,"Genération %d : Moyenne %f \n", x, moyenne_v2(pop));
     }
-    grille* g = copie_grille(best(pop, 0.5, 0.5));
-    free_population(pop);
+    grille* g = best_v2(pop, 0.5, 0.5);
+    free_population_v2(pop);
+    
     /*randomize_terrain(&g);
     randomize_infra(USINE, 4, &g);
     randomize_infra(GD_VILLE, 3, &g);
@@ -57,13 +66,16 @@ int main(){
     randomize_infra(CENTRALE, 1, &g);
     randomize_infra(GD_TRANSFO, 5, &g);
     randomize_infra(PT_TRANSFO, 12, &g);*/	// NE PAS SUPPRIMER
+    
     //////terrain_infra_test8(g);		// TEST, penser à effacer les preuves
     //////affiche_moche(&g);
-    init_ncurses();
-    relieup(g);
+    
+    affichePPM(g,true,"grille.ppm");	// Le booléen correspond à la présence du quadrillage
+    //init_ncurses();	// REQUIS avec ncurses
     //astar(g, getCell(0,0,g), getCell(50,50,g));
-    affiche(g);
+    //affiche(g);		// Ancienne implémentation avec ncurses
 	/*
+	 * 
 	// TESTS FILEPRIO
     fileprio f = creer_fileprio(n*n);
     inserer_fileprio(&f, 5, 5);
@@ -94,8 +106,9 @@ int main(){
     detruire_fileprio(&f);
     // TEST OK
 	*/
-	sleep(50);		// Hack fumeux TEMPORAIRE pour voir la grille quelques instants
-	endwin();		// Arrête proprement ncurses, c'est REQUIS pour ne pas détruire le terminal
+	
+	//sleep(60);		// Bien pratique avec ncurses
+	//endwin();			// REQUIS avec ncurses pour ne pas détruire le terminal
 	
 	detruire_grille(g);
 		

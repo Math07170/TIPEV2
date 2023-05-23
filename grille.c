@@ -16,11 +16,11 @@ const int CENTRALE = 5;	// rouge
 const int GD_TRANSFO = 6;	// rouge
 const int PT_TRANSFO = 7;	// rouge
 
-const int NB_USINE = 2;
-const int NB_GD_VILLE = 1;
-const int NB_PT_VILLE = 2;
-const int NB_VILLAGE = 3;
-const int NB_CENTRALE = 2;
+const int NB_USINE = 30;
+const int NB_GD_VILLE = 15;
+const int NB_PT_VILLE = 50;
+const int NB_VILLAGE = 70;
+const int NB_CENTRALE = 10;
 
 // Type de terrain
 const int NEANT = 0;	// N'a pas à être affiché !!!
@@ -423,31 +423,12 @@ int* astar(grille* g, cell* depart, cell* final, int id) {	// Situation du table
         int k = p[ce->x * n + ce->y];
         //fprintf(stderr, "x = %d, y=%d\n", ce->x, ce->y);
         cable cable;
-        if(id == 1){
-            cable.i = 2.35;
-            cable.u = 230;
-            cable.r = 0.06;
-            cable.id = g->nb_l;
-            ce->c[ce->nb_c] = cable;
-            ce->nb_c = ce->nb_c+1;
-        }else if(id == 2){
-            cable.i = 45;
-            cable.u = 30000;
-            cable.r = 0.06;
-            cable.id = g->nb_l;
-            ce->c[ce->nb_c] = cable;
-            ce->nb_c = ce->nb_c+1;
-        }else if(id == 3){
-            cable.i = 450;
-            cable.u = 400000;
-            cable.r = 0.06;
-            cable.id = g->nb_l;
-            ce->c[ce->nb_c] = cable;
-            ce->nb_c = ce->nb_c+1;
-        }else{
-            
-        }
-        
+        cable.i = 0;
+        cable.u = 230;
+        cable.r = 50;
+        cable.id = g->nb_l;
+        ce->c[ce->nb_c] = cable;
+        ce->nb_c = ce->nb_c+1;
         //fprintf(stderr, "Case : x=%d y=%d", ce->x, ce->y);
         ce = getCell(k / n, k%n, g);
         //fprintf(stderr, "Case : x=%d y=%d", ce->x, ce->y);
@@ -455,30 +436,12 @@ int* astar(grille* g, cell* depart, cell* final, int id) {	// Situation du table
     ce=depart;
     int k = p[ce->x * n + ce->y];
     cable cable;
-    if(id == 1){
-        cable.i = 2.35;
-        cable.u = 230;
-        cable.r = 0.06;
-        cable.id = g->nb_l;
-        ce->c[ce->nb_c] = cable;
-        ce->nb_c = ce->nb_c+1;
-    }else if(id == 2){
-        cable.i = 45;
-        cable.u = 30000;
-        cable.r = 0.06;
-        cable.id = g->nb_l;
-        ce->c[ce->nb_c] = cable;
-        ce->nb_c = ce->nb_c+1;
-    }else if(id == 3){
-        cable.i = 450;
-        cable.u = 400000;
-        cable.r = 0.06;
-        cable.id = g->nb_l;
-        ce->c[ce->nb_c] = cable;
-        ce->nb_c = ce->nb_c+1;
-    }else{
-            
-    }
+    cable.i = 0;
+    cable.u = 230;
+    cable.r = 50;
+    cable.id = g->nb_l;
+    ce->c[ce->nb_c] = cable;
+    ce->nb_c = (ce->nb_c)+1;
     g->nb_l += 1;
     detruire_fileprio(&file);
     free(p);
@@ -705,13 +668,13 @@ void relieup(grille* g){
             cell** destination = k_plus_proche(g, g->infra[k], GD_TRANSFO, 1, GD_TRANSFO);
             cell* c = destination[0];
             if(c == NULL) exit(666);
-            astar(g, g->infra[k], c, 2);
+            astar(g, g->infra[k], c, 1);
             free(destination);
         }else{
             cell** destination = k_plus_proche(g, g->infra[k], CENTRALE, 1, CENTRALE);
             cell* c = destination[0];
             if(c == NULL) exit(666);
-            astar(g, g->infra[k], c, 3);
+            astar(g, g->infra[k], c, 1);
             free(destination);
         }
     }

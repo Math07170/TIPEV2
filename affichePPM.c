@@ -6,8 +6,8 @@
 #include "grille.h"
 
 const int TAILLE_TUILE = 25;
-/* Si cette valeur est autre chose que 25, l'affichage des "lettres" des infrastructures risque de devenir assez laid
- * Rien d'autre n'est hardcodé, donc à part ça tout devrait bien se passer */
+/* Si cette valeur est autre chose que 25, l'affichage des "lettres" des infrastructures ne sera pas centré (mais restera à peu près dans la tuile)
+ * Rien d'autre n'est hardcodé */
 
 struct s_pixel{
 	int rouge;
@@ -61,49 +61,8 @@ void ecritPPM(image* img,char* nom_fichier){
 	return;
 }
 
-/* Dessine une (seule !) ligne électrique sur une tuile
- * Peut nécessiter jusqu'à 4 appels pour une seule cellule, avec des indice_ligne différents
- * Ancienne version... */
-void dessine_ligne(cell* c,image* img,grille* g,int indice_ligne){
-	pixel ligne;		// Pixel servant à dessiner les lignes électriques
-	ligne.rouge = 128;
-	ligne.vert = 128;
-	ligne.bleu = 128;
-	int id_l = c->c[indice_ligne].id;		// SUS
-	cell** v = voisins(c, g);
-	if(v[0] != NULL && contient_ligne(v[0],id_l)){		// Affiche en haut
-		for(int i = 0;i < (TAILLE_TUILE * 2 / 5) - 1;i++){
-			for(int j = TAILLE_TUILE * 2 / 5;j < TAILLE_TUILE - (TAILLE_TUILE * 2 / 5);j++){
-				dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
-			}
-		}
-	}
-	if(v[1] != NULL && contient_ligne(v[1],id_l)){		// Affiche en bas
-		for(int i = TAILLE_TUILE - 1;i > TAILLE_TUILE - TAILLE_TUILE * 2 / 5;i--){
-			for(int j = TAILLE_TUILE * 2 / 5;j < TAILLE_TUILE - (TAILLE_TUILE * 2 / 5);j++){
-				dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
-			}
-		}
-	}
-	if(v[2] != NULL && contient_ligne(v[2],id_l)){		// Affiche à gauche
-		for(int j = 0;j < (TAILLE_TUILE * 2 / 5) - 1 ;j++){
-			for(int i = TAILLE_TUILE * 2 / 5;i < TAILLE_TUILE - (TAILLE_TUILE * 2 / 5);i++){
-				dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
-			}
-		}
-	}
-	if(v[3] != NULL && contient_ligne(v[3],id_l)){		// Affiche à droite
-		for(int j = TAILLE_TUILE - 1;j > TAILLE_TUILE - TAILLE_TUILE * 2 / 5;j--){
-			for(int i = TAILLE_TUILE * 2 / 5;i < TAILLE_TUILE - (TAILLE_TUILE * 2 / 5);i++){
-				dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
-			}
-		}
-	}
-	free(v);		// Requis, voir fonction voisins
-	return;
-}
-
-void dessine_ligne_v2(cell* c,image* img,grille* g){
+/* Dessine toutes les lignes électriques sur une tuile */
+void dessine_ligne(cell* c,image* img,grille* g){
 	pixel ligne;		// Pixel servant à dessiner les lignes électriques
 	ligne.rouge = 128;
 	ligne.vert = 128;
@@ -245,23 +204,18 @@ void dessine_infra_lettre(cell* c,image* img){
 			dessine_pixel(img,x0+4,y0+2,rouge);
 			break;
 		case 7:		// PT_TRANSFO, t rouge
-			dessine_pixel(img,x0,y0+1,rouge);
-			dessine_pixel(img,x0+1,y0+1,rouge);
-			dessine_pixel(img,x0+2,y0+1,rouge);
-			dessine_pixel(img,x0+3,y0+1,rouge);
-			dessine_pixel(img,x0+3,y0+2,rouge);
-			dessine_pixel(img,x0+4,y0+2,rouge);
-			dessine_pixel(img,x0+4,y0+3,rouge);
+			dessine_pixel(img,x0,y0+2,rouge);
 			dessine_pixel(img,x0+1,y0+2,rouge);
+			dessine_pixel(img,x0+2,y0+2,rouge);
+			dessine_pixel(img,x0+3,y0+2,rouge);
+			dessine_pixel(img,x0+4,y0+3,rouge);
+			dessine_pixel(img,x0+4,y0+3,rouge);
+			dessine_pixel(img,x0+4,y0+4,rouge);
 			dessine_pixel(img,x0+1,y0+3,rouge);
+			dessine_pixel(img,x0+1,y0+4,rouge);
+			dessine_pixel(img,x0+1,y0+1,rouge);
 			break;
 		default:	// Pas d'infrastructure, rien à faire
-			// Test, évidemment à enlever...
-			/*dessine_pixel(img,x0,y0,noir);
-			dessine_pixel(img,x0+1,y0+1,rouge);
-			dessine_pixel(img,x0+2,y0+2,noir);
-			dessine_pixel(img,x0+3,y0+3,rouge);
-			dessine_pixel(img,x0+4,y0+4,noir);*/
 			{}
 	}
 	return;
@@ -305,34 +259,7 @@ void dessine_cell(cell* c,image* img,grille* g,bool quadrillage){
 			dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,terrain);
 		}
 	}
-	/*switch(c->nb_c){
-		case 1:
-			dessine_ligne(c,img,g,0);
-			break;
-		case 2:
-			dessine_ligne(c,img,g,0);
-			dessine_ligne(c,img,g,1);
-			break;
-		case 3:
-			dessine_ligne(c,img,g,0);
-			dessine_ligne(c,img,g,1);
-			dessine_ligne(c,img,g,2);
-			break;
-		case 4:
-			dessine_ligne(c,img,g,0);
-			dessine_ligne(c,img,g,1);
-			dessine_ligne(c,img,g,2);
-			dessine_ligne(c,img,g,3);
-			break;
-		default:		// 0, ou erreur grossière
-			{}			// Pas de ligne à dessinner, RAS
-	}		// En fait, appeller dessine_ligne 4 fois comme un sauvage dans tous les cas devrait suffire...
-	*/
-	/*for(int k = 0;k < 4;k++){
-		dessine_ligne(c,img,g,k);
-	}			// TEST, fumeux... 			*/
-	dessine_ligne_v2(c,img,g);
-	// DES PROBLÈMES D'AFFICHAGE DES LIGNES SUBSISTENT...
+	dessine_ligne(c,img,g);
 	if(quadrillage) for(int k = 0;k < TAILLE_TUILE;k++){		// Sépare les cases par du noir, si demandé
 		dessine_pixel(img,(c->x)*TAILLE_TUILE+(TAILLE_TUILE-1),(c->y)*TAILLE_TUILE+k,bordure);
 		dessine_pixel(img,(c->x)*TAILLE_TUILE+k,(c->y)*TAILLE_TUILE+(TAILLE_TUILE-1),bordure);

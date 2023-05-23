@@ -21,11 +21,25 @@ int score_v2(grille* g, individu_v2* i, float eco, float env){
     int res_env = 0;
     for(int k = 0; k<copie->taille; k++){
         for(int j = 0; j<copie->taille; j++){
-            res_eco += (copie->t[k][j].type)*(copie->t[k][j].nb_c);
-            //fprintf(stderr, "type : %d, nb_c : %d res_eco %d\n", g->t[k][j].type, g->t[k][j].nb_c, res_eco);
+            int res_temp = 0;
             for(int c = 0; c < copie->t[k][j].nb_c; c++){
-                res_env += (((copie->t[k][j].c[c].r)*(copie->t[k][j].c[c].i)*(copie->t[k][j].c[c].i))*3.65*2.4*6*6)*(2.16)/1000;
+                switch(copie->t[k][j].nb_c){
+                    case 230: res_temp += 210*1000; break;
+                    case 30000: res_temp += 60000; break;
+                    case 400000: res_temp += 1200000; break;
+                    default : break;
+                }
+                if(copie->t[k][j].type == FORET){
+                    res_temp = res_temp * 1.25;
+                }else if(copie->t[k][j].type == PLAINE){
+                    res_temp = res_temp * 1;
+                }else{
+                    res_temp = res_temp * 2;
+                }
+                res_temp += (((copie->t[k][j].c[c].r)*(copie->t[k][j].c[c].i)*(copie->t[k][j].c[c].i))*3.65*2.4*6*6)*(2.16)/1000;
             }
+            
+            res_eco += res_temp;
         }
     }
     detruire_grille(copie);

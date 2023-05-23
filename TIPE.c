@@ -69,7 +69,6 @@ int main(){
     
     //////terrain_infra_test8(g);		// TEST, penser à effacer les preuves
     //////affiche_moche(&g);
-    
     affichePPM(g,true,"grille.ppm");	// Le booléen correspond à la présence du quadrillage
     //init_ncurses();	// REQUIS avec ncurses
     //astar(g, getCell(0,0,g), getCell(50,50,g));

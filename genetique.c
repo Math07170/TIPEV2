@@ -7,7 +7,7 @@
 #include "genetique.h"
 #include "carte.h"
 
-int score_v2(grille* g, individu_v2* i, float eco, float env){
+double score_v2(grille* g, individu_v2* i, float eco, float env){
     grille* copie = copie_grille(g);
     for(int k = 0; k < i->taille; k++){
         cell* c = getCell(i->t[k].x, i->t[k].y, copie);
@@ -17,17 +17,18 @@ int score_v2(grille* g, individu_v2* i, float eco, float env){
         //fprintf(stderr, "nb_infra : %d x : %d, y : %d, type : %d\n", copie->nb_infra, i->t[k].x, i->t[k].y, i->t[k].type);
     }
     relieup(copie);
-    int res_eco = 0;
-    int res_env = 0;
+    double res_eco = 0;
+    double res_env = 0;
     for(int k = 0; k<copie->taille; k++){
         for(int j = 0; j<copie->taille; j++){
-            int res_temp = 0;
+            double res_temp = 0;
             for(int c = 0; c < copie->t[k][j].nb_c; c++){
-                switch(copie->t[k][j].nb_c){
-                    case 230: res_temp += 210*1000; break;
-                    case 30000: res_temp += 60000; break;
-                    case 400000: res_temp += 1200000; break;
-                    default : break;
+                if((int)copie->t[k][j].c[c].u == 230){
+                    res_temp += 210*1000;
+                }else if((int)copie->t[k][j].c[c].u == 60000){
+                    res_temp += 60000;
+                }else{
+                    res_temp += 1200000;
                 }
                 if(copie->t[k][j].type == FORET){
                     res_temp = res_temp * 1.25;
@@ -77,8 +78,8 @@ grille* best_v2(population_v2* p, float eco, float env){
     return copie;
 
 }
-float moyenne_v2(population_v2* p){
-    int res = 0;
+double moyenne_v2(population_v2* p){
+    double res = 0;
     for(int k = 0; k < p->taille; k++){
         res += (p->score[k] == -1) ? score_v2(p->g, &(p->t[k]), 0.5, 0.5) : p->score[k];
     }
@@ -157,7 +158,7 @@ population_v2* creer_population_v2(int n){
     population_v2* res = malloc(sizeof(population_v2));
     res->taille = n;
     res->t = malloc(sizeof(individu_v2)*n);
-    res->score = malloc(sizeof(int)*n);
+    res->score = malloc(sizeof(double)*n);
     for(int k = 0; k<n; k++){
         res->score[k] = -1;
     }
@@ -222,7 +223,7 @@ population_v2* next_generation_v2(population_v2* pop){
     population_v2* res = malloc(sizeof(population_v2));
     res->taille = pop->taille;
     res->t = malloc(sizeof(individu_v2)*pop->taille);
-    res->score = malloc(sizeof(int)*pop->taille);
+    res->score = malloc(sizeof(double)*pop->taille);
     res->g = pop->g;
     int* t = tri_rapide_v2(pop, 0.5, 0.5);
     for(int k = 0; k < pop->taille/2; k++){

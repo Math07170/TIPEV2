@@ -53,7 +53,7 @@ int main(){
     fprintf(stderr, "Population créée\n");
     for(int x =0; x < 100; x++){
         pop = next_generation_v2(pop);
-        fprintf(stderr,"Genération %d : Moyenne %f \n", x, moyenne_v2(pop));
+        fprintf(stderr,"Genération %d : Moyenne %lf \n", x, moyenne_v2(pop));
     }
     grille* g = best_v2(pop, 0.5, 0.5);
     free_population_v2(pop);

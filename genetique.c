@@ -24,11 +24,10 @@ int score_v2(grille* g, individu_v2* i, float eco, float env){
             res_eco += (copie->t[k][j].type)*(copie->t[k][j].nb_c);
             //fprintf(stderr, "type : %d, nb_c : %d res_eco %d\n", g->t[k][j].type, g->t[k][j].nb_c, res_eco);
             for(int c = 0; c < copie->t[k][j].nb_c; c++){
-                res_env += (copie->t[k][j].c[c].r)*(copie->t[k][j].c[c].i)*(copie->t[k][j].c[c].i);
+                res_env += (((copie->t[k][j].c[c].r)*(copie->t[k][j].c[c].i)*(copie->t[k][j].c[c].i))*3.65*2.4*6*6)*(2.16)/1000;
             }
         }
     }
-    detruire_grille(copie);
     return (res_eco*eco + res_env*env);
 
 }

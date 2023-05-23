@@ -16,11 +16,11 @@ const int CENTRALE = 5;	// rouge
 const int GD_TRANSFO = 6;	// rouge
 const int PT_TRANSFO = 7;	// rouge
 
-const int NB_USINE = 30;
-const int NB_GD_VILLE = 15;
-const int NB_PT_VILLE = 50;
-const int NB_VILLAGE = 70;
-const int NB_CENTRALE = 10;
+const int NB_USINE = 2;
+const int NB_GD_VILLE = 1;
+const int NB_PT_VILLE = 2;
+const int NB_VILLAGE = 3;
+const int NB_CENTRALE = 2;
 
 // Type de terrain
 const int NEANT = 0;	// N'a pas à être affiché !!!
@@ -39,9 +39,6 @@ grille* creer_grille(int n) {
     g->taille = n;
     g->nb_infra = 0;
     g->infra = malloc(sizeof(cell*) * n*n);
-    if(n!= 100){
-        int a = n;
-    }
     // initialisation tu tableau infra 
     for(int k = 0; k < n*n; k++){
         g->infra[k] = NULL;
@@ -159,24 +156,17 @@ bool contient_ligne(cell* c, int id_ligne){
     return false;
 }
 
-/* Ordre : H,B,G,D */
+/* Ordre : H,B,G,D
+ * IL EST REQUIS DE LIBÉRER LE TABLEAU RENVOYÉ PAR CETTE FONCTION APRÈS UTILISATION !!! */
 cell** voisins(cell* c, grille* g){
     cell** vois = malloc(4*sizeof(cell*));
     int x = c->x;
     int y = c->y;
 
     vois[1] =  getCell(x+1, y, g);
-    if(vois[1] != NULL && vois[1]->x* 100 + vois[1]->y > 99* 100 + 99) 
-    {exit(-1);}
     vois[0] =  getCell(x-1, y, g);
-    if(vois[0] != NULL && vois[0]->x* 100 + vois[0]->y > 99* 100 + 99) 
-    {exit(-2);}
     vois[3] =  getCell(x, y+1, g);
-    if(vois[3] != NULL && vois[3]->x* 100 + vois[3]->y > 99* 100 + 99) 
-    {exit(-3);}
     vois[2] =  getCell(x, y-1, g);
-    if(vois[2] != NULL && vois[2]->x* 100 + vois[2]->y > 99* 100 + 99) 
-    {exit(-4);}
     return vois;
 }
 void deplace(cell* source, cell* destination){
@@ -382,7 +372,7 @@ int* astar(grille* g, cell* depart, cell* final, int id) {	// Situation du table
             deg = 4;
         }
         cell** vois = voisins(getCell(xs, ys,g), g);
-        int voisins[deg];
+        int voisins[deg];		// HORREUR !!!
         int indice = 0;
         for(int k = 0; k<4; k++){
             if(vois[k] != NULL){
@@ -433,12 +423,31 @@ int* astar(grille* g, cell* depart, cell* final, int id) {	// Situation du table
         int k = p[ce->x * n + ce->y];
         //fprintf(stderr, "x = %d, y=%d\n", ce->x, ce->y);
         cable cable;
-        cable.i = 0;
-        cable.u = 230;
-        cable.r = 50;
-        cable.id = g->nb_l;
-        ce->c[ce->nb_c] = cable;
-        ce->nb_c = ce->nb_c+1;
+        if(id == 1){
+            cable.i = 2.35;
+            cable.u = 230;
+            cable.r = 0.06;
+            cable.id = g->nb_l;
+            ce->c[ce->nb_c] = cable;
+            ce->nb_c = ce->nb_c+1;
+        }else if(id == 2){
+            cable.i = 45;
+            cable.u = 30000;
+            cable.r = 0.06;
+            cable.id = g->nb_l;
+            ce->c[ce->nb_c] = cable;
+            ce->nb_c = ce->nb_c+1;
+        }else if(id == 3){
+            cable.i = 450;
+            cable.u = 400000;
+            cable.r = 0.06;
+            cable.id = g->nb_l;
+            ce->c[ce->nb_c] = cable;
+            ce->nb_c = ce->nb_c+1;
+        }else{
+            
+        }
+        
         //fprintf(stderr, "Case : x=%d y=%d", ce->x, ce->y);
         ce = getCell(k / n, k%n, g);
         //fprintf(stderr, "Case : x=%d y=%d", ce->x, ce->y);
@@ -446,12 +455,30 @@ int* astar(grille* g, cell* depart, cell* final, int id) {	// Situation du table
     ce=depart;
     int k = p[ce->x * n + ce->y];
     cable cable;
-    cable.i = 0;
-    cable.u = 230;
-    cable.r = 50;
-    cable.id = g->nb_l;
-    ce->c[ce->nb_c] = cable;
-    ce->nb_c = (ce->nb_c)+1;
+    if(id == 1){
+        cable.i = 2.35;
+        cable.u = 230;
+        cable.r = 0.06;
+        cable.id = g->nb_l;
+        ce->c[ce->nb_c] = cable;
+        ce->nb_c = ce->nb_c+1;
+    }else if(id == 2){
+        cable.i = 45;
+        cable.u = 30000;
+        cable.r = 0.06;
+        cable.id = g->nb_l;
+        ce->c[ce->nb_c] = cable;
+        ce->nb_c = ce->nb_c+1;
+    }else if(id == 3){
+        cable.i = 450;
+        cable.u = 400000;
+        cable.r = 0.06;
+        cable.id = g->nb_l;
+        ce->c[ce->nb_c] = cable;
+        ce->nb_c = ce->nb_c+1;
+    }else{
+            
+    }
     g->nb_l += 1;
     detruire_fileprio(&file);
     free(p);
@@ -678,13 +705,13 @@ void relieup(grille* g){
             cell** destination = k_plus_proche(g, g->infra[k], GD_TRANSFO, 1, GD_TRANSFO);
             cell* c = destination[0];
             if(c == NULL) exit(666);
-            astar(g, g->infra[k], c, 1);
+            astar(g, g->infra[k], c, 2);
             free(destination);
         }else{
             cell** destination = k_plus_proche(g, g->infra[k], CENTRALE, 1, CENTRALE);
             cell* c = destination[0];
             if(c == NULL) exit(666);
-            astar(g, g->infra[k], c, 1);
+            astar(g, g->infra[k], c, 3);
             free(destination);
         }
     }

@@ -51,7 +51,7 @@ int main(){
 
     population_v2* pop = creer_population_v2(3);
     fprintf(stderr, "Population créée\n");
-    for(int x =0; x < 2; x++){
+    for(int x =0; x < 3; x++){
         pop = next_generation_v2(pop);
         fprintf(stderr,"Genération %d : Moyenne %f \n", x, moyenne_v2(pop));
     }

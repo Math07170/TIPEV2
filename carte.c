@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
+#include <math.h>
 
 #include "grille.h"
 #include "affichage.h"
@@ -120,7 +121,7 @@ void tab_init(int taille, int* t) {
 			t[k] = k;
 		}
 	}
-	int a = t[20];
+	//int a = t[20];
 	//printf("20 : %d\n\n", a); //test
 }
 
@@ -142,7 +143,7 @@ int affine_terrain(int H, int B, int G, int D, int A) {
 
 int random_entre(int min, int max) {
 	int m = max - min + 1;
-	int res = rand() % max;
+	int res = rand() % m;
 	return (res + min);
 }
 
@@ -300,8 +301,8 @@ void deuxième_passage(grille* g, int NB) {
 
 }
 
-grille* generation_carte(grille* g) {
-	int n = g->taille;
+grille* generation_carte(int n) {
+	grille* g = creer_grille(n);
 
 	int* t = malloc(n*n*sizeof(int));
 	tab_init(n,t);
@@ -342,10 +343,11 @@ grille* generation_carte(grille* g) {
 	
 	deuxième_passage(g,100000);
 
-	int nb_montagnes = n / 40;
+	/*int nb_montagnes = n / 40;
 	for(int b=0;b<nb_montagnes;b++) {
 		montagne_passage(g);
-	}
+	}*/
+
 	free(t);
 	return g;
 }	
@@ -356,6 +358,7 @@ grille* generation_carte(grille* g) {
 
 //Transposition carte réelle --> grille
 
+//{Rouge,Vert,Bleu}
 
 struct s_pixel2{
 	int rouge;
@@ -388,25 +391,33 @@ int bleu2(pixel2 p){
 
 int plage(pixel2 p) {
 
-	float red = (float) rouge2(p);
-	float blue = (float) bleu2(p);
-	float green = (float) vert2(p);
+	int point[3] = {rouge2(p),vert2(p),bleu2(p)};
+	int indice = 0;
+	int dmin = 100000;
 
-	float somme = red + blue + green;
+	int COULEUR[7][3] = {{255,0,0},{0,255,0},{0,0,255},{255,255,0},{255,0,255},{0,255,255},{255,255,255}};
 
-	float r = somme / red;
-	float g = somme / green;
-	float b = somme / blue;
+	for(int i=0;i<7;i++) {
 
-	float coef = 2.2;
+		int r = (point[0]-COULEUR[i][0])*(point[0]-COULEUR[i][0]);
+		int v = (point[1]-COULEUR[i][1])*(point[1]-COULEUR[i][1]);
+		int b = (point[2]-COULEUR[i][2])*(point[2]-COULEUR[i][2]);
+		int d = sqrt(r + v + b);
 
-	if (r <= coef) { // rouge
+		if(d<dmin) {
+			indice = i;
+			dmin = d;
+		}
+	}
+	// rouge : 0, vert : 1, bleu : 2, jaune : 3, violet : 4, cyan : 5, blanc : 6
+
+	if ((indice == 0)  || (indice == 3)) { // rouge, jaune
 		return PLAINE;
 	}
-	else if (g <= coef) { // vert
+	else if ((indice == 1) || (indice == 4)) { // vert, violet
 		return FORET;
 	}
-	else if (b <= coef) { // bleu
+	else if ((indice == 2) || (indice == 5)) { // bleu, cyan
 		return EAU;
 	}
 	else {
@@ -437,7 +448,7 @@ grille* recuperer_image() {
 	int taille;
 
 	fscanf(fichier, "P3 %d %d 255", &largeur, &taille);
-	assert((largeur == taille) && (largeur > 0) && (largeur <= 255));
+	assert((largeur == taille) && (largeur > 0) && (largeur <= 1000));
 
 	image2* Image = malloc(sizeof(image2));
 	Image->pixels = malloc(taille*taille*sizeof(pixel2));
@@ -458,6 +469,6 @@ grille* recuperer_image() {
 	grille* g = convertir(Image);
 	free(Image->pixels);
 	free(Image);
-	deuxième_passage(g,10000);
+	//deuxième_passage(g,10000);
 	return g;
 }

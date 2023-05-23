@@ -18,12 +18,6 @@ extern const int EAU;
 extern const int RIVIERE;
 extern const int MONTAGNE;
 
-extern const int NB_USINE;
-extern const int NB_GD_VILLE;
-extern const int NB_PT_VILLE;
-extern const int NB_VILLAGE;
-extern const int NB_CENTRALE;
-
 struct s_cable{
 	int id; 	// Identifiant de la ligne
 	float u;	// Permet de donner le type de câble

@@ -16,11 +16,11 @@ const int CENTRALE = 5;	// rouge
 const int GD_TRANSFO = 6;	// rouge
 const int PT_TRANSFO = 7;	// rouge
 
-const int NB_USINE = 2;
-const int NB_GD_VILLE = 1;
-const int NB_PT_VILLE = 2;
-const int NB_VILLAGE = 3;
-const int NB_CENTRALE = 2;
+const int NB_USINE = 30;
+const int NB_GD_VILLE = 15;
+const int NB_PT_VILLE = 50;
+const int NB_VILLAGE = 70;
+const int NB_CENTRALE = 10;
 
 // Type de terrain
 const int NEANT = 0;	// N'a pas à être affiché !!!

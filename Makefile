@@ -13,14 +13,15 @@ TIPE.o: TIPE.c affichage.h affichePPM.h grille.h fileprio.h carte.h genetique.h
 		gcc -c TIPE.c -lncurses -g -Wall -Wextra -fsanitize=undefined -lm
 =======
 tipe:  grille.o fileprio.o TIPE.o affichage.o carte.o genetique.o
-		gcc TIPE.o fileprio.o grille.o affichage.o carte.o genetique.o -o tipe -lncurses -lm -g -Wall -Wextra -fsanitize=undefined
+		gcc TIPE.o fileprio.o grille.o affichage.o carte.o genetique.o -o tipe -lncurses -g -Wall -Wextra -fsanitize=undefined
 tipe-all:
-		gcc -c fileprio.c -lncurses -lm -g -Wall -Wextra -fsanitize=undefined
-		gcc -c grille.c -lncurses -lm -g -Wall -Wextra -fsanitize=undefined
-		gcc -c affichage.c -lncurses -lm -g -Wall -Wextra -fsanitize=undefined
-		gcc -c TIPE.c -lncurses -lm -g -Wall -Wextra -fsanitize=undefined
+		gcc -c fileprio.c -lncurses -g -Wall -Wextra -fsanitize=undefined
+		gcc -c grille.c -lncurses -g -Wall -Wextra -fsanitize=undefined
+		gcc -c affichage.c -lncurses -g -Wall -Wextra -fsanitize=undefined
+		gcc -c TIPE.c -lncurses -g -Wall -Wextra -fsanitize=undefined
 		gcc TIPE.o fileprio.o grille.o affichage.o -o tipe -lncurses
 TIPE.o: TIPE.c affichage.h grille.h fileprio.h carte.h genetique.h
+<<<<<<< HEAD
 		gcc -c TIPE.c -lncurses -lm -g -Wall -Wextra -fsanitize=undefined
 >>>>>>> parent of 28d5fe1 (commit)
 grille.o: grille.c grille.h
@@ -45,6 +46,19 @@ genetique.o: genetique.c grille.h carte.h
 genetique.o: genetique.c grille.h affichage.h carte.h
 		gcc -c genetique.c -lncurses -lm -g -Wall -Wextra -fsanitize=undefined
 >>>>>>> parent of 28d5fe1 (commit)
+=======
+		gcc -c TIPE.c -lncurses -g -Wall -Wextra -fsanitize=undefined
+grille.o: grille.c grille.h
+		gcc -c grille.c -lncurses -g -Wall -Wextra -fsanitize=undefined
+affichage.o: affichage.c affichage.h grille.h fileprio.h
+		gcc -c affichage.c -lncurses -g -Wall -Wextra -fsanitize=undefined
+fileprio.o: fileprio.c fileprio.h
+		gcc -c fileprio.c -lncurses -g -Wall -Wextra -fsanitize=undefined
+carte.o: carte.c carte.h grille.h
+		gcc -c carte.c -lncurses -g -Wall -Wextra -fsanitize=undefined
+genetique.o: genetique.c grille.h affichage.h carte.h
+		gcc -c genetique.c -lncurses -lmath -g -Wall -Wextra -fsanitize=undefined
+>>>>>>> parent of ac53004 (d)
 clean:
 	rm -f *.o
 	rm -f tipe

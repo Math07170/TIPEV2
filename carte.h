@@ -11,7 +11,7 @@ int random_terrain(int A,int B,int C,int D);
 
 void tab_init(int taille, int* t);
 
-grille* generation_carte(int n);
+grille* generation_carte(grille* g);
 
 //grille* convertir(Image* I);
 grille* recuperer_image();

@@ -62,13 +62,14 @@ void ecritPPM(image* img,char* nom_fichier){
 }
 
 /* Dessine une (seule !) ligne électrique sur une tuile
- * Peut nécessiter jusqu'à 4 appels pour une seule cellule, avec des indice_ligne différents */
+ * Peut nécessiter jusqu'à 4 appels pour une seule cellule, avec des indice_ligne différents
+ * Ancienne version... */
 void dessine_ligne(cell* c,image* img,grille* g,int indice_ligne){
 	pixel ligne;		// Pixel servant à dessiner les lignes électriques
 	ligne.rouge = 128;
 	ligne.vert = 128;
 	ligne.bleu = 128;
-	int id_l = c->c[indice_ligne].id;		// On suppose que la ligne est là-dedans, À AMÉLIORER
+	int id_l = c->c[indice_ligne].id;		// SUS
 	cell** v = voisins(c, g);
 	if(v[0] != NULL && contient_ligne(v[0],id_l)){		// Affiche en haut
 		for(int i = 0;i < (TAILLE_TUILE * 2 / 5) - 1;i++){
@@ -99,6 +100,45 @@ void dessine_ligne(cell* c,image* img,grille* g,int indice_ligne){
 		}
 	}
 	free(v);		// Requis, voir fonction voisins
+	return;
+}
+
+void dessine_ligne_v2(cell* c,image* img,grille* g){
+	pixel ligne;		// Pixel servant à dessiner les lignes électriques
+	ligne.rouge = 128;
+	ligne.vert = 128;
+	ligne.bleu = 128;
+	cell** v = voisins(c, g);
+	for(int id_l = 0;id_l < g->nb_l;id_l++){
+		if(v[0] != NULL && contient_ligne(v[0],id_l) && contient_ligne(c,id_l)){		// Affiche en haut
+			for(int i = 0;i < (TAILLE_TUILE * 2 / 5) - 1;i++){
+				for(int j = TAILLE_TUILE * 2 / 5;j < TAILLE_TUILE - (TAILLE_TUILE * 2 / 5);j++){
+					dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
+				}
+			}
+		}
+		if(v[1] != NULL && contient_ligne(v[1],id_l) && contient_ligne(c,id_l)){		// Affiche en bas
+			for(int i = TAILLE_TUILE - 1;i > TAILLE_TUILE - TAILLE_TUILE * 2 / 5;i--){
+				for(int j = TAILLE_TUILE * 2 / 5;j < TAILLE_TUILE - (TAILLE_TUILE * 2 / 5);j++){
+					dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
+				}
+			}
+		}
+		if(v[2] != NULL && contient_ligne(v[2],id_l)  && contient_ligne(c,id_l)){		// Affiche à gauche
+			for(int j = 0;j < (TAILLE_TUILE * 2 / 5) - 1 ;j++){
+				for(int i = TAILLE_TUILE * 2 / 5;i < TAILLE_TUILE - (TAILLE_TUILE * 2 / 5);i++){
+					dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
+				}
+			}
+		}
+		if(v[3] != NULL && contient_ligne(v[3],id_l) && contient_ligne(c,id_l)){		// Affiche à droite
+			for(int j = TAILLE_TUILE - 1;j > TAILLE_TUILE - TAILLE_TUILE * 2 / 5;j--){
+				for(int i = TAILLE_TUILE * 2 / 5;i < TAILLE_TUILE - (TAILLE_TUILE * 2 / 5);i++){
+					dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
+				}
+			}
+		}
+	}
 	return;
 }
 
@@ -265,7 +305,7 @@ void dessine_cell(cell* c,image* img,grille* g,bool quadrillage){
 			dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,terrain);
 		}
 	}
-	switch(c->nb_c){
+	/*switch(c->nb_c){
 		case 1:
 			dessine_ligne(c,img,g,0);
 			break;
@@ -287,6 +327,11 @@ void dessine_cell(cell* c,image* img,grille* g,bool quadrillage){
 		default:		// 0, ou erreur grossière
 			{}			// Pas de ligne à dessinner, RAS
 	}		// En fait, appeller dessine_ligne 4 fois comme un sauvage dans tous les cas devrait suffire...
+	*/
+	/*for(int k = 0;k < 4;k++){
+		dessine_ligne(c,img,g,k);
+	}			// TEST, fumeux... 			*/
+	dessine_ligne_v2(c,img,g);
 	// DES PROBLÈMES D'AFFICHAGE DES LIGNES SUBSISTENT...
 	if(quadrillage) for(int k = 0;k < TAILLE_TUILE;k++){		// Sépare les cases par du noir, si demandé
 		dessine_pixel(img,(c->x)*TAILLE_TUILE+(TAILLE_TUILE-1),(c->y)*TAILLE_TUILE+k,bordure);

@@ -49,9 +49,9 @@ int main(){
         fprintf(stderr, "Generation %d, Score moyen : %f, taille mémoire : %ld \n", x, moyenne(pop, 0.5, 0.5), sizeof(grille));
     }*/
 
-    population_v2* pop = creer_population_v2(3);
+    population_v2* pop = creer_population_v2(100);
     fprintf(stderr, "Population créée\n");
-    for(int x =0; x < 3; x++){
+    for(int x =0; x < 100; x++){
         pop = next_generation_v2(pop);
         fprintf(stderr,"Genération %d : Moyenne %f \n", x, moyenne_v2(pop));
     }

@@ -168,8 +168,7 @@ population_v2* creer_population_v2(int n){
     for(int k = 0; k<n; k++){
         res->score[k] = -1;
     }
-    res->g = creer_grille(100);
-    generation_carte(res->g);
+    res->g = generation_carte(100);
     situation_initiale(res->g);
 
     for(int k = 0; k < res->taille; k++){
@@ -536,8 +535,7 @@ population* creer_population(int n){
     res->t = malloc(sizeof(individu)*n);
     res->score = malloc(sizeof(int)*n);
     res->score[0] = -1;
-    res->t[0] = creer_grille(100);
-    generation_carte(res->t[0]);
+    res->t[0] = generation_carte(100);
     situation_initiale(res->t[0]);
     
     for(int k = 1; k < n; k++){

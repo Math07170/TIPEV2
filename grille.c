@@ -803,3 +803,10 @@ void export_csv_file(double xl[], int n){
     return;
 }
 
+/* Copier-coller revisité de contient_ligne */
+int tension_ligne(cell* c,int id_ligne){
+	for(int k = 0; k<c->nb_c; k++){
+        if(c->c[k].id == id_ligne) return c->c[k].u;
+    }
+	return 0;	// Valeur à ne pas utiliser en tant que tension
+}

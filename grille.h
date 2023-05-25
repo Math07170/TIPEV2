@@ -72,4 +72,5 @@ grille* copie_grille(grille* g);
 void random_transfo(grille* g);
 void copie_case(cell* depart, cell* arrive);
 void export_csv_file(double xl[], int n);
+int tension_ligne(cell* c,int id_ligne);
 #endif

@@ -61,15 +61,65 @@ void ecritPPM(image* img,char* nom_fichier){
 	return;
 }
 
+/* Renvoie la couleur d'une ligne en fonction de sa tension (3 possibilités) */
+pixel couleur_ligne(cell* c,int id_l){
+	pixel res;
+	int tension = tension_ligne(c,id_l);
+	if(tension == 400000){		// Haute tension
+		res.rouge = 64;
+		res.vert = 64;
+		res.bleu = 64;
+	}else if(tension == 30000){		// Moyenne tension
+		res.rouge = 128;
+		res.vert = 128;
+		res.bleu = 128;
+	}else{		// 230		// Basse tension
+		res.rouge = 192;
+		res.vert = 192;
+		res.bleu = 192;
+	}
+	return res;
+}
+
 /* Dessine toutes les lignes électriques sur une tuile */
-void dessine_ligne(cell* c,image* img,grille* g){
-	pixel ligne;		// Pixel servant à dessiner les lignes électriques
-	ligne.rouge = 128;
-	ligne.vert = 128;
-	ligne.bleu = 128;
+void dessine_lignes(cell* c,image* img,grille* g){
 	cell** v = voisins(c, g);
+	// Indices des coupures entre les zones d'affichage des différentes lignes
+	int indice_0 = TAILLE_TUILE * 8 / 25;
+	int indice_1 = TAILLE_TUILE * 11 / 25;
+	int indice_2 = TAILLE_TUILE * 14 / 25;
+	int indice_3 = TAILLE_TUILE * 17 / 25;
 	for(int id_l = 0;id_l < g->nb_l;id_l++){
-		if(v[0] != NULL && contient_ligne(v[0],id_l) && contient_ligne(c,id_l)){		// Affiche en haut
+		int tension = tension_ligne(c,id_l);
+		pixel ligne;
+		int indice_min;
+		int indice_max;
+		if(tension == 400000){		// Haute tension
+			ligne.rouge = 64;
+			ligne.vert = 64;
+			ligne.bleu = 64;
+			indice_min = indice_0;
+			indice_max = indice_1;
+		}else if(tension == 30000){		// Moyenne tension
+			ligne.rouge = 128;
+			ligne.vert = 128;
+			ligne.bleu = 128;
+			indice_min = indice_1;
+			indice_max = indice_2;
+		}else if(tension == 230){		// Basse tension
+			ligne.rouge = 192;
+			ligne.vert = 192;
+			ligne.bleu = 192;
+			indice_min = indice_2;
+			indice_max = indice_3;
+		}else{		// NE DEVRAIT JAMAIS S'AFFICHER
+			ligne.rouge = 255;
+			ligne.vert = 96;
+			ligne.bleu = 240;
+			indice_min = indice_0;
+			indice_max = indice_3;
+		}
+		/*if(v[0] != NULL && contient_ligne(v[0],id_l) && contient_ligne(c,id_l)){		// Affiche en haut
 			for(int i = 0;i < (TAILLE_TUILE * 2 / 5) - 1;i++){
 				for(int j = TAILLE_TUILE * 2 / 5;j < TAILLE_TUILE - (TAILLE_TUILE * 2 / 5);j++){
 					dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
@@ -93,6 +143,34 @@ void dessine_ligne(cell* c,image* img,grille* g){
 		if(v[3] != NULL && contient_ligne(v[3],id_l) && contient_ligne(c,id_l)){		// Affiche à droite
 			for(int j = TAILLE_TUILE - 1;j > TAILLE_TUILE - TAILLE_TUILE * 2 / 5;j--){
 				for(int i = TAILLE_TUILE * 2 / 5;i < TAILLE_TUILE - (TAILLE_TUILE * 2 / 5);i++){
+					dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
+				}
+			}
+		}*/
+		if(v[0] != NULL && contient_ligne(v[0],id_l) && contient_ligne(c,id_l)){		// Affiche en haut
+			for(int i = 0;i < (TAILLE_TUILE * 2 / 5) - 2;i++){
+				for(int j = indice_min;j < indice_max;j++){
+					dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
+				}
+			}
+		}
+		if(v[1] != NULL && contient_ligne(v[1],id_l) && contient_ligne(c,id_l)){		// Affiche en bas
+			for(int i = TAILLE_TUILE - 1;i > TAILLE_TUILE - TAILLE_TUILE * 2 / 5 + 1;i--){
+				for(int j = indice_min;j < indice_max;j++){
+					dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
+				}
+			}
+		}
+		if(v[2] != NULL && contient_ligne(v[2],id_l)  && contient_ligne(c,id_l)){		// Affiche à gauche
+			for(int j = 0;j < (TAILLE_TUILE * 2 / 5) - 2;j++){
+				for(int i = indice_min;i < indice_max;i++){
+					dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
+				}
+			}
+		}
+		if(v[3] != NULL && contient_ligne(v[3],id_l) && contient_ligne(c,id_l)){		// Affiche à droite
+			for(int j = TAILLE_TUILE - 1;j > TAILLE_TUILE - TAILLE_TUILE * 2 / 5 + 1;j--){
+				for(int i = indice_min;i < indice_max;i++){
 					dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
 				}
 			}
@@ -259,7 +337,7 @@ void dessine_cell(cell* c,image* img,grille* g,bool quadrillage){
 			dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,terrain);
 		}
 	}
-	dessine_ligne(c,img,g);
+	dessine_lignes(c,img,g);
 	if(quadrillage) for(int k = 0;k < TAILLE_TUILE;k++){		// Sépare les cases par du noir, si demandé
 		dessine_pixel(img,(c->x)*TAILLE_TUILE+(TAILLE_TUILE-1),(c->y)*TAILLE_TUILE+k,bordure);
 		dessine_pixel(img,(c->x)*TAILLE_TUILE+k,(c->y)*TAILLE_TUILE+(TAILLE_TUILE-1),bordure);

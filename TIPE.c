@@ -49,8 +49,8 @@ int main(){
         fprintf(stderr, "Generation %d, Score moyen : %f, taille mémoire : %ld \n", x, moyenne(pop, 0.5, 0.5), sizeof(grille));
     }*/
 
-    population_v2* pop = creer_population_v2(100);
-    int gen = 50;
+    population_v2* pop = creer_population_v2(3);
+    int gen = 3;
     double* score = malloc(gen*sizeof(double));
 
     
@@ -61,11 +61,9 @@ int main(){
         fprintf(stderr,"Genération %d : Moyenne %lf \n", x, score[x]);
     }
     grille* g = best_v2(pop, 0.5, 0.5);
-    affichePPM(g,true,"grille.ppm");
     free_population_v2(pop);
     export_csv_file(score, gen);
     free(score);
-    return 0;
     /*randomize_terrain(&g);
     randomize_infra(USINE, 4, &g);
     randomize_infra(GD_VILLE, 3, &g);

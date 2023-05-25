@@ -49,15 +49,22 @@ int main(){
         fprintf(stderr, "Generation %d, Score moyen : %f, taille mémoire : %ld \n", x, moyenne(pop, 0.5, 0.5), sizeof(grille));
     }*/
 
-    population_v2* pop = creer_population_v2(100);
+    population_v2* pop = creer_population_v2(200);
+    int gen = 10;
+    double* score = malloc(gen*sizeof(double));
+
+    
     fprintf(stderr, "Population créée\n");
-    for(int x =0; x < 10; x++){
+    for(int x =0; x < gen; x++){
         pop = next_generation_v2(pop);
-        fprintf(stderr,"Genération %d : Moyenne %lf \n", x, moyenne_v2(pop));
+        score[x] = moyenne_v2(pop);
+        fprintf(stderr,"Genération %d : Moyenne %lf \n", x, score[x]);
     }
     grille* g = best_v2(pop, 0.5, 0.5);
     affichePPM(g,true,"grille.ppm");
     free_population_v2(pop);
+    export_csv_file(score, gen);
+    free(score);
     return 0;
     /*randomize_terrain(&g);
     randomize_infra(USINE, 4, &g);

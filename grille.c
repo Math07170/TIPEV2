@@ -312,15 +312,42 @@ int heuristique(int xa, int ya, int xb, int yb) {
     }
     return x + y;
 }
-
+cable get_cable(int id){
+    cable cable;
+    if(id == 1){
+        cable.i = 2.35;
+        cable.u = 230;
+        cable.r = 0.06;
+        cable.id = 0;
+    }else if(id == 2){
+        cable.i = 45;
+        cable.u = 30000;
+        cable.r = 0.06;
+        cable.id = 0;
+    }else if(id == 3){
+        cable.i = 450;
+        cable.u = 400000;
+        cable.r = 0.06;
+        cable.id = 0;
+    }else{
+        fprintf(stderr, "Erreur : id de ligne inconnu\n");
+    }
+    return cable;
+}
 /* Impressionnant de vacuité, pourra être amélioré selon les types de cases... */
-int poids(int sx, int sy, grille* g) {
+int poids(int sx, int sy, grille* g, int id) {
+    cable cble = get_cable(id);
     int n = g->taille;
     cell* c = getCell(sx / n, sx%n, g);
-    if(c->nb_c != 0) return 0;
+    for(int k = 0; k<c->nb_c; k++){
+        if(c->c[k].u - cble.u <= 0.1){
+            return 0;
+        }
+    }
     int res = (c->type)*(c->type);
     return res;
 }
+
 /* À mettre dans grille.c ? Ou pas ? */
 int* astar(grille* g, cell* depart, cell* final, int id) {	// Situation du tableau voisins à clarifier/régulariser
     assert(final != NULL && depart != NULL);
@@ -396,15 +423,15 @@ int* astar(grille* g, cell* depart, cell* final, int id) {	// Situation du table
                 
                 p[s_v] = s;
                 
-                d[s_v] = d[s] + poids(s_v,s, g);		// AJOUT ÉVENTUEL D'UN POIDS ICI (poids différent pour chaque case de la grille ?)
+                d[s_v] = d[s] + poids(s_v,s, g, id);		// AJOUT ÉVENTUEL D'UN POIDS ICI (poids différent pour chaque case de la grille ?)
                 
                 f[s_v] = d[s_v] + heuristique(xs,ys,final->x,final->y);
                 inserer_fileprio(&file, s_v, f[s_v]);
                 
-			}else if (c[s_v] == GRIS && d[s] + poids(s_v,s, g) < d[s_v]) {
+			}else if (c[s_v] == GRIS && d[s] + poids(s_v,s, g, id) < d[s_v]) {
                 p[s_v] = s;
                 
-                d[s_v] = d[s] + poids(s_v,s, g);
+                d[s_v] = d[s] + poids(s_v,s, g, id);
                 f[s_v] = d[s_v] + heuristique(final->x,final->y,xs,ys);
                 diminuer_fileprio(&file,s_v,f[s_v]);
                 
@@ -692,6 +719,7 @@ void random_transfo(grille* g){
     }
 
 }
+
 //relie chaque consomateur au transformateur le plus proche.
 void relieup(grille* g){
     for(int k = 0; k < g->nb_infra; k++){
@@ -762,13 +790,13 @@ void creation_res(grille* g, int k_vois_cons, int k_vois_transfo){
     return;
 }
 
-void export_csv_file(int xl[], int yl[], int n){
+void export_csv_file(double xl[], int n){
     FILE* fichier = NULL;
     fichier = fopen("resultat.csv", "w+");
     if (fichier != NULL)
     {
         for(int i = 0; i<n; i++){
-            //fprintf(fichier, "%d;%d\n", xl[i], yl[i]);
+            fprintf(fichier, "%d;%lf\n", i, xl[i]);
         }
         fclose(fichier);
     }

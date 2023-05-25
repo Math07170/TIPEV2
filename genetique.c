@@ -8,6 +8,15 @@
 #include "carte.h"
 #include <pthread.h>
 
+/**
+ * The function calculates the economic score of a given grid and infrastructure configuration.
+ * 
+ * @param g The parameter `g` is a pointer to a `grille` struct, which represents a grid of cells.
+ * @param i The parameter `i` is an individual of type `individu_v2` which contains an array of
+ * `taille` structures of type `terrain` representing the infrastructure built on the `grille` `g`.
+ * 
+ * @return a double value, which represents the economic score of a given grid and individual.
+ */
 double score_v2(grille* g, individu_v2* i){
     grille* copie = copie_grille(g);
     for(int k = 0; k < i->taille; k++){
@@ -47,6 +56,11 @@ double score_v2(grille* g, individu_v2* i){
     return (res_eco);
 
 }
+/**
+ * The function frees the memory allocated for a population structure and its components.
+ * 
+ * @param p The parameter "p" is a pointer to a struct of type "population_v2".
+ */
 void free_population_v2(population_v2* p){
     for(int k = 0; k < p->taille; k++){
         free(p->t[k].t);
@@ -55,6 +69,17 @@ void free_population_v2(population_v2* p){
     free(p->score);
     free(p);
 }
+
+/**
+ * The function "best_v2" returns a copy of a grid with the infrastructure of the best individual in a
+ * population added to it.
+ * 
+ * @param p The population_v2 struct pointer containing the individuals to be evaluated.
+ * 
+ * @return a pointer to a newly created grid (grille) that is a copy of the input grid (p->g) with
+ * additional infrastructure cells added according to the best individual (i) in the population (p)
+ * based on their score.
+ */
 grille* best_v2(population_v2* p, float eco, float env){
     int min = score_v2(p->g, &(p->t[0]));
     int indice = 0;
@@ -78,6 +103,16 @@ grille* best_v2(population_v2* p, float eco, float env){
     return copie;
 
 }
+
+/**
+ * This function calculates the average score of a population, taking into account any missing scores.
+ * 
+ * @param p The parameter "p" is a pointer to a structure of type "population_v2".
+ * 
+ * @return The function `moyenne_v2` is returning the average score of a population, calculated by
+ * summing up all the scores of individuals in the population and dividing by the total number of
+ * individuals in the population.
+ */
 double moyenne_v2(population_v2* p){
     double res = 0;
     for(int k = 0; k < p->taille; k++){
@@ -86,7 +121,16 @@ double moyenne_v2(population_v2* p){
     return res/p->taille;
 }
 
-// Renvoie la liste des indices des individus de la population triés par score croissant
+
+/**
+ * The function performs a sort algorithm on a population of individuals based on their scores.
+ * 
+ * @param p The parameter "p" is a pointer to a struct called "population_v2" which contains
+ * information about a population of individuals.
+ * 
+ * @return a pointer to an integer array that contains the indices of the elements in the population_v2
+ * structure sorted in ascending order based on their score values.
+ */
 int* tri_rapide_v2(population_v2* p, float eco, float env){
     int* res = malloc(sizeof(int)*(p->taille));
     for(int k = 0; k < p->taille; k++){
@@ -102,7 +146,6 @@ int* tri_rapide_v2(population_v2* p, float eco, float env){
             if(p->score[res[j]] < 0){
                 p->score[res[j]] = score_v2(p->g, &(p->t[res[j]]));
             }            
-           // fprintf(stderr, "s : 0, min : %f, k=%d, j=%d, taille=%d\n", min, k, j, p->taille);
             double s = p->score[res[j]];
             if(s < min){
                 min = s;
@@ -119,7 +162,20 @@ int* tri_rapide_v2(population_v2* p, float eco, float env){
     return res;
 }
 
-// Renvoie l'individu qui est le résultat du croisement de deux individus
+
+/**
+ * The function performs a crossover between two individuals by selecting infrastructure elements from
+ * the first individual that are located in the top-left quadrant of a grid and selecting elements from
+ * the second individual that are located in the other quadrants.
+ * 
+ * @param i1 The first parent individual of type "individu_v2" that will be used for the crossover
+ * operation.
+ * @param i2 The parameter i2 is an object of the struct type "individu_v2".
+ * @param n The parameter "n" represents the size of the grid or the number of cells in each row/column
+ * of the grid.
+ * 
+ * @return The function `croisement_v2` returns an `individu_v2` object.
+ */
 individu_v2 croisement_v2(individu_v2 i1, individu_v2 i2, int n){
     individu_v2 res;
     res.taille = i1.taille + i2.taille;
@@ -152,14 +208,34 @@ individu_v2 croisement_v2(individu_v2 i1, individu_v2 i2, int n){
     return res;
 }
 
-void mutation_v2(individu_v2* i, int n){
-    int k = rand() % i->taille;
-    int x2 = rand() % n;
-    int y2 = rand() % n;
-    i->t[k].x = x2;
-    i->t[k].y = y2;
+
+/**
+ * The function performs a mutation on an individual by randomly changing a percentage of its genes to
+ * new values.
+ * 
+ * @param i The parameter "i" is a pointer to an object of type "individu_v2".
+ * 
+ * @return nothing (void).
+ */
+void mutation_v2(individu_v2* i){
+    int nb = rand() % i->taille*1/100;
+    for(int k = 0; k < nb; k++){
+        int x = rand() % i->taille;
+        int x2 = rand() % nb;
+        int y2 = rand() % nb;
+        i->t[x].x = x2;
+        i->t[x].y = y2;
+    }
+    return;
 }
 
+/**
+ * This function creates a population of individuals with randomly generated infrastructure on a map.
+ * 
+ * @param n The parameter "n" represents the size of the population to be created.
+ * 
+ * @return The function `creer_population_v2` returns a pointer to a `population_v2` structure.
+ */
 population_v2* creer_population_v2(int n){
     population_v2* res = malloc(sizeof(population_v2));
     res->taille = n;
@@ -224,6 +300,16 @@ population_v2* creer_population_v2(int n){
 
 }
 
+/**
+ * The function "next_generation_v2" generates the next generation of individuals in a genetic
+ * algorithm, with a mutation rate of 30%, using a quicksort algorithm to select the parents for
+ * crossover.
+ * 
+ * @param pop A pointer to a population_v2 struct, which contains an array of individu_v2 structs and
+ * their corresponding scores, as well as other information about the population.
+ * 
+ * @return The function `next_generation_v2` returns a pointer to a `population_v2` structure.
+ */
 population_v2* next_generation_v2(population_v2* pop){
     population_v2* res = malloc(sizeof(population_v2));
     res->taille = pop->taille;
@@ -237,7 +323,7 @@ population_v2* next_generation_v2(population_v2* pop){
         res->score[k] = pop->score[t[k]];
         if(rand() % 100 <= 30 ) { 
             res->score[k] = -1;
-            mutation_v2(&(res->t[k]), res->g->taille);
+            mutation_v2(&(res->t[k]));
         }
         //fprintf(stderr, "k = %d res : %d\n", k, score(res->t[k], eco, env));
     }
@@ -254,7 +340,7 @@ population_v2* next_generation_v2(population_v2* pop){
         res->t[k].taille = crois.taille;
 
         free(temp.t);
-        if(rand() % 100 <= 30 ) mutation_v2(&(res->t[k]), res->g->taille);
+        if(rand() % 100 <= 30 ) mutation_v2(&(res->t[k]));
         //fprintf(stderr, "k = %d res : %d\n", k, score(res->t[k], eco, env));
         res->score[k] = score_v2(res->g, &(res->t[k]));
     }

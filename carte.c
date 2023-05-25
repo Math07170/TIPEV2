@@ -343,10 +343,10 @@ grille* generation_carte(int n) {
 	
 	deuxième_passage(g,100000);
 
-	/*int nb_montagnes = n / 40;
+	int nb_montagnes = n / 40;
 	for(int b=0;b<nb_montagnes;b++) {
 		montagne_passage(g);
-	}*/
+	}
 
 	free(t);
 	return g;

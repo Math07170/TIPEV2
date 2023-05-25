@@ -49,8 +49,8 @@ int main(){
         fprintf(stderr, "Generation %d, Score moyen : %f, taille mémoire : %ld \n", x, moyenne(pop, 0.5, 0.5), sizeof(grille));
     }*/
 
-    population_v2* pop = creer_population_v2(200);
-    int gen = 10;
+    population_v2* pop = creer_population_v2(100);
+    int gen = 50;
     double* score = malloc(gen*sizeof(double));
 
     

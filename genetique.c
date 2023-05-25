@@ -6,8 +6,9 @@
 #include "grille.h"
 #include "genetique.h"
 #include "carte.h"
+#include <pthread.h>
 
-double score_v2(grille* g, individu_v2* i, float eco, float env){
+double score_v2(grille* g, individu_v2* i){
     grille* copie = copie_grille(g);
     for(int k = 0; k < i->taille; k++){
         cell* c = getCell(i->t[k].x, i->t[k].y, copie);
@@ -55,10 +56,10 @@ void free_population_v2(population_v2* p){
     free(p);
 }
 grille* best_v2(population_v2* p, float eco, float env){
-    int min = score_v2(p->g, &(p->t[0]), eco, env);
+    int min = score_v2(p->g, &(p->t[0]));
     int indice = 0;
     for(int k = 1; k < p->taille; k++){
-        int s = score_v2(p->g, &(p->t[k]), eco, env);
+        int s = score_v2(p->g, &(p->t[k]));
         if(s < min){
             min = s;
             indice = k;
@@ -80,10 +81,11 @@ grille* best_v2(population_v2* p, float eco, float env){
 double moyenne_v2(population_v2* p){
     double res = 0;
     for(int k = 0; k < p->taille; k++){
-        res += (p->score[k] == -1) ? score_v2(p->g, &(p->t[k]), 0.5, 0.5) : p->score[k];
+        res += (p->score[k] == -1) ? score_v2(p->g, &(p->t[k])) : p->score[k];
     }
     return res/p->taille;
 }
+
 // Renvoie la liste des indices des individus de la population triés par score croissant
 int* tri_rapide_v2(population_v2* p, float eco, float env){
     int* res = malloc(sizeof(int)*(p->taille));
@@ -92,13 +94,13 @@ int* tri_rapide_v2(population_v2* p, float eco, float env){
     }
     for(int k = 0; k < p->taille; k++){
         if(p->score[res[k]] < 0){
-            p->score[res[k]] = score_v2(p->g, &(p->t[res[k]]), eco, env);
+            p->score[res[k]] = score_v2(p->g, &(p->t[res[k]]));
         }
         double min = p->score[res[k]];
         int indice = k;
         for(int j = k+1; j < p->taille; j++){
             if(p->score[res[j]] < 0){
-                p->score[res[j]] = score_v2(p->g, &(p->t[res[j]]), eco, env);
+                p->score[res[j]] = score_v2(p->g, &(p->t[res[j]]));
             }            
            // fprintf(stderr, "s : 0, min : %f, k=%d, j=%d, taille=%d\n", min, k, j, p->taille);
             double s = p->score[res[j]];
@@ -117,6 +119,7 @@ int* tri_rapide_v2(population_v2* p, float eco, float env){
     return res;
 }
 
+// Renvoie l'individu qui est le résultat du croisement de deux individus
 individu_v2 croisement_v2(individu_v2 i1, individu_v2 i2, int n){
     individu_v2 res;
     res.taille = i1.taille + i2.taille;
@@ -254,7 +257,7 @@ population_v2* next_generation_v2(population_v2* pop){
         free(temp.t);
         if(rand() % 100 <= 30 ) mutation_v2(&(res->t[k]), res->g->taille);
         //fprintf(stderr, "k = %d res : %d\n", k, score(res->t[k], eco, env));
-        res->score[k] = score_v2(res->g, &(res->t[k]), 0.5, 0.5);
+        res->score[k] = score_v2(res->g, &(res->t[k]));
     }
     free(t);
     free(pop->t);

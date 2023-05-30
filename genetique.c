@@ -236,7 +236,7 @@ void mutation_v2(individu_v2* i){
  * 
  * @return The function `creer_population_v2` returns a pointer to a `population_v2` structure.
  */
-population_v2* creer_population_v2(int n){
+population_v2* creer_population_v2(int n, grille* g){
     population_v2* res = malloc(sizeof(population_v2));
     res->taille = n;
     res->t = malloc(sizeof(individu_v2)*n);
@@ -244,7 +244,7 @@ population_v2* creer_population_v2(int n){
     for(int k = 0; k<n; k++){
         res->score[k] = -1;
     }
-    res->g = generation_carte(100);
+    res->g = g;
     situation_initiale(res->g);
 
     for(int k = 0; k < res->taille; k++){

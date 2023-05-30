@@ -395,9 +395,9 @@ int plage(pixel2 p) {
 	int indice = 0;
 	int dmin = 100000;
 
-	int COULEUR[8][3] = {{255,0,0},{0,255,0},{0,0,255},{255,255,0},{255,0,255},{0,255,255},{255,255,255},{0,0,0}};
+	int COULEUR[9][3] = {{200,150,0},{0,255,0},{0,0,255},{255,255,0},{255,0,255},{0,150,255},{255,255,255},{0,0,0},{50,200,50}};
 
-	for(int i=0;i<8;i++) {
+	for(int i=0;i<9;i++) {
 
 		int r = (point[0]-COULEUR[i][0])*(point[0]-COULEUR[i][0]);
 		int v 
@@ -410,12 +410,12 @@ int plage(pixel2 p) {
 			dmin = d;
 		}
 	}
-	// rouge : 0, vert : 1, bleu : 2, jaune : 3, violet : 4, cyan : 5, blanc : 6, noir : 7
+	// rouge : 0, vert : 1, bleu : 2, jaune : 3, violet : 4, cyan : 5, blanc : 6, noir : 7, 8 : vertclair
 
-	if ((indice == 3) || (indice == 7) || (indice == 4)) { // jaune, blanc, noir
+	if ((indice == 1) || (indice == 8)) { // blanc, jaune, violet, noir
 		return PLAINE;
 	}
-	else if ((indice == 1)) { // vert
+	else if ((indice == 6) || (indice == 3) || (indice == 4) || (indice == 7)) { // vert, vert clair
 		return FORET;
 	}
 	else if ((indice == 2) || (indice == 5)) { // bleu, cyan
@@ -470,6 +470,6 @@ grille* recuperer_image() {
 	grille* g = convertir(Image);
 	free(Image->pixels);
 	free(Image);
-	//deuxième_passage(g,10000);
+	//deuxième_passage(g,1000000);
 	return g;
 }

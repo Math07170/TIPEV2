@@ -16,8 +16,10 @@ double score_grille(grille* g){
     for(int k=0; k<g->nb_infra; k++){
         i.t[k].type = g->infra[k]->type;
         i.t[k].x = g->infra[k]->x;
-        i.t[k].x = g->infra[k]->y;
+        i.t[k].y = g->infra[k]->y;
+        i.t[k].type = 0;
     }
+    g->nb_infra = 0;
     double res = score_v2(g, &i);
     free(g);
     free(i.t);

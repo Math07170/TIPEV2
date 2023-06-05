@@ -45,4 +45,5 @@ population_v2* next_generation_v2(population_v2* pop);
 double moyenne_v2(population_v2* p);
 void free_population_v2(population_v2* p);
 grille* best_v2(population_v2* p, float eco, float env);
+double score_grille(grille* g);
 #endif // GENETIQUE_H

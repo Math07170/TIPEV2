@@ -16,9 +16,9 @@ int main(){
     srand(time(NULL));
     
     // ANCIEN ALGORITHME
-	/*grille* g = generation_carte(100);
+	grille* g = generation_carte(40);
     situation_initiale(g);
-    relie(g);*/
+    relie(g);
     
     // PPREMIER ALGORITHME GÉNÉTIQUE
     /*population* pop = creer_population(100);
@@ -32,7 +32,7 @@ int main(){
     }*/
 	
 	// ALGORITHME GÉNÉTIQUE V2
-    grille* gr = generation_carte(100);
+    /*grille* gr = generation_carte(100);
     //grille* gr = recuperer_image();
     population_v2* pop = creer_population_v2(20, gr);
     int gen = 20;
@@ -48,7 +48,7 @@ int main(){
     grille* g = best_v2(pop, 0.5, 0.5);
     free_population_v2(pop);
     export_csv_file(score, gen);
-    free(score);
+    free(score);*/
     
     // ANCIEN AFFICHAGE
     /*init_ncurses();	// REQUIS avec ncurses

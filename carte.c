@@ -7,7 +7,6 @@
 #include "grille.h"
 #include "affichage.h"
 #include "carte.h"
-//#include "quickimage.h"
 
 const int k0 = 1;
 const int k1 = 2;
@@ -203,7 +202,6 @@ void poser_terrain(grille* g, int t, int* x, int* y, int dir, int* len) {
 }
 
 //pose un cours d'eau avec pour sommet initial (xi,yi) et de longueur maximum len_max
-
 void eau_passage(grille* g, int x, int y) {
 
 	int n = g->taille;
@@ -236,7 +234,6 @@ void eau_passage(grille* g, int x, int y) {
 }
 
 //Pose une montagne de taille aléatoire sur la carte
-
 void montagne_passage(grille* g) {
 	int n = g->taille;
 

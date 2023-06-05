@@ -267,40 +267,6 @@ void randomize_terrain(grille* g){		// TEMPORAIRE !!!
     return;
 }
 
-void terrain_infra_test8(grille* g){		// À des fins de test, utiliser avec n=8, et faire disparaître les preuves à la fin
-	int n = g -> taille;			// 8	!!!
-	 for(int i = 0; i < 8;i++){
-		for(int j = 0 ; j < 5;j++){
-			g->t[i][j].infra = i;
-			g->t[i][j].type = (j+1)*10;
-		}
-		for(int j = 5 ; j < 8;j++){
-			g->t[i][j].infra = i;
-			g->t[i][j].type = NEANT;
-		}
-	}
-	return;
-}
-
-/* N'est plus utilisé */
-/*void affiche_moche(grille* g) {
-    int n = g->taille;
-    for(int i = 0; i < n; i++){
-        for(int j = 0; j < n; j++){
-            int e = g->t[i][j];
-            if (e != VIDE) {
-                printf("i : %d, j : %d, élément : %d\n", i,j,e);
-            }
-        }
-    }
-}*/
-const int BLANC = 0;
-const int GRIS = 1;
-const int NOIR = 2;
-
-
-
-
 int heuristique(int xa, int ya, int xb, int yb) {
     int x = xa - xb;
     int y = ya - yb;
@@ -312,6 +278,7 @@ int heuristique(int xa, int ya, int xb, int yb) {
     }
     return x + y;
 }
+
 cable get_cable(int id){
     cable cable;
     if(id == 1){
@@ -334,7 +301,7 @@ cable get_cable(int id){
     }
     return cable;
 }
-/* Impressionnant de vacuité, pourra être amélioré selon les types de cases... */
+
 int poids(int sx, int sy, grille* g, int id) {
     cable cble = get_cable(id);
     int n = g->taille;
@@ -348,8 +315,12 @@ int poids(int sx, int sy, grille* g, int id) {
     return res;
 }
 
-/* id représente la taille de la ligne que l'on cherche à placer
- * 1 : Petit, 230V - 2  */
+// Constantes pour A*
+const int BLANC = 0;
+const int GRIS = 1;
+const int NOIR = 2;
+
+/* id représente la taille de la ligne que l'on cherche à placer */
 int* astar(grille* g, cell* depart, cell* final, int id) {
     assert(final != NULL && depart != NULL);
     int n = g->taille;
@@ -515,6 +486,7 @@ int* astar(grille* g, cell* depart, cell* final, int id) {
     free(f);
     return NULL;
 }
+
 int dist(cell* c1, cell* c2){
     int x = c1->x - c2->x;
     int y = c1->y - c2->y;
@@ -558,6 +530,7 @@ cell** k_plus_proche(grille* g, cell* source, int id_inf, int k, int id_sup){
     return top;
 
 }
+
 cell* barycentre(grille* g, cell* points[], int k){
     int x = 0;
     int y = 0;
@@ -571,6 +544,7 @@ cell* barycentre(grille* g, cell* points[], int k){
     y = y;
     return getCell(x, y, g);
 }
+
 void situation_initiale_pop(grille** g, int l){
 	int n = g[0] -> taille;
 	for(int k = 0;k < NB_USINE;k++){
@@ -633,6 +607,7 @@ void situation_initiale_pop(grille** g, int l){
    
 	return;
 }
+
 void situation_initiale(grille* g){
 	int n = g -> taille;
 	for(int k = 0;k < NB_USINE;k++){
@@ -684,7 +659,6 @@ void situation_initiale(grille* g){
    
 	return;
 }
-
 
 //Pose les transformateur de façon aléatoire
 void random_transfo(grille* g){

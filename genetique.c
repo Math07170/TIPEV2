@@ -8,6 +8,23 @@
 #include "carte.h"
 #include <pthread.h>
 
+double score_grille(grille* g){
+    grille* copie = copie_grille(g);
+    individu_v2 i;
+    i.taille = g->nb_infra;
+    i.t = malloc(i.taille * infra);
+    for(int k=0; k<g->nb_infra; k++){
+        i.t[k].type = g->infra[k]->type;
+        i.t[k].x = g->infra[k]->x;
+        i.t[k].x = g->infra[k]->y;
+    }
+    double res = score_v2(g, &i);
+    free(g);
+    free(i.t);
+    free(i);
+    return res;
+}
+
 /**
  * The function calculates the economic score of a given grid and infrastructure configuration.
  * 

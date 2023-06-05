@@ -348,8 +348,9 @@ int poids(int sx, int sy, grille* g, int id) {
     return res;
 }
 
-/* À mettre dans grille.c ? Ou pas ? */
-int* astar(grille* g, cell* depart, cell* final, int id) {	// Situation du tableau voisins à clarifier/régulariser
+/* id représente la taille de la ligne que l'on cherche à placer
+ * 1 : Petit, 230V - 2  */
+int* astar(grille* g, cell* depart, cell* final, int id) {
     assert(final != NULL && depart != NULL);
     int n = g->taille;
     int DMAX = n+n+1;
@@ -772,7 +773,7 @@ void relie(grille* g) {
             g->nb_infra += 1;
             for(int p=0; p<5; p++){
                 if(vois[p] == NULL) continue;
-                if(vois[p]->nb_c <= 5) astar(g, vois[p], b, 1);
+                if(vois[p]->nb_c <= 5) astar(g, vois[p], b, 2);
             }
             
         }
@@ -782,7 +783,7 @@ void relie(grille* g) {
         if((g->infra[x])->infra == GD_TRANSFO){
             cell** vois = k_plus_proche(g, g->infra[x], CENTRALE, 1, CENTRALE);
             if(vois[0] == NULL) continue;
-            astar(g, vois[0], g->infra[x], 1);
+            astar(g, vois[0], g->infra[x], 3);
         }
     }
 }

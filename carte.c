@@ -270,7 +270,7 @@ void montagne_passage(grille* g) {
 }
 
 
-void deuxième_passage(grille* g, int NB) {
+void deuxieme_passage(grille* g, int NB) {
 
 	int n = g->taille;
 	
@@ -341,7 +341,7 @@ grille* generation_carte(int n) {
 		free(v_c);
 	}
 	
-	deuxième_passage(g,100000);
+	deuxieme_passage(g,100000);
 
 	int nb_montagnes = n / 40;
 	for(int b=0;b<nb_montagnes;b++) {
@@ -470,6 +470,6 @@ grille* recuperer_image() {
 	grille* g = convertir(Image);
 	free(Image->pixels);
 	free(Image);
-	//deuxième_passage(g,1000000);
+	//deuxieme_passage(g,1000000);
 	return g;
 }

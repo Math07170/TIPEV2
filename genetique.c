@@ -71,7 +71,7 @@ double score_grille(grille* g){
         i.t[k].y = copie->infra[k]->y;
         i.t[k].type = 0;
     }
-    g->nb_infra = 0;
+    copie->nb_infra = 0;
     double res = score_v2(copie, &i);
     free(g);
     free(i.t);

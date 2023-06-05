@@ -7,34 +7,12 @@
 #include "genetique.h"
 #include "carte.h"
 #include <pthread.h>
-
-double score_grille(grille* g){
-    grille* copie = copie_grille(g);
-    individu_v2 i;
-    i.taille = g->nb_infra;
-    i.t = malloc(i.taille * infra);
-    for(int k=0; k<g->nb_infra; k++){
-        i.t[k].type = g->infra[k]->type;
-        i.t[k].x = g->infra[k]->x;
-        i.t[k].y = g->infra[k]->y;
-        i.t[k].type = 0;
-    }
-    g->nb_infra = 0;
-    double res = score_v2(g, &i);
-    free(g);
-    free(i.t);
-    free(i);
-    return res;
-}
-
 /**
- * The function calculates the economic score of a given grid and infrastructure configuration.
+ * Cette fonction calcule le score d'un individu_v2
+ * @param g la grille qui correspond à la carte du terrain
+ * @param i l'individu_v2 dont on veut calculer le score
  * 
- * @param g The parameter `g` is a pointer to a `grille` struct, which represents a grid of cells.
- * @param i The parameter `i` is an individual of type `individu_v2` which contains an array of
- * `taille` structures of type `terrain` representing the infrastructure built on the `grille` `g`.
- * 
- * @return a double value, which represents the economic score of a given grid and individual.
+ * @return le score de l'individu_v2 qui correspond donc au prix du réseau électrique
  */
 double score_v2(grille* g, individu_v2* i){
     grille* copie = copie_grille(g);
@@ -75,6 +53,31 @@ double score_v2(grille* g, individu_v2* i){
     return (res_eco);
 
 }
+
+/**
+ * Cette fonction calcule le score d'une grille
+ * @param g la grille dont on veut calculer le score
+ * 
+ * @return le score de la grille qui correspond donc au prix du réseau électrique
+*/
+double score_grille(grille* g){
+    grille* copie = copie_grille(g);
+    individu_v2 i;
+    i.taille = g->nb_infra;
+    i.t = malloc(i.taille * sizeof(infra));
+    for(int k=0; k<copie->nb_infra; k++){
+        i.t[k].type = copie->infra[k]->type;
+        i.t[k].x = copie->infra[k]->x;
+        i.t[k].y = copie->infra[k]->y;
+        i.t[k].type = 0;
+    }
+    g->nb_infra = 0;
+    double res = score_v2(copie, &i);
+    free(g);
+    free(i.t);
+    return res;
+}
+
 /**
  * The function frees the memory allocated for a population structure and its components.
  * 

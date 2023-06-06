@@ -61,21 +61,33 @@ double score_v2(grille* g, individu_v2* i){
  * @return le score de la grille qui correspond donc au prix du réseau électrique
 */
 double score_grille(grille* g){
-    grille* copie = copie_grille(g);
-    individu_v2 i;
-    i.taille = g->nb_infra;
-    i.t = malloc(i.taille * sizeof(infra));
-    for(int k=0; k<copie->nb_infra; k++){
-        i.t[k].type = copie->infra[k]->type;
-        i.t[k].x = copie->infra[k]->x;
-        i.t[k].y = copie->infra[k]->y;
-        i.t[k].type = 0;
+    double res_eco = 0;
+    for(int k = 0; k<g->taille; k++){
+        for(int j = 0; j<g->taille; j++){
+            double res_temp = 0;
+            for(int c = 0; c < g->t[k][j].nb_c; c++){
+                if((int)g->t[k][j].c[c].u == 230){
+                    res_temp += 210*1000;
+                }else if((int)g->t[k][j].c[c].u == 60000){
+                    res_temp += 60000;
+                }else{
+                    res_temp += 1200000;
+                }
+                if(g->t[k][j].type == FORET){
+                    res_temp = res_temp * 1.25;
+                }else if(g->t[k][j].type == PLAINE){
+                    res_temp = res_temp * 1;
+                }else{
+                    res_temp = res_temp * 2;
+                }
+                res_temp += (((g->t[k][j].c[c].r)*(g->t[k][j].c[c].i)*(g->t[k][j].c[c].i))*3.65*2.4*6*6)*(2.16)/1000;
+            }
+            
+            res_eco += res_temp;
+        }
     }
-    copie->nb_infra = 0;
-    double res = score_v2(copie, &i);
-    free(g);
-    free(i.t);
-    return res;
+    return (res_eco);
+
 }
 
 /**

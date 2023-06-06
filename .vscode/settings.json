@@ -4,6 +4,11 @@
             "cwd": "/home/mathias/Documents/GitHub/TIPEV2",
             "binaryPath": "/home/mathias/Documents/GitHub/TIPEV2/tipe",
             "binaryArgs": []
+        },
+        {
+            "cwd": "/workspaces/TIPEV2",
+            "binaryPath": "/workspaces/TIPEV2/tipe",
+            "binaryArgs": []
         }
     ],
     "files.associations": {

@@ -19,6 +19,7 @@ int main(){
 	grille* g = generation_carte(40);
     situation_initiale(g);
     relie(g);
+    fprintf(stdout,"Test : %lf\n",score_grille(g));
     
     // PPREMIER ALGORITHME GÉNÉTIQUE
     /*population* pop = creer_population(100);

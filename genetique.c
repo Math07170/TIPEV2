@@ -7,13 +7,8 @@
 #include "genetique.h"
 #include "carte.h"
 #include <pthread.h>
-/**
- * Cette fonction calcule le score d'un individu_v2
- * @param g la grille qui correspond à la carte du terrain
- * @param i l'individu_v2 dont on veut calculer le score
- * 
- * @return le score de l'individu_v2 qui correspond donc au prix du réseau électrique
- */
+
+/* Calcule le score (homogène à un prix) d'un individu_v2 */
 double score_v2(grille* g, individu_v2* i){
     grille* copie = copie_grille(g);
     for(int k = 0; k < i->taille; k++){
@@ -54,12 +49,6 @@ double score_v2(grille* g, individu_v2* i){
 
 }
 
-/**
- * Cette fonction calcule le score d'une grille
- * @param g la grille dont on veut calculer le score
- * 
- * @return le score de la grille qui correspond donc au prix du réseau électrique
-*/
 double score_grille(grille* g){
     double res_eco = 0;
     for(int k = 0; k<g->taille; k++){
@@ -90,11 +79,7 @@ double score_grille(grille* g){
 
 }
 
-/**
- * The function frees the memory allocated for a population structure and its components.
- * 
- * @param p The parameter "p" is a pointer to a struct of type "population_v2".
- */
+/* Libère la mémoire allouée pour une population_v2 */
 void free_population_v2(population_v2* p){
     for(int k = 0; k < p->taille; k++){
         free(p->t[k].t);
@@ -138,15 +123,7 @@ grille* best_v2(population_v2* p, float eco, float env){
 
 }
 
-/**
- * This function calculates the average score of a population, taking into account any missing scores.
- * 
- * @param p The parameter "p" is a pointer to a structure of type "population_v2".
- * 
- * @return The function `moyenne_v2` is returning the average score of a population, calculated by
- * summing up all the scores of individuals in the population and dividing by the total number of
- * individuals in the population.
- */
+/* Calcule le score moyen d'une population_v2 */
 double moyenne_v2(population_v2* p){
     double res = 0;
     for(int k = 0; k < p->taille; k++){
@@ -156,15 +133,7 @@ double moyenne_v2(population_v2* p){
 }
 
 
-/**
- * The function performs a sort algorithm on a population of individuals based on their scores.
- * 
- * @param p The parameter "p" is a pointer to a struct called "population_v2" which contains
- * information about a population of individuals.
- * 
- * @return a pointer to an integer array that contains the indices of the elements in the population_v2
- * structure sorted in ascending order based on their score values.
- */
+/* Trie les individus_v2 d'une population_v2 par score */
 int* tri_rapide_v2(population_v2* p, float eco, float env){
     int* res = malloc(sizeof(int)*(p->taille));
     for(int k = 0; k < p->taille; k++){
@@ -196,20 +165,8 @@ int* tri_rapide_v2(population_v2* p, float eco, float env){
     return res;
 }
 
-
-/**
- * The function performs a crossover between two individuals by selecting infrastructure elements from
- * the first individual that are located in the top-left quadrant of a grid and selecting elements from
- * the second individual that are located in the other quadrants.
- * 
- * @param i1 The first parent individual of type "individu_v2" that will be used for the crossover
- * operation.
- * @param i2 The parameter i2 is an object of the struct type "individu_v2".
- * @param n The parameter "n" represents the size of the grid or the number of cells in each row/column
- * of the grid.
- * 
- * @return The function `croisement_v2` returns an `individu_v2` object.
- */
+/* Effectuue un croisement entre deux individu_v2
+ * Garde les infrastructures du quart d'en haut à gauche de la grille de i1, et des autres quarts de la grille de i2 */
 individu_v2 croisement_v2(individu_v2 i1, individu_v2 i2, int n){
     individu_v2 res;
     res.taille = i1.taille + i2.taille;
@@ -242,15 +199,6 @@ individu_v2 croisement_v2(individu_v2 i1, individu_v2 i2, int n){
     return res;
 }
 
-
-/**
- * The function performs a mutation on an individual by randomly changing a percentage of its genes to
- * new values.
- * 
- * @param i The parameter "i" is a pointer to an object of type "individu_v2".
- * 
- * @return nothing (void).
- */
 void mutation_v2(individu_v2* i){
     int nb = rand() % i->taille*1/100;
     for(int k = 0; k < nb; k++){
@@ -263,13 +211,7 @@ void mutation_v2(individu_v2* i){
     return;
 }
 
-/**
- * This function creates a population of individuals with randomly generated infrastructure on a map.
- * 
- * @param n The parameter "n" represents the size of the population to be created.
- * 
- * @return The function `creer_population_v2` returns a pointer to a `population_v2` structure.
- */
+/* Crée une population_v2 d'individus_v2 aléatoires */
 population_v2* creer_population_v2(int n, grille* g){
     population_v2* res = malloc(sizeof(population_v2));
     res->taille = n;
@@ -334,16 +276,7 @@ population_v2* creer_population_v2(int n, grille* g){
 
 }
 
-/**
- * The function "next_generation_v2" generates the next generation of individuals in a genetic
- * algorithm, with a mutation rate of 30%, using a quicksort algorithm to select the parents for
- * crossover.
- * 
- * @param pop A pointer to a population_v2 struct, which contains an array of individu_v2 structs and
- * their corresponding scores, as well as other information about the population.
- * 
- * @return The function `next_generation_v2` returns a pointer to a `population_v2` structure.
- */
+/* Taux de mutation : 30% */
 population_v2* next_generation_v2(population_v2* pop){
     population_v2* res = malloc(sizeof(population_v2));
     res->taille = pop->taille;
@@ -385,7 +318,8 @@ population_v2* next_generation_v2(population_v2* pop){
     //fprintf(stderr, "Moyenne : %d\n", moyenne_v2(*res));
     return res;
 }
-// Plus le score est faible mieux c'est
+
+/* Homogène à un prix, mieux s'il est plus faible */
 int score(individu i, float eco, float env){
     grille* g = copie_grille((grille*)i);
     relieup(g);
@@ -404,7 +338,7 @@ int score(individu i, float eco, float env){
     return (res_eco*eco + res_env*env);
 }
 
-// croise deux individus en prenant 1/4 de l'un et 3/4 de l'autre
+/* Croise deux individus en prenant 1/4 de l'un et 3/4 de l'autre */
 individu croisement(individu g1, individu g2){
     individu res = creer_grille(g1->taille);
     for(int k = 0; k<g1->taille; k++){
@@ -456,8 +390,8 @@ individu croisement(individu g1, individu g2){
     return res;
 }
 
-// Applique une mutation a un individu 
-/// Une mutation prend k cases contenant un transformateur et les déplaces aléatoirement sur la carte
+/* Applique une mutation a un individu 
+ * Une mutation prend k cases contenant un transformateur et les déplaces aléatoirement sur la carte */
 void mutation(individu g){
     int k = rand() % g->nb_infra;
     int modif = 0;
@@ -477,7 +411,7 @@ void mutation(individu g){
 }
 
 
-// Renvoie le meilleur individu de la population (celui qui as le score le plus faible)
+/* Renvoie le meilleur individu de la population (celui qui as le score le plus faible) */
 individu best(population* p, float eco, float env){
     int min = score(p->t[0], eco, env);
     int indice = 0;
@@ -491,7 +425,7 @@ individu best(population* p, float eco, float env){
     return p->t[indice];
 }
 
-// Renvoie le pire individu de la population (celui qui as le score le plus élevé)
+/* Renvoie le pire individu de la population (celui qui as le score le plus élevé) */
 individu worst(population* p, float eco, float env){
     int max = score(p->t[0], eco, env);
     int indice = 0;
@@ -506,7 +440,7 @@ individu worst(population* p, float eco, float env){
     return p->t[indice];
 }
 
-// Renvoie la moyenne des scores de la population
+/* Renvoie la moyenne des scores de la population */
 float moyenne(population* p, float eco, float env){
     float res = 0;
     for(int k = 0; k < p->taille; k++){
@@ -520,7 +454,7 @@ float moyenne(population* p, float eco, float env){
     return res/p->taille;
 }
 
-// Renvoie la variance des scores de la population
+/* Renvoie la variance des scores de la population */
 float variance(population* p, float eco, float env){
     float res = 0;
     float m = moyenne(p, eco, env);
@@ -531,7 +465,7 @@ float variance(population* p, float eco, float env){
 }
 
 
-// Renvoie la médiane des scores de la population
+/* Renvoie la médiane des scores de la population */
 float mediane(population* p, float eco, float env){
     int* t = malloc(sizeof(int)*p->taille);
     for(int k = 0; k < p->taille; k++){
@@ -560,7 +494,8 @@ float mediane(population* p, float eco, float env){
     free(t);
     return res;
 }
-// Renvoie la liste des indices des individus de la population triés par score croissant
+
+/* Renvoie la liste des indices des individus de la population triés par score croissant */
 int* tri_rapide(population* p, float eco, float env){
     int* res = malloc(sizeof(int)*p->taille);
     for(int k = 0; k < p->taille; k++){
@@ -588,6 +523,7 @@ int* tri_rapide(population* p, float eco, float env){
     }
     return res;
 }
+
 void free_partial_population(population* p, int* t){
     for(int k = p->taille /2; k < p->taille; k++){
         grille* test = p->t[t[k]];
@@ -598,6 +534,7 @@ void free_partial_population(population* p, int* t){
     free(p->score);
     free(p);
 }
+
 void free_population(population* p){
     for(int k = 0; k < p->taille; k++){
         grille* g = p->t[k];
@@ -608,7 +545,8 @@ void free_population(population* p){
     free(p->score);
     free(p);
 }
-// Utilise la fonction tri_rapide pour générer la population suivante en appliquant une selection naturelle et une chance de mutation de 10% par individu
+
+/* Utilise la fonction tri_rapide pour générer la population suivante en appliquant une selection naturelle et une chance de mutation de 10% par individu */
 population* next_generation(population* p, float eco, float env){
     fprintf(stderr, "Pire : %d\n", score(worst(p, eco, env), eco, env));
     population* res = malloc(sizeof(population));

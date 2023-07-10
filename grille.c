@@ -23,14 +23,12 @@ const int NB_VILLAGE = 70;
 const int NB_CENTRALE = 10;
 
 // Type de terrain
-const int NEANT = 0;	// N'a pas à être affiché !!!
+const int NEANT = 0;	// N'a pas à être affiché !
 const int PLAINE = 10;	// yellow
 const int FORET = 20;	// green
 const int EAU = 30;		// blue
-const int RIVIERE = 40;	// cyan		// NE VA PROBABLEMENT PAS RESTER
+const int RIVIERE = 40;	// cyan		// N'est pas utilisé, rempléacé par EAU
 const int MONTAGNE = 50;	// white
-
-
 
 
 
@@ -58,7 +56,7 @@ grille* creer_grille(int n) {
 			exit(-1);
 		}
 		for(int l = 0;l < n;l++){
-			(g->t[k][l]).c = malloc(sizeof(cable)*1000);		// Remplacé par les IDs de lignes, mais ça marche en l'état
+			(g->t[k][l]).c = malloc(sizeof(cable)*1000);
             if(g->t[k][l].c == NULL){
 				printf("Manque de mémoire pour créer la grille\n");
 				exit(-1);
@@ -169,9 +167,7 @@ cell** voisins(cell* c, grille* g){
     vois[2] =  getCell(x, y-1, g);
     return vois;
 }
-void deplace(cell* source, cell* destination){
 
-}
 void delete_line(int id_line, grille* g){
     int n = g->taille;
     int res = 0;
@@ -248,22 +244,11 @@ void randomize_infra(int element, int nb_element, grille* g){
     while (counter < nb_element) {
         int i = rand() % n;
         int j = rand() % n;
-        if (est(VIDE, i, j, g)) {		// AUSSI VÉRIFIER QUE LA CASE EST "CONSTRUCTIBLE"
+        if (est(VIDE, i, j, g)) {		// On pourrait aussi vérifier que la case est constructible
             g->t[i][j].infra = element;
             counter++;
         }
     }
-    return;
-}
-
-void randomize_terrain(grille* g){		// TEMPORAIRE !!!
-	int n = g->taille;
-    for(int i = 0; i < n;i++){
-		for(int j = 0 ; j < n;j++){
-			int t = 10 * (rand() % 5);
-			g->t[i][j].type = t;
-		}
-	}
     return;
 }
 
@@ -372,7 +357,7 @@ int* astar(grille* g, cell* depart, cell* final, int id) {
             deg = 4;
         }
         cell** vois = voisins(getCell(xs, ys,g), g);
-        int voisins[4];		// HORREUR !!!
+        int voisins[4];
         int indice = 0;
         for(int k = 0; k<4; k++){
             if(vois[k] != NULL){
@@ -381,7 +366,7 @@ int* astar(grille* g, cell* depart, cell* final, int id) {
             }
         }
         free(vois);
-				// TODO : générer d'une façon ou d'une autre le tableau voisins
+		
         for(int i=0;i<indice;i++) {
             
             int s_v = voisins[i];		// Numéro de sommet du voisin
@@ -395,7 +380,7 @@ int* astar(grille* g, cell* depart, cell* final, int id) {
                 
                 p[s_v] = s;
                 
-                d[s_v] = d[s] + poids(s_v,s, g, id);		// AJOUT ÉVENTUEL D'UN POIDS ICI (poids différent pour chaque case de la grille ?)
+                d[s_v] = d[s] + poids(s_v,s, g, id);
                 
                 f[s_v] = d[s_v] + heuristique(xs,ys,final->x,final->y);
                 inserer_fileprio(&file, s_v, f[s_v]);
@@ -660,7 +645,7 @@ void situation_initiale(grille* g){
 	return;
 }
 
-//Pose les transformateur de façon aléatoire
+/* Pose les transformateur de façon aléatoire */
 void random_transfo(grille* g){
     int n = g -> taille;
     for(int x =0; x<NB_CENTRALE; x++){
@@ -695,7 +680,7 @@ void random_transfo(grille* g){
 
 }
 
-//relie chaque consomateur au transformateur le plus proche.
+/* Relie chaque consomateur au transformateur le plus proche */
 void relieup(grille* g){
     for(int k = 0; k < g->nb_infra; k++){
         if(g->infra[k]->infra == VILLAGE || g->infra[k]->infra == PT_VILLE){
@@ -761,6 +746,7 @@ void relie(grille* g) {
         }
     }
 }
+
 void creation_res(grille* g, int k_vois_cons, int k_vois_transfo){
     return;
 }

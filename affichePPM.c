@@ -4,25 +4,12 @@
 #include <assert.h>
 #include <time.h>
 #include "grille.h"
+#include "affichePPM.h"
 
 const int TAILLE_TUILE = 25;
-/* Si cette valeur est autre chose que 25, l'affichage des "lettres" des infrastructures ne sera pas centré (mais restera à peu près dans la tuile)
+/* Si cette valeur est autre chose que 25, l'affichage des "lettres" des infrastructures ne sera pas centré (mais restera grosso modo dans la tuile)
  * Rien d'autre n'est hardcodé */
-
-struct s_pixel{
-	int rouge;
-	int vert;
-	int bleu;
-};
-typedef struct s_pixel pixel;
-
-struct s_image{
-	int largeur;	// i, vers le bas		// Comptée en pixels (pas en tuiles !)
-	int hauteur;	// j, vers la droite	// Idem
-	pixel* pixels;
-};
-typedef struct s_image image;
-
+ 
 pixel lire_pixel(image* img,int i,int j){
 	return img -> pixels[i+img->hauteur*j];
 }
@@ -89,6 +76,7 @@ void dessine_lignes(cell* c,image* img,grille* g){
 	int indice_1 = TAILLE_TUILE * 11 / 25;
 	int indice_2 = TAILLE_TUILE * 14 / 25;
 	int indice_3 = TAILLE_TUILE * 17 / 25;
+	
 	for(int id_l = 0;id_l < g->nb_l;id_l++){
 		int tension = tension_ligne(c,id_l);
 		pixel ligne;
@@ -119,34 +107,6 @@ void dessine_lignes(cell* c,image* img,grille* g){
 			indice_min = indice_0;
 			indice_max = indice_3;
 		}
-		/*if(v[0] != NULL && contient_ligne(v[0],id_l) && contient_ligne(c,id_l)){		// Affiche en haut
-			for(int i = 0;i < (TAILLE_TUILE * 2 / 5) - 1;i++){
-				for(int j = TAILLE_TUILE * 2 / 5;j < TAILLE_TUILE - (TAILLE_TUILE * 2 / 5);j++){
-					dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
-				}
-			}
-		}
-		if(v[1] != NULL && contient_ligne(v[1],id_l) && contient_ligne(c,id_l)){		// Affiche en bas
-			for(int i = TAILLE_TUILE - 1;i > TAILLE_TUILE - TAILLE_TUILE * 2 / 5;i--){
-				for(int j = TAILLE_TUILE * 2 / 5;j < TAILLE_TUILE - (TAILLE_TUILE * 2 / 5);j++){
-					dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
-				}
-			}
-		}
-		if(v[2] != NULL && contient_ligne(v[2],id_l)  && contient_ligne(c,id_l)){		// Affiche à gauche
-			for(int j = 0;j < (TAILLE_TUILE * 2 / 5) - 1 ;j++){
-				for(int i = TAILLE_TUILE * 2 / 5;i < TAILLE_TUILE - (TAILLE_TUILE * 2 / 5);i++){
-					dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
-				}
-			}
-		}
-		if(v[3] != NULL && contient_ligne(v[3],id_l) && contient_ligne(c,id_l)){		// Affiche à droite
-			for(int j = TAILLE_TUILE - 1;j > TAILLE_TUILE - TAILLE_TUILE * 2 / 5;j--){
-				for(int i = TAILLE_TUILE * 2 / 5;i < TAILLE_TUILE - (TAILLE_TUILE * 2 / 5);i++){
-					dessine_pixel(img,(c->x)*TAILLE_TUILE+i,(c->y)*TAILLE_TUILE+j,ligne);
-				}
-			}
-		}*/
 		if(v[0] != NULL && contient_ligne(v[0],id_l) && contient_ligne(c,id_l)){		// Affiche en haut
 			for(int i = 0;i < (TAILLE_TUILE * 2 / 5) - 2;i++){
 				for(int j = indice_min;j < indice_max;j++){
@@ -307,7 +267,7 @@ void dessine_cell(cell* c,image* img,grille* g,bool quadrillage){
 	bordure.vert = 0;
 	bordure.bleu = 0;
 	switch(c -> type){		// Note : couleurs choisies vraiment à l'arrache
-		case 10:	// PLAINE	// Si on met "PLAINE", on obtient "l'étiquette du case ne se réduit pas en une constante entière", malgré l'inclusion de grille.h...
+		case 10:	// PLAINE	// Si on met "PLAINE", on obtient l'erreur "l'étiquette du case ne se réduit pas en une constante entière", malgré l'inclusion de grille.h...
 			terrain.rouge = 143;
 			terrain.vert = 206;
 			terrain.bleu = 0;

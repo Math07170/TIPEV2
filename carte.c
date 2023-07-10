@@ -5,7 +5,7 @@
 #include <math.h>
 
 #include "grille.h"
-#include "affichage.h"
+#include "affichePPM.h"
 #include "carte.h"
 
 const int k0 = 1;
@@ -24,9 +24,9 @@ const int c4 = 30;
 const int P_PLAINE = 32;
 const int P_FORET = 25;
 const int P_EAU = 0;
-const int P_RIVIERE = 0;	// À enlever
+const int P_RIVIERE = 0;	// Pas utilisé
 const int P_MONTAGNE = 0;
-const int P_NEANT = 0;		// Ne pas changer !
+const int P_NEANT = 0;		// Ne pas enlever, débogage
 
 int egalites(int A,int B,int C,int D,int T) {
 	int res = 0;
@@ -147,11 +147,10 @@ int random_entre(int min, int max) {
 }
 
 
-//Pose un terrain t suivant la direction d depuis la case (x,y)
-//La fonction diminura de 1 la longeur du terrain à poser
-//La fonction augmentera x et y convenablement selon la direction
-//Si on est au bord de la grille, la longeur restante à poser passe alors à 0
-
+/* Pose un terrain t suivant la direction d depuis la case (x,y)
+ * La fonction diminura de 1 la longeur du terrain à poser
+ * La fonction augmentera x et y convenablement selon la direction
+ * Si on est au bord de la grille, la longeur restante à poser passe alors à 0 */
 void poser_terrain(grille* g, int t, int* x, int* y, int dir, int* len) {
 	int n = g->taille;
 	int d = dir % 8;
@@ -201,7 +200,7 @@ void poser_terrain(grille* g, int t, int* x, int* y, int dir, int* len) {
 	*len = *len - 1;
 }
 
-//pose un cours d'eau avec pour sommet initial (xi,yi) et de longueur maximum len_max
+/* Pose un cours d'eau avec pour sommet initial (xi,yi) et de longueur maximum len_max */
 void eau_passage(grille* g, int x, int y) {
 
 	int n = g->taille;
@@ -233,7 +232,7 @@ void eau_passage(grille* g, int x, int y) {
 	}
 }
 
-//Pose une montagne de taille aléatoire sur la carte
+/* Pose une montagne de taille aléatoire sur la carte */
 void montagne_passage(grille* g) {
 	int n = g->taille;
 
@@ -266,7 +265,7 @@ void montagne_passage(grille* g) {
 	}
 }
 
-
+/*repasse sur la grille NB fois*/
 void deuxieme_passage(grille* g, int NB) {
 
 	int n = g->taille;
@@ -314,8 +313,6 @@ grille* generation_carte(int n) {
 		int i = x / n;
 		int j = x % n;
 
-		//printf("ran : %d\nlen : %d\nx : %d\ni : %d\nj : %d\n\n", r,len_actuel,x,i,j); //test
-
 		int ter[4];
 		
 		cell* c = getCell(i,j,g);
@@ -357,38 +354,9 @@ grille* generation_carte(int n) {
 
 //{Rouge,Vert,Bleu}
 
-struct s_pixel2{
-	int rouge;
-	int vert;
-	int bleu;
-};
-typedef struct s_pixel2 pixel2;
-struct s_image2{
-	int hauteur;
-	int largeur;
-	pixel2* pixels;
-};
-typedef struct s_image2 image2;
+int plage(pixel p) {
 
-pixel2 lire_pixel2(image2* img,int i,int j){
-	return img -> pixels[img->largeur*i+j];
-}
-
-int rouge2(pixel2 p){
-	return p.rouge;
-}
-
-int vert2(pixel2 p){
-	return p.vert;
-}
-
-int bleu2(pixel2 p){
-	return p.bleu;
-}
-
-int plage(pixel2 p) {
-
-	int point[3] = {rouge2(p),vert2(p),bleu2(p)};
+	int point[3] = {rouge(p),vert(p),bleu(p)};
 	int indice = 0;
 	int dmin = 100000;
 
@@ -424,14 +392,14 @@ int plage(pixel2 p) {
 }
 
 
-grille* convertir(image2* I) {
+grille* convertir(image* I) {
 	assert(I->hauteur == I->largeur);
 	grille* g = creer_grille(I->hauteur);
 	int n = g->taille;
 	for (int i=0;i<n;i++) {
 		for (int j=0;j<n;j++) {
 			
-			pixel2 p = lire_pixel2(I,i,j);
+			pixel p = lire_pixel(I,i,j);
 			g->t[i][j].type = plage(p);
 		}
 	}
@@ -448,8 +416,8 @@ grille* recuperer_image() {
 	fscanf(fichier, "P3 %d %d 255", &largeur, &taille);
 	assert((largeur == taille) && (largeur > 0) && (largeur <= 1000));
 
-	image2* Image = malloc(sizeof(image2));
-	Image->pixels = malloc(taille*taille*sizeof(pixel2));
+	image* Image = malloc(sizeof(image));
+	Image->pixels = malloc(taille*taille*sizeof(pixel));
 	Image->hauteur = taille;
 	Image->largeur = taille;
 

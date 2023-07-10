@@ -4,8 +4,7 @@
 #include <stdbool.h>
 
 /* Structure de file de priorité donnant le numéro du sommet associé à la valeur la plus PETITE
- * Implémentation : tas binaire avec un tableau
- * 6/3/23 au soir, testé convenablement, semble faire le taf ! (+rajouté une fonction detruire_fileprio) */
+ * Implémentation : tas binaire avec un tableau */
 
 struct s_noeud{		// càd une case du tableau
 	int num_sommet;
@@ -17,13 +16,13 @@ typedef struct s_noeud noeud;
 
 struct s_fileprio{
 	int nb_valeurs;
-	//int taille_max;		// Pourrait être ajouté pour mettre des assertions...
+	//int taille_max;		// Pourrait être ajouté pour mettre des assertions
 	noeud* t;
 };
 typedef struct s_fileprio fileprio;
 
 
-fileprio creer_fileprio(int taille_max);		// Toujours mettre n² en argument en attendant l'avis de Mathias...
+fileprio creer_fileprio(int taille_max);
 bool fileprio_non_vide(fileprio* f);
 void inserer_fileprio(fileprio* f,int num_sommet,int distance);
 int extraire_fileprio(fileprio* f);		// Renvoie un numéro de sommet

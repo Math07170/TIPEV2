@@ -1,0 +1,236 @@
+
+
+
+
+#ifndef AFFICHE_H
+#define AFFICHE_H
+
+void init_ncurses();
+void affiche(grille* g);
+
+#endif
+
+
+
+
+#ifndef AFFICHEPPM_H
+#define AFFICHEPPM_H
+
+// Note : La structure d'image est également utilisée dans carte.c
+
+struct s_pixel{
+	int rouge;
+	int vert;
+	int bleu;
+};
+typedef struct s_pixel pixel;
+
+struct s_image{
+	int largeur;	// i, vers le bas		// Comptée en pixels (pas en tuiles !)
+	int hauteur;	// j, vers la droite	// Idem
+	pixel* pixels;
+};
+typedef struct s_image image;
+
+pixel lire_pixel(image* img,int i,int j);
+int rouge(pixel p);
+int vert(pixel p);
+int bleu(pixel p);
+
+void affichePPM(grille* g,bool quadrillage,char* filename);
+
+#endif
+ 
+
+
+
+#ifndef CARTE_H
+#define CARTE_H
+#include "grille.h"
+//#include "quickimage.h"
+
+int egalite(int A,int B,int C,int D,int T);
+
+int coef(int A,int B,int C,int D,int T,int p);
+
+int random_terrain(int A,int B,int C,int D);
+
+void tab_init(int taille, int* t);
+
+grille* generation_carte(int n);
+
+//grille* convertir(Image* I);
+grille* recuperer_image();
+
+#endif
+
+
+
+
+#ifndef FILEPRIO_H
+#define FILEPRIO_H
+
+#include <stdbool.h>
+
+/* Structure de file de priorité donnant le numéro du sommet associé à la valeur la plus PETITE
+ * Implémentation : tas binaire avec un tableau */
+
+struct s_noeud{		// càd une case du tableau
+	int num_sommet;
+	int valeur;
+	//int i_fils_droit;			// a priori non
+	//int i_fils_gauche;		// non plus
+};
+typedef struct s_noeud noeud;
+
+struct s_fileprio{
+	int nb_valeurs;
+	//int taille_max;		// Pourrait être ajouté pour mettre des assertions
+	noeud* t;
+};
+typedef struct s_fileprio fileprio;
+
+
+fileprio creer_fileprio(int taille_max);
+bool fileprio_non_vide(fileprio* f);
+void inserer_fileprio(fileprio* f,int num_sommet,int distance);
+int extraire_fileprio(fileprio* f);		// Renvoie un numéro de sommet
+void diminuer_fileprio(fileprio* f,int num_sommet,int nv_val);
+void detruire_fileprio(fileprio* f);
+// Rajouter une fonction lire_min_fileprio ?
+
+
+#endif
+
+
+
+
+#ifndef GENETIQUE_H
+#define GENETIQUE_H
+
+typedef grille* individu;
+
+struct s_population {
+    int* score;
+    int taille;
+    individu* t;
+};
+typedef struct s_population population;
+
+struct s_infra {
+    int type;
+    int x;
+    int y;
+};
+typedef struct s_infra infra;
+
+struct s_individu_v2 {
+    infra* t;
+    int taille;
+};
+typedef struct s_individu_v2 individu_v2;
+
+struct s_population_v2 {
+    grille* g;
+    double* score;
+    int taille;
+    individu_v2* t;
+};
+typedef struct s_population_v2 population_v2;
+
+int score(individu i, float eco, float env);
+float moyenne(population* p, float eco, float env);
+void mutation(individu i);
+individu croisement(individu i1, individu i2);
+int* tri_rapide(population* p, float eco, float env);
+population* next_generation(population* p, float eco, float env);
+population* creer_population(int n);
+void free_population(population* p);
+individu best(population* p, float eco, float env);
+population_v2* creer_population_v2(int n, grille* g);
+population_v2* next_generation_v2(population_v2* pop);
+double moyenne_v2(population_v2* p);
+void free_population_v2(population_v2* p);
+grille* best_v2(population_v2* p, float eco, float env);
+double score_grille(grille* g);
+#endif // GENETIQUE_H
+
+
+
+
+#ifndef GRILLE_H
+#define GRILLE_H
+#include <stdbool.h>
+
+extern const int VIDE;
+extern const int USINE;
+extern const int GD_VILLE;
+extern const int PT_VILLE;
+extern const int VILLAGE;
+extern const int CENTRALE;
+extern const int GD_TRANSFO;
+extern const int PT_TRANSFO;
+
+extern const int NEANT;
+extern const int PLAINE;
+extern const int FORET;
+extern const int EAU;
+extern const int RIVIERE;
+extern const int MONTAGNE;
+
+extern const int NB_USINE;
+extern const int NB_GD_VILLE;
+extern const int NB_PT_VILLE;
+extern const int NB_VILLAGE;
+extern const int NB_CENTRALE;
+
+struct s_cable{
+	int id; 	// Identifiant de la ligne
+	float u;	// Permet de donner le type de câble
+	float i;
+	float r;
+};
+typedef struct s_cable cable;
+
+struct s_cell{ 
+	int nb_c;
+    cable* c;
+    int type;
+    int infra;
+    int x;
+    int y;
+};
+typedef struct s_cell cell;
+
+struct s_grille{
+    int taille;
+    int nb_l;
+    int nb_infra;
+    cell** t;
+    cell** infra;
+};
+typedef struct s_grille grille;
+
+grille* creer_grille(int n);
+void detruire_grille(grille* g);
+void randomize_infra(int element, int nb_element, grille* g);
+void randomize_terrain(grille* g);
+//void affiche_moche(grille* g);
+bool est_terrain(int terrain, int i, int j, grille* g);
+int heuristique(int xa, int ya, int xb, int yb);
+cell* getCell(int x, int y, grille* g);
+bool contient_ligne(cell* c, int id_cable);
+cell** voisins(cell* c, grille* g);
+void change_terrain(int terrain, int i, int j, grille* g);
+void terrain_infra_test8(grille* g);
+int* astar(grille* g, cell* depart, cell* final, int id);
+void situation_initiale(grille* g);
+void relie(grille* g);
+void relieup(grille* g);
+void situation_initiale_pop(grille** gl, int n);
+grille* copie_grille(grille* g);
+void random_transfo(grille* g);
+void copie_case(cell* depart, cell* arrive);
+void export_csv_file(double xl[], int n);
+int tension_ligne(cell* c,int id_ligne);
+#endif

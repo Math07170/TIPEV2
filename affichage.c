@@ -93,7 +93,7 @@ void dessine_case(cell c,grille* g){
 	attroff(COLOR_PAIR(couleur));
 	
 	if(c.nb_c != 0){		// Affiche UNE ligne, s'il y a existence
-		int id_l = c.c[0].id;		// On suppose que la ligne est là-dedans, À AMÉLIORER
+		int id_l = c.c[0].id;		// Fantaisiste
 		cell** v = voisins(&c, g);
 		
 		if(v[0] != NULL && contient_ligne(v[0],id_l)){		// Affiche en haut
@@ -117,6 +117,7 @@ void dessine_case(cell c,grille* g){
 	return;
 }
 
+// Affiche la grille dans le terminal, en utilisant ncurses */
 void affiche(grille* g){
 	int n = g->taille;
 	erase();
